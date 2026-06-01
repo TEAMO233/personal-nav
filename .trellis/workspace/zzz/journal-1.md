@@ -72,3 +72,25 @@ trellis-check 安全复核发现并已修复:
 - 生产强制 `COOKIE_SECURE=true`(M8 在 README 列为必设项)。
 
 下一步:M3 引擎管理(新用户初始化预置 4 引擎 + 引擎 CRUD / 排序 / 设默认,均按 user_id 隔离)。
+
+---
+
+## 2026-06-02 — M3 引擎管理(任务 06-01-personal-nav-home)
+
+完成 M3,后端测试全绿:`./mvnw test` BUILD SUCCESS,23 tests(M1/M2 的 15 + 引擎 8)。
+- 数据层:`V2__add_engine_icon_builtin.sql` 给 search_engines 加 `icon_builtin` 列;SearchEngine 实体 + Repository 补按用户查询/归属校验/计数方法。
+- `EngineService`:预置初始化 + 按 user_id 隔离的 list/create/update/delete/reorder/setDefault;`EngineController` 暴露 GET/POST `/api/engines`、PUT/DELETE `/{id}`、PUT `/order`、PUT `/{id}/default`。
+- 预置 4 引擎(Google 默认 / 百度 / Bing / DuckDuckGo)在邀请码注册、管理员开户、初始 ADMIN 三处同事务写入。
+- 前端 `src/assets/engine-icons/` 放 4 个内置图标 svg(简洁 monogram,M7 可换为品牌图标)。
+
+关键决策:
+1. 预置图标用前端内置 svg,后端只存 `icon_builtin` key(google 等);自定义图标走 `icon_asset_id`(M4)。响应里两者都返回,前端据此拼图标。无跨域/proxy 问题。
+2. URL 模板占位符定为 `{query}`,service 强制校验含此占位(否则 400);前端跳转替换为 `encodeURIComponent(关键词)`。
+3. 多租户隔离用 `findByIdAndUserId`,越权返回 404(不暴露存在性),非 403。
+4. 新引擎追加末尾;reorder 要求传全部引擎 id 的一个排列(否则 400);删默认引擎后把剩余最前的补设为默认。
+
+测试覆盖:预置 4 引擎(Google 默认 + iconBuiltin)、A/B 用户隔离、增删改、逆序重排、设默认切换、越权 404、删默认兜底、缺占位模板 400。
+
+踩坑:无新增踩坑。Spring Data Redis 对 JPA Repository 报 "Could not safely identify store assignment" 为 M1 即有的无害提示(多模块共存时的存储归属探测日志),不影响功能。
+
+下一步:M4 文件存储与图标(StorageService + LocalDiskStorageService、media_assets 落库、`GET /api/media/{id}` 校验归属、上传 / 图片 URL / favicon 抓取含 SSRF 防护与超时大小上限)。

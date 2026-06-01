@@ -29,7 +29,7 @@
 
 - `users`(id, username 唯一, password_hash, role, status, created_at)
 - `invite_codes`(id, code 唯一, created_by, used_by 可空, expires_at, used_at)
-- `search_engines`(id, user_id, name, url_template, icon_asset_id 可空, is_default, sort_order, is_preset, created_at)
+- `search_engines`(id, user_id, name, url_template, icon_asset_id 可空, icon_builtin 可空, is_default, sort_order, is_preset, created_at)
 - `shortcut_groups`(id, user_id, name, sort_order, created_at)
 - `shortcuts`(id, user_id, group_id, name, url, icon_asset_id 可空, sort_order, created_at)
 - `media_assets`(id, user_id, type[upload/favicon/url], storage_key, source_url 可空, content_type, created_at)
@@ -47,6 +47,15 @@
 - 公共基类:`com.nav.common.BaseEntity`(`@MappedSuperclass`)抽出 `id` 与 `createdAt`,各实体继承。
 - 包结构:按功能分包 —— `com.nav.user`(User / InviteCode 账户体系)、`com.nav.engine`、`com.nav.shortcut`(ShortcutGroup + Shortcut)、`com.nav.media`,公共件放 `com.nav.common`。
 - 建表顺序(满足外键依赖):users → invite_codes → media_assets → search_engines → shortcut_groups → shortcuts。完整列定义以 `V1__init.sql` 为准,本文不重复。
+
+### 4.2 引擎管理实现约定(M3 敲定,已与用户确认)
+
+- 新增列 `icon_builtin VARCHAR(64)` 可空(迁移 `V2__add_engine_icon_builtin.sql`,Flyway 只增不改):存预置引擎的内置图标 key(google/baidu/bing/duckduckgo)。预置引擎 `icon_builtin` 非空、`icon_asset_id` 为空;自定义引擎反之(自定义图标 M4 启用)。图标 svg 内置在前端 `src/assets/engine-icons/`,前端按 key 映射渲染;响应同时返回 `iconBuiltin` 与 `iconAssetId` 供前端拼图标。
+- URL 模板占位符统一用 `{query}`(如 `https://www.google.com/search?q={query}`);新建/更新引擎时 service 强制校验模板含此占位,否则 400(`ENGINE_URL_TEMPLATE_INVALID`)。前端跳转时把 `{query}` 替换为 `encodeURIComponent(关键词)`。
+- 预置 4 引擎:Google(默认)、百度、Bing、DuckDuckGo,`sort_order` 0–3、`is_preset=true`;在用户创建(邀请码注册 / 管理员开户 / 初始 ADMIN)的同一事务内由 `EngineService.initPresetEngines` 写入。
+- 多租户隔离:所有引擎操作经 `findByIdAndUserId` 校验归属;访问或修改他人引擎返回 **404**(不暴露资源存在性),非 403。
+- 新建引擎追加到末尾(`sort_order = 当前引擎数`);排序接口要求传当前全部引擎 id 的一个排列,否则 400(`ENGINE_ORDER_MISMATCH`)。
+- 删除默认引擎后,把剩余 `sort_order` 最前的引擎补设为默认,保证始终有可用默认引擎。
 
 ## 5. 文件存储与图标(对应 D5 / D6)
 

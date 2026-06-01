@@ -22,13 +22,17 @@ public class SearchEngine extends BaseEntity {
     @Column(nullable = false, length = 64)
     private String name;
 
-    /** 搜索 URL 模板,含查询占位 */
+    /** 搜索 URL 模板,含查询占位 {query} */
     @Column(name = "url_template", nullable = false, length = 1024)
     private String urlTemplate;
 
     /** 图标媒体资源 id,可空(预置引擎用内置图标) */
     @Column(name = "icon_asset_id")
     private UUID iconAssetId;
+
+    /** 内置图标 key,预置引擎用(如 google);自定义引擎为空,改用 iconAssetId */
+    @Column(name = "icon_builtin", length = 64)
+    private String iconBuiltin;
 
     /** 是否为默认引擎 */
     @Column(name = "is_default", nullable = false)
@@ -72,6 +76,14 @@ public class SearchEngine extends BaseEntity {
 
     public void setIconAssetId(UUID iconAssetId) {
         this.iconAssetId = iconAssetId;
+    }
+
+    public String getIconBuiltin() {
+        return iconBuiltin;
+    }
+
+    public void setIconBuiltin(String iconBuiltin) {
+        this.iconBuiltin = iconBuiltin;
     }
 
     public boolean isDefault() {

@@ -1,5 +1,6 @@
 package com.nav.user;
 
+import com.nav.engine.EngineService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
- * 启动时初始化管理员:库中无 ADMIN 且配置了凭据时,创建一个初始管理员。
+ * 启动时初始化管理员:库中无 ADMIN 且配置了凭据时,创建一个初始管理员并为其初始化预置引擎。
  */
 @Component
 public class AdminInitializer implements ApplicationRunner {
@@ -19,14 +20,17 @@ public class AdminInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EngineService engineService;
     private final String adminUsername;
     private final String adminPassword;
 
     public AdminInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                            EngineService engineService,
                             @Value("${app.admin.username:}") String adminUsername,
                             @Value("${app.admin.password:}") String adminPassword) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.engineService = engineService;
         this.adminUsername = adminUsername;
         this.adminPassword = adminPassword;
     }
@@ -53,7 +57,9 @@ public class AdminInitializer implements ApplicationRunner {
         admin.setPasswordHash(passwordEncoder.encode(adminPassword));
         admin.setRole(Role.ADMIN);
         admin.setStatus(UserStatus.ACTIVE);
-        userRepository.save(admin);
+        User saved = userRepository.save(admin);
+        // 5. 为初始管理员初始化预置引擎
+        engineService.initPresetEngines(saved.getId());
         log.info("已创建初始管理员:{}", adminUsername);
     }
 }

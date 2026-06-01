@@ -3,6 +3,7 @@ package com.nav.auth;
 import com.nav.auth.dto.RegisterRequest;
 import com.nav.auth.dto.UserResponse;
 import com.nav.common.error.ApiException;
+import com.nav.engine.EngineService;
 import com.nav.user.InviteCode;
 import com.nav.user.InviteCodeRepository;
 import com.nav.user.Role;
@@ -25,12 +26,14 @@ public class AuthService {
     private final UserRepository userRepository;
     private final InviteCodeRepository inviteCodeRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EngineService engineService;
 
     public AuthService(UserRepository userRepository, InviteCodeRepository inviteCodeRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder, EngineService engineService) {
         this.userRepository = userRepository;
         this.inviteCodeRepository = inviteCodeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.engineService = engineService;
     }
 
     /**
@@ -63,11 +66,13 @@ public class AuthService {
         user.setRole(Role.USER);
         user.setStatus(UserStatus.ACTIVE);
         User saved = userRepository.save(user);
-        // 6. 消费邀请码(标记使用者与使用时间)
+        // 6. 为新用户初始化预置引擎(同一事务,与开户一起落库)
+        engineService.initPresetEngines(saved.getId());
+        // 7. 消费邀请码(标记使用者与使用时间)
         invite.setUsedBy(saved.getId());
         invite.setUsedAt(Instant.now());
         inviteCodeRepository.save(invite);
-        // 7. 返回
+        // 8. 返回
         return new UserResponse(saved.getId(), saved.getUsername(), saved.getRole().name());
     }
 }
