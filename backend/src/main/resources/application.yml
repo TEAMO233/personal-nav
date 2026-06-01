@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: backend
+  # 数据源:PostgreSQL,连接信息全部走环境变量,本地默认仅供开发
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/personal_nav}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
+  jpa:
+    hibernate:
+      # 表结构由 Flyway 管,这里只校验实体与表是否一致
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# 应用自定义配置(供后续里程碑读取)
+app:
+  # 本地磁盘文件存储目录
+  storage:
+    local:
+      base-dir: ${STORAGE_BASE_DIR:./data/media}
+  # 会话 Cookie 配置
+  cookie:
+    name: ${SESSION_COOKIE_NAME:NAV_SESSION}
+    secure: ${COOKIE_SECURE:false}
+    same-site: ${COOKIE_SAME_SITE:Lax}
+    max-age-seconds: ${SESSION_TTL_SECONDS:604800}
