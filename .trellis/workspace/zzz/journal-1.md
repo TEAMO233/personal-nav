@@ -43,3 +43,32 @@
 trellis-check 复核:通过(可进入 M2),仅 3 项低危;已把 design §4.1 的 RESTRICT 措辞修正为 NO ACTION 以对齐已验证的迁移。
 
 下一步:M2 认证与会话(Spring Security JSON 登录 + Redis session + Cookie/CSRF + 角色 + BCrypt + 限流)。
+
+---
+
+## 2026-06-02 — M2 认证与会话(任务 06-01-personal-nav-home)
+
+完成 M2,后端测试全绿:`./mvnw test` BUILD SUCCESS,15 tests(M1 数据层 6 + 认证 5 + 管理后台 3 + 限流 1)。
+- Spring Security 6.5 + Spring Session Redis:JSON 登录、服务端会话存 Redis、Cookie(HttpOnly/Secure/SameSite=Lax)。
+- CSRF 双提交(CookieCsrfTokenRepository + 官方 SpaCsrfTokenRequestHandler)。
+- BCrypt;UserDetailsService 从库加载(DISABLED 拒登);login/logout/me;邀请码注册(单事务建用户+消费码);管理后台开户/重置密码/签发邀请码。
+- Redis 固定窗口限流(Lua 原子 INCR+EXPIRE)。
+- 初始 ADMIN:`APP_ADMIN_USERNAME/PASSWORD` 启动幂等注入。
+- 统一错误结构 `{code,message}` + 全局异常处理。
+
+关键决策/踩坑:
+1. Spring Security 6 手动登录(controller 内 `authenticate`)需显式 `saveContext` 到 session(6.x 不再自动保存);并须显式补会话固定防护(见下 H1)。
+2. SPA CSRF:查证官方 6.5 文档,`SpaCsrfTokenRequestHandler.handle()` 自调 `csrfToken.get()` 渲染 cookie,无需额外 `CsrfCookieFilter`。
+3. Cookie/会话用 Boot 标准 `server.servlet.session.*` + `spring.session.redis.*`,Spring Session 自动接管。
+
+trellis-check 安全复核发现并已修复:
+- H1(高危)会话固定:手动认证绕过了过滤器的 `ChangeSessionIdAuthenticationStrategy`,登录后未换 sessionId。修复:login 认证成功后调 `ChangeSessionIdAuthenticationStrategy.onAuthentication` 换发 session id,并补回归测试(带旧会话再登录,sessionId 必变)。
+- M1(中危)X-Forwarded-For 可伪造绕过限流:改用 `server.forward-headers-strategy=framework` 由框架在可信边界统一处理,`RequestUtils` 改用 `getRemoteAddr()`;生产须部署在可信代理后。
+- M2(中危)限流缺纯 IP 维度:login 叠加 `rl:login-ip`(30 次/5 分)防单 IP 喷洒 / key 膨胀。
+
+留待后续(低危,记 M8 收尾清单):
+- 管理员禁用 / 重置密码后主动失效该用户的 Redis 会话(落实 design 的「即时注销」)。
+- 邀请码并发同码消费的 TOCTOU:用 `UPDATE ... WHERE used_by IS NULL` 行数判定或唯一约束。
+- 生产强制 `COOKIE_SECURE=true`(M8 在 README 列为必设项)。
+
+下一步:M3 引擎管理(新用户初始化预置 4 引擎 + 引擎 CRUD / 排序 / 设默认,均按 user_id 隔离)。

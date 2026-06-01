@@ -19,9 +19,27 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:}
+  # 会话存到 Redis(服务端 session,Cookie 只持 sessionId)
+  session:
+    store-type: redis
+    redis:
+      flush-mode: on_save
+      namespace: nav:session
 
 server:
   port: ${SERVER_PORT:8080}
+  # 真实 IP/协议由可信反向代理经 X-Forwarded-* 统一解析,应用侧不裸读转发头
+  forward-headers-strategy: framework
+  servlet:
+    session:
+      # 会话有效期(Redis 中 session 存活时间)
+      timeout: ${SESSION_TTL_SECONDS:604800}s
+      cookie:
+        name: ${SESSION_COOKIE_NAME:NAV_SESSION}
+        http-only: true
+        secure: ${COOKIE_SECURE:false}
+        same-site: ${COOKIE_SAME_SITE:Lax}
+        max-age: ${SESSION_TTL_SECONDS:604800}s
 
 # 应用自定义配置(供后续里程碑读取)
 app:
@@ -29,9 +47,7 @@ app:
   storage:
     local:
       base-dir: ${STORAGE_BASE_DIR:./data/media}
-  # 会话 Cookie 配置
-  cookie:
-    name: ${SESSION_COOKIE_NAME:NAV_SESSION}
-    secure: ${COOKIE_SECURE:false}
-    same-site: ${COOKIE_SAME_SITE:Lax}
-    max-age-seconds: ${SESSION_TTL_SECONDS:604800}
+  # 初始管理员:仅当库中无 ADMIN 时,启动用这组凭据创建;留空则跳过
+  admin:
+    username: ${APP_ADMIN_USERNAME:}
+    password: ${APP_ADMIN_PASSWORD:}
