@@ -1,8 +1,18 @@
 /**
- * 管理后台接口(仅 ADMIN 可访问,鉴权由后端 /api/admin/** 规则保证):开户、重置密码、签发邀请码。
+ * 管理后台接口(仅 ADMIN 可访问,鉴权由后端 /api/admin/** 规则保证):列出用户、开户、重置密码、签发邀请码。
  */
 import http from './http'
-import type { CreateUserInput, InviteCode, UserInfo } from './types'
+import type { AdminUser, CreateUserInput, InviteCode, UserInfo } from './types'
+
+/**
+ * 列出全部用户,供管理后台展示与定位重置密码目标。
+ *
+ * @returns 用户列表
+ */
+export function listUsers(): Promise<AdminUser[]> {
+  // 1. 拉取用户列表
+  return http.get<AdminUser[]>('/admin/users').then((r) => r.data)
+}
 
 /**
  * 管理员开户。

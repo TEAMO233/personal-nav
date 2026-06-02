@@ -1,5 +1,6 @@
 package com.nav.admin;
 
+import com.nav.admin.dto.AdminUserResponse;
 import com.nav.admin.dto.CreateUserRequest;
 import com.nav.admin.dto.InviteCodeResponse;
 import com.nav.auth.dto.UserResponse;
@@ -11,6 +12,7 @@ import com.nav.user.Role;
 import com.nav.user.User;
 import com.nav.user.UserRepository;
 import com.nav.user.UserStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -68,6 +71,20 @@ public class AdminService {
         engineService.initPresetEngines(saved.getId());
         // 4. 返回
         return new UserResponse(saved.getId(), saved.getUsername(), saved.getRole().name());
+    }
+
+    /**
+     * 列出全部用户(按创建时间升序),供管理后台展示并定位重置密码目标。
+     *
+     * @return 用户列表
+     */
+    @Transactional(readOnly = true)
+    public List<AdminUserResponse> listUsers() {
+        // 1. 按创建时间升序查全部用户,逐个转成响应
+        return userRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt")).stream()
+                .map(u -> new AdminUserResponse(u.getId(), u.getUsername(), u.getRole().name(),
+                        u.getStatus().name(), u.getCreatedAt()))
+                .toList();
     }
 
     /**

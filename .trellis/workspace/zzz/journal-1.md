@@ -178,3 +178,50 @@ trellis-check 安全复核发现并已修复:
 2. 引擎图标外键约束:`icon_asset_id REFERENCES media_assets(id)`,故测试必须先真实上传媒体拿 id,不能传随机 UUID(否则外键违反 500)。
 
 下一步:M7-2 用户设置页 `/settings`(引擎/分组/快捷方式管理 + vue-draggable-plus 拖拽 + IconPicker 三来源图标 + 移动端按钮降级)。
+
+---
+
+## 2026-06-02 — M7-2 用户设置页 /settings(任务 06-01-personal-nav-home)
+
+完成 M7-2。前端 `npm run build`(vue-tsc -b + vite build)通过,1736 模块;EP 按需引入生效——EP 组件只进 SettingsView 独立 chunk(JS 310KB / CSS 110KB,gzip 104KB+15KB,访问 /settings 才加载),首页 HomeView(5.9KB)/LoginView 不受影响。布局经用户选定 EP Tabs(搜索引擎/快捷方式两个标签页)。
+
+- 地基:main.ts 补 `element-plus/theme-chalk/dark/css-vars.css`(M6 移除全局 EP 后缺此,设置页 EP 组件靠 html.dark 驱动暗色;放 style.css 前,让 --el-* 覆盖对齐 HIG)。AppIcon 扩 13 个线性图标(plus/edit/trash/grip/arrow-up/down/left/folder/check/upload/link/image/close)。router 加 /settings(requiresAuth)。HomeView 启用"设置"入口跳 /settings,清理"即将上线"dead CSS。
+- 共用:`composables/useIsMobile.ts`(matchMedia 监听 640px,拖拽降级用),引擎/快捷方式两区共用;style.css 加"设置页共用控件"(.s-icon-btn/.s-link-btn/.s-badge-default/.s-move-btns)避免两区重复样式。
+- IconPicker(引擎/快捷方式共用):v-model 绑 iconAssetId,三来源(上传/图片外链/抓 favicon)+ 预览 + 清除;favicon 输入默认填关联站点(引擎取 urlTemplate 的 {query} 前段,快捷方式取 url);原生 UI + HIG 样式,错误走 ElMessage。
+- EngineSection:引擎列表 + vue-draggable-plus 拖拽排序(@update 提交全量 id)+ 设默认 + 增删改(EP Dialog/Form,URL 模板前端校验含 {query})+ IconPicker;窄屏禁拖拽改上移/下移。
+- ShortcutSection:两层拖拽——外层分组排序(group="groups")、内层快捷方式组内+组间(group="shortcuts",v-model 自动跨组搬移);拖拽/移动后按"全量快照"提交 reorderShortcuts(遍历所有组算 {id, 所在 groupId, 组内下标});分组/快捷方式增删改;窄屏降级为上移/下移 + ElDropdown"移到分组"。
+- SettingsView:毛玻璃顶栏(返回首页 + 主题切换)+ EP Tabs,onMounted 确保两 store 已加载(直接访问/刷新场景)。
+
+关键决策/踩坑:
+1. EP 按需 d.ts 鸡生蛋:build=`vue-tsc -b && vite build`,vue-tsc 在前,但 unplugin 的 EP 符号 d.ts 由 vite 阶段生成。首次须先单跑 `npx vite build` 填充 auto-imports.d.ts / components.d.ts(写入 ElDialog/ElForm/ElTabs/ElSelect/ElDropdown/ElMessage 等),再跑完整 build 才过 vue-tsc。两个 d.ts 已更新,需随提交。
+2. 拖拽全量快照:后端 reorderShortcuts 要求覆盖全部快捷方式;组间拖拽后被搬 item 的 groupId 取"它现在所在的本地分组 id"(非 item.groupId 旧值),保证跨组移动正确持久化。
+3. 拖拽本地副本 + 同步:各区维护 localEngines / localGroups 本地 ref 供拖拽,deep watch store 同步;拖拽只改本地、commit 才动 store,失败回滚为 store 现状,无 watch 循环。
+4. @vueuse/core(vue-draggable-plus 依赖)的 #__PURE__ 注释被 Rolldown(Vite 8)报 INVALID_ANNOTATION,系上游库 + 打包器无害提示,产物正常。
+
+已知/待办:
+- 预置引擎图标优先级:EngineIcon 内置图标优先于 iconAssetId(M6 既定),故给"预置"引擎额外设自定义图标不会显示(自定义引擎正常)。prd 未要求预置可换图标,未改(改优先级会动首页行为,超 M7-2 范围);若要"自定义覆盖内置"再单独评估。
+- 前端无单测,拖拽(尤其嵌套的组间拖拽)、三来源图标上传/抓取、暗色下 EP 组件观感等以真机为准:`cd frontend && npm run dev` + 后端起 PG/Redis 登录后验收。
+
+下一步:M7-3 ADMIN 后台 `/admin` + 邀请码注册 `/register` + HomeView 给 ADMIN 显示"管理后台"入口。
+
+---
+
+## 2026-06-02 — M7-3 ADMIN 后台 + 邀请码注册(任务 06-01-personal-nav-home)
+
+完成 M7-3(M7 收尾)。后端 `./mvnw test` 48 全绿(原 47 + 列用户 1);前端 `npm run build` 通过,AdminView 独立 chunk(98.8KB / gzip 33.6KB,访问 /admin 才加载),首页 HomeView(6.1KB)不受影响。
+
+- 后端(根因修复 design §6 缺口):原管理接口只有开户 / 按 UUID 重置密码 / 签发邀请码,缺「列出用户」途径——管理员重置已有用户密码拿不到其 UUID,重置 UI 无法落地。经用户确认补 `GET /api/admin/users`:新建 `AdminUserResponse`(id/用户名/角色/状态/创建时间,比 UserResponse 多状态与时间),`AdminService.listUsers`(findAll 按 createdAt 升序),`AdminController` GET;`/api/admin/**` 已限 ADMIN,自动受保护。测试:管理员列出含初始 admin + 新建用户且字段齐全、普通用户 403。
+- 前端 API/类型:`types.ts` 加 `AdminUser`,`admin.ts` 加 `listUsers`。
+- AdminView(`/admin`):顶栏复用 settings 风格;用户管理(el-table 列用户名/角色 tag/状态/创建时间 + 每行重置密码 + 开户对话框含角色 select)+ 邀请码(签发可选有效天数 + 本次会话签发码列表 + 复制)。EP 用法、ElMessage 对齐 EngineSection。
+- RegisterView(`/register`,公开):邀请码 + 用户名 + 密码,注册后不自动登录(后端语义),引导去登录页。
+- 登录/注册共用样式:把 LoginView 卡片样式提到 style.css `.auth-*` 共用类(避免 RegisterView 复制),LoginView 改用共用类并加「去注册」链接;视觉值不变。
+- 路由/入口:router 加 `/admin`(requiresAuth+requiresAdmin)、`/register`(公开);守卫加「非 ADMIN 访问 /admin 挡回首页」「已登录访问注册页回首页」;RouteMeta 加 requiresAdmin。HomeView 用户菜单 ADMIN 显示「管理后台」(shield 图标)。AppIcon 补 shield/copy 两图标。
+
+关键决策/踩坑:
+1. 构建 JDK 坑:系统默认 Java 8,`/usr/libexec/java_home -v 21` 找不到 21 时会静默回退 Java 8(退出码 0,故 `||` 兜底不触发),导致 record DTO 全报"需要 class/interface/enum"。正解:JDK 21 在 brew 的 `/usr/local/opt/openjdk@21`,构建固定 `JAVA_HOME=/usr/local/opt/openjdk@21`,不靠 java_home 探测。
+2. EP el-table slot 类型:`#default="{ row }"` 的 row 是 EP 的 `DefaultRow`,显示用属性访问不报错,但传给强类型函数(openReset(user: AdminUser))报 TS2345;在模板内标注 `{ row }: { row: AdminUser }` 反而与 EP slot 签名(含 column/$index)不兼容(参数逆变)。正解:slot 不标注,仅在调用处 `openReset(row as AdminUser)` 断言。
+3. EP 按需 d.ts 鸡生蛋(同 M7-2):AdminView 新用 el-table/el-table-column/el-tag/el-input-number,先单跑 `npx vite build` 由 unplugin 填 components.d.ts,再跑完整 `npm run build`(vue-tsc 在前)才过。两个 d.ts 随提交。
+
+待真机验收(前端无单测):ADMIN 登录见「管理后台」→ 开户/列表刷新/重置密码/签发并复制邀请码;普通用户无该入口且直访 /admin 被挡;登录页「去注册」→ 邀请码注册成功 → 跳登录 → 新账号可登录;无效/过期码报错。
+
+下一步:M8 安全与收尾(复核 HTTPS / Cookie Secure / CSRF / SSRF / 限流;清理调试代码与未用依赖;README;并落实前述留待项:禁用用户即时失效会话、邀请码并发 TOCTOU、生产强制 COOKIE_SECURE)。

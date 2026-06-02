@@ -89,6 +89,17 @@ export interface MediaAsset {
   url: string
 }
 
+/** 管理后台用户列表项(对应后端 AdminUserResponse) */
+export interface AdminUser {
+  id: string
+  username: string
+  role: Role
+  /** 账户状态:ACTIVE / DISABLED */
+  status: string
+  /** 创建时间(ISO 8601 字符串) */
+  createdAt: string
+}
+
 /** 管理员开户入参 */
 export interface CreateUserInput {
   username: string

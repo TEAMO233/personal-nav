@@ -59,18 +59,20 @@
 - 验证:`cd backend && ./mvnw -q test`(引擎图标新增用例通过);`cd frontend && npm run build`(按需引入生效、产物未因 EP 暴涨)。
 
 #### M7-2 用户设置页 /settings
-- [ ] 引擎管理:列表 + 新增/编辑/删除 + 拖拽排序 + 设默认 + 图标选择。
-- [ ] 分组管理:新增/编辑/删除 + 拖拽排序。
-- [ ] 快捷方式管理:新增/编辑/删除 + 组内拖拽 + 组间拖拽(改 `groupId`);移动端降级为上移/下移/移动到分组按钮。
-- [ ] `IconPicker` 复用组件:三来源(上传 / 图片 URL / 抓 favicon),引擎与快捷方式共用。
-- [ ] 路由 `/settings` + HomeView 用户菜单加入口。
+- [x] 引擎管理:列表 + 新增/编辑/删除 + 拖拽排序 + 设默认 + 图标选择。
+- [x] 分组管理:新增/编辑/删除 + 拖拽排序。
+- [x] 快捷方式管理:新增/编辑/删除 + 组内拖拽 + 组间拖拽(改 `groupId`);移动端降级为上移/下移/移动到分组按钮。
+- [x] `IconPicker` 复用组件:三来源(上传 / 图片 URL / 抓 favicon),引擎与快捷方式共用。
+- [x] 路由 `/settings` + HomeView 用户菜单加入口。
 - 验证:对照 prd 验收(引擎增删改排序设默认、分组与快捷方式增删改、组内/组间拖拽持久化、三来源图标);`npm run build`。
 
 #### M7-3 ADMIN 后台 + 邀请码注册
-- [ ] `/admin`(仅 ADMIN,路由守卫限角色):开户、重置密码、签发邀请码。
-- [ ] `/register` 邀请码注册页:邀请码 + 用户名 + 密码,成功后引导登录。
-- [ ] HomeView 用户菜单:ADMIN 显示「管理后台」入口。
-- 验证:ADMIN 可开户/重置/发码;非 ADMIN 访问 `/admin` 被挡;邀请码注册成功后可登录;`npm run build`。
+> 偏离 design §6 并经用户确认:后端补 `GET /api/admin/users` 列用户接口(根因修复——重置密码需 UUID 却无列用户途径)。详见 design §7.2「M7-3 敲定」。
+- [x] 后端:新增 `GET /api/admin/users`(列出用户:id/用户名/角色/状态/创建时间)+ `AdminService.listUsers` + 集成测试(管理员列出 / 普通用户 403)。
+- [x] `/admin`(仅 ADMIN,路由守卫限角色):用户表格 + 开户、重置密码、签发邀请码。
+- [x] `/register` 邀请码注册页:邀请码 + 用户名 + 密码,成功后引导登录。
+- [x] HomeView 用户菜单:ADMIN 显示「管理后台」入口。
+- 验证:ADMIN 可开户/重置/发码;非 ADMIN 访问 `/admin` 被挡;邀请码注册成功后可登录;后端 `./mvnw test`、前端 `npm run build`。
 
 ### M8 安全与收尾(D9)
 - [ ] 复核 HTTPS / Cookie Secure / CSRF / SSRF / 限流;清理调试代码与未用依赖。

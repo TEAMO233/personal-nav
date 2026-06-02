@@ -1,5 +1,6 @@
 package com.nav.admin;
 
+import com.nav.admin.dto.AdminUserResponse;
 import com.nav.admin.dto.CreateInviteCodeRequest;
 import com.nav.admin.dto.CreateUserRequest;
 import com.nav.admin.dto.InviteCodeResponse;
@@ -11,6 +12,7 @@ import com.nav.security.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -53,6 +56,17 @@ public class AdminController {
         rateLimiter.checkLimit("rl:admin-user:" + RequestUtils.clientIp(httpRequest), CREATE_USER_MAX, CREATE_USER_WINDOW);
         // 2. 开户
         return adminService.createUser(request);
+    }
+
+    /**
+     * 列出全部用户,供管理后台展示并定位重置密码目标。
+     *
+     * @return 用户列表
+     */
+    @GetMapping("/users")
+    public List<AdminUserResponse> listUsers() {
+        // 1. 委托服务查全部用户
+        return adminService.listUsers();
     }
 
     /**

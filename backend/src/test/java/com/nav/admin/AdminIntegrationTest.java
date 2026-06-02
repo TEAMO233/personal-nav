@@ -114,6 +114,32 @@ class AdminIntegrationTest {
     }
 
     /**
+     * 管理员能列出全部用户(字段含 status / createdAt);普通用户访问被拒 403。
+     */
+    @Test
+    void listUsersForAdminOnly() {
+        // 1. 管理员开户
+        ApiClient admin = loginAs("admin", "adminpass123");
+        admin.exchange(HttpMethod.POST, "/api/admin/users",
+                "{\"username\":\"listed\",\"password\":\"listed123\"}");
+
+        // 2. 管理员列用户:含初始 admin 与新建用户,且字段齐全
+        ResponseEntity<String> list = admin.exchange(HttpMethod.GET, "/api/admin/users", null);
+        assertThat(list.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(list.getBody())
+                .contains("\"username\":\"admin\"")
+                .contains("\"username\":\"listed\"")
+                .contains("\"role\":")
+                .contains("\"status\":")
+                .contains("\"createdAt\":");
+
+        // 3. 普通用户访问被拒 403
+        ApiClient user = loginAs("listed", "listed123");
+        ResponseEntity<String> denied = user.exchange(HttpMethod.GET, "/api/admin/users", null);
+        assertThat(denied.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    /**
      * 拿 CSRF 后登录,返回带会话的客户端。
      */
     private ApiClient loginAs(String username, String password) {

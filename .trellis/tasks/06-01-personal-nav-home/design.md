@@ -66,7 +66,7 @@
 ## 6. API 契约(RESTful JSON,统一 `/api` 前缀)
 
 - 认证:`POST /api/auth/login`、`POST /api/auth/logout`、`GET /api/auth/me`、`POST /api/auth/register`(仅邀请码模式)
-- 管理(ADMIN):`POST /api/admin/users`、`POST /api/admin/users/{id}/reset-password`、`POST /api/admin/invite-codes`
+- 管理(ADMIN):`GET /api/admin/users`(列出用户)、`POST /api/admin/users`、`POST /api/admin/users/{id}/reset-password`、`POST /api/admin/invite-codes`
 - 引擎:`GET/POST /api/engines`、`PUT/DELETE /api/engines/{id}`、`PUT /api/engines/order`、`PUT /api/engines/{id}/default`
 - 分组:`GET/POST /api/groups`、`PUT/DELETE /api/groups/{id}`、`PUT /api/groups/order`
 - 快捷方式:`GET/POST /api/shortcuts`、`PUT/DELETE /api/shortcuts/{id}`、`PUT /api/shortcuts/order`(支持跨组移动:body 带 group_id + sort)
@@ -98,6 +98,7 @@
 - 拖拽库:由原定 `vuedraggable@4.1.0` 改为 `vue-draggable-plus`。原因:vuedraggable 维护停滞,且与 Vite 8 有 CommonJS interop 报错史,TS 类型需手写;vue-draggable-plus 为 Vue 3 原生、内置 TS 类型与 typed events、现代 ESM,契合本项目 Vue 3.5 + Vite 8 + TS 6 栈。
 - Element Plus 按需引入:装 `unplugin-auto-import` + `unplugin-vue-components`,`vite.config.ts` 用 `ElementPlusResolver` 自动引入用到的 EP 组件与样式(免全局注册、免手写 import),延续 M6「不全局引入 EP」的瘦身目标。
 - 拖拽移动端降级(D10):触摸端把组内/组间拖拽降级为「上移 / 下移 / 移动到分组」按钮,排序结果同样走 reorder 接口持久化。
+- 管理后台列用户接口(M7-3 敲定,根因修复):后端原管理接口只有开户 / 按 UUID 重置密码 / 签发邀请码,缺「列出用户」途径,导致重置密码 UI 拿不到用户 UUID 而无法落地。M7-3 补 `GET /api/admin/users`(返回 id / 用户名 / 角色 / 状态 / 创建时间),后台用表格展示并定位重置目标。已与用户确认。注:管理后台只读展示状态,「禁用 / 启用用户」与「主动失效会话」仍归 M8。
 
 ## 8. 安全与运维(对应 D9)
 

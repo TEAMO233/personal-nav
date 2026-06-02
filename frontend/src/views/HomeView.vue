@@ -55,6 +55,24 @@ async function onLogout(): Promise<void> {
   router.replace({ name: 'login' })
 }
 
+/**
+ * 打开设置页。
+ */
+function onOpenSettings(): void {
+  // 1. 收起菜单并跳转设置页
+  userMenuOpen.value = false
+  router.push({ name: 'settings' })
+}
+
+/**
+ * 打开管理后台(仅 ADMIN 菜单可见)。
+ */
+function onOpenAdmin(): void {
+  // 1. 收起菜单并跳转管理后台
+  userMenuOpen.value = false
+  router.push({ name: 'admin' })
+}
+
 onMounted(loadAll)
 </script>
 
@@ -87,11 +105,15 @@ onMounted(loadAll)
                 <div class="user-info__role">{{ auth.isAdmin ? '管理员' : '用户' }}</div>
               </div>
               <div class="user-divider"></div>
-              <!-- 设置入口(M7 上线前禁用) -->
-              <button type="button" class="user-item user-item--disabled" disabled>
+              <!-- 设置入口 -->
+              <button type="button" class="user-item" @click="onOpenSettings">
                 <AppIcon name="settings" :size="18" />
                 <span>设置</span>
-                <span class="user-item__soon">即将上线</span>
+              </button>
+              <!-- 管理后台入口(仅 ADMIN 可见) -->
+              <button v-if="auth.isAdmin" type="button" class="user-item" @click="onOpenAdmin">
+                <AppIcon name="shield" :size="18" />
+                <span>管理后台</span>
               </button>
               <!-- 退出登录 -->
               <button type="button" class="user-item" @click="onLogout">
@@ -242,19 +264,8 @@ onMounted(loadAll)
   transition: background-color var(--duration-fast) var(--ease-default);
 }
 
-.user-item:hover:not(:disabled) {
+.user-item:hover {
   background: var(--bg-secondary);
-}
-
-.user-item--disabled {
-  color: var(--label-tertiary);
-  cursor: default;
-}
-
-.user-item__soon {
-  margin-left: auto;
-  font-size: var(--text-caption2);
-  color: var(--label-tertiary);
 }
 
 /* 下拉遮罩:铺满视口,点击收起 */

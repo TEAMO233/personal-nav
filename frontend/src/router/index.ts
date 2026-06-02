@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-// 给路由 meta 增加类型:是否需要登录
+// 给路由 meta 增加类型:是否需要登录 / 是否需要管理员
 declare module 'vue-router' {
   interface RouteMeta {
     requiresAuth?: boolean
+    requiresAdmin?: boolean
   }
 }
 
-// 路由表:首页需登录,登录页公开;未知路径回首页
+// 路由表:首页/设置/后台需登录(后台另需 ADMIN),登录/注册公开;未知路径回首页
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -20,6 +21,23 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'login',
     component: () => import('@/views/LoginView.vue'),
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('@/views/SettingsView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('@/views/AdminView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/RegisterView.vue'),
   },
   {
     path: '/:pathMatch(.*)*',
@@ -45,11 +63,15 @@ router.beforeEach(async (to) => {
   if (to.meta.requiresAuth && !auth.isLoggedIn) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
-  // 3. 已登录还去登录页:回首页
-  if (to.name === 'login' && auth.isLoggedIn) {
+  // 3. 需要管理员却非管理员:挡回首页
+  if (to.meta.requiresAdmin && !auth.isAdmin) {
     return { name: 'home' }
   }
-  // 4. 其余放行
+  // 4. 已登录还去登录/注册页:回首页
+  if ((to.name === 'login' || to.name === 'register') && auth.isLoggedIn) {
+    return { name: 'home' }
+  }
+  // 5. 其余放行
   return true
 })
 

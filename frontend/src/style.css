@@ -192,3 +192,226 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* 6. 设置页共用控件:列表行的图标按钮 / 文字按钮 / 默认徽标 / 移动端移动按钮 */
+.s-icon-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--label-secondary);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-default);
+}
+
+.s-icon-btn:hover {
+  color: var(--label-primary);
+  background: var(--bg-secondary);
+}
+
+.s-icon-btn--danger:hover {
+  color: var(--system-red);
+}
+
+.s-link-btn {
+  height: 30px;
+  padding: 0 var(--space-2);
+  font-size: var(--text-footnote);
+  color: var(--system-blue);
+  white-space: nowrap;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.s-link-btn:hover {
+  background: color-mix(in srgb, var(--system-blue) 10%, transparent);
+}
+
+.s-badge-default {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 30px;
+  padding: 0 var(--space-2);
+  font-size: var(--text-footnote);
+  font-weight: 600;
+  color: var(--system-green);
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--system-green) 12%, transparent);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: default;
+}
+
+/* 移动端上移/下移按钮组(竖排) */
+.s-move-btns {
+  display: inline-flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.s-move-btns button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 20px;
+  color: var(--label-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.s-move-btns button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* 7. 认证页(登录 / 注册)共用:居中卡片表单 */
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+}
+
+.auth-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-4);
+}
+
+.auth-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  /* 视觉重心略偏上 */
+  padding: var(--space-4) var(--space-4) 12vh;
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 360px;
+  padding: var(--space-8);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-elevated);
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+.auth-title {
+  font-size: var(--text-title1);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+  font-size: var(--text-subhead);
+  color: var(--label-secondary);
+}
+
+.auth-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.auth-field-label {
+  padding-left: var(--space-1);
+  font-size: var(--text-footnote);
+  color: var(--label-secondary);
+}
+
+.auth-field-input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--space-4);
+  font-family: inherit;
+  font-size: var(--text-body);
+  color: var(--label-primary);
+  background: var(--bg-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-default),
+    box-shadow var(--duration-fast) var(--ease-default);
+}
+
+.auth-field-input::placeholder {
+  color: var(--label-tertiary);
+}
+
+.auth-field-input:focus {
+  border-color: var(--system-blue);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--system-blue) 25%, transparent);
+}
+
+.auth-error {
+  margin: 0;
+  font-size: var(--text-subhead);
+  color: var(--system-red);
+  text-align: center;
+}
+
+.auth-submit {
+  height: 50px;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--system-blue);
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: opacity var(--duration-fast) var(--ease-default),
+    transform var(--duration-instant) var(--ease-default);
+}
+
+.auth-submit:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.auth-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* 卡片底部跳转链接(去注册 / 去登录) */
+.auth-alt {
+  margin: 0;
+  font-size: var(--text-footnote);
+  color: var(--label-secondary);
+  text-align: center;
+}
+
+.auth-alt a {
+  font-weight: 600;
+}
