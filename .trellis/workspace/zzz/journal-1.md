@@ -94,3 +94,26 @@ trellis-check 安全复核发现并已修复:
 踩坑:无新增踩坑。Spring Data Redis 对 JPA Repository 报 "Could not safely identify store assignment" 为 M1 即有的无害提示(多模块共存时的存储归属探测日志),不影响功能。
 
 下一步:M4 文件存储与图标(StorageService + LocalDiskStorageService、media_assets 落库、`GET /api/media/{id}` 校验归属、上传 / 图片 URL / favicon 抓取含 SSRF 防护与超时大小上限)。
+
+---
+
+## 2026-06-02 — M4 文件存储与图标(任务 06-01-personal-nav-home)
+
+完成 M4,后端测试全绿:`./mvnw test` BUILD SUCCESS,37 tests(M1-M3 的 23 + media 14:ImageTypeDetector 3 + SsrfGuard 3 + MediaIntegration 8)。
+- `StorageService` 接口 + `LocalDiskStorageService`:按「年/月/随机uuid」组织文件,返回相对 key;`resolve` 拦截 `../` 目录穿越。
+- `MediaService` 三来源(上传 / 图片外链 / 站点 favicon)统一落 `media_assets`;`loadForOwner` 按 `findByIdAndUserId` 读取,越权当不存在(404)。
+- `MediaController` 四接口(upload / from-url / fetch-favicon / `GET {id}`);读取响应加 `nosniff` + CSP `sandbox` + `Content-Disposition: inline` + 私有缓存,防 SVG 等内嵌脚本执行。
+- `SsrfGuard`:仅放行公网 http/https,拒环回(可配置开关)、私网、链路本地、多播,补 100.64/10 与 fc00::/7;按解析出的所有 IP 判定。
+- `RemoteContentFetcher`:连接/读取超时 + 边读边限大小上限;关自动重定向改手动逐跳,每跳重做 SSRF 校验。
+- `FaviconService`:jsoup 选 `link[rel~=icon]` 中 sizes 最大者,失败回退站点根 `/favicon.ico`。
+- 配置:`spring.servlet.multipart` 大小限制、`app.media.fetch.*`(大小/超时/重定向/环回开关)、`app.storage.local.base-dir`;`GlobalExceptionHandler` 补 `MaxUploadSizeExceededException` → 413。
+
+关键决策/踩坑:
+1. 图片类型只认文件头魔数(`ImageTypeDetector`),不信任 multipart 声称的 content-type,挡住伪装成图片的可执行内容;SVG 走 CSP sandbox + nosniff + inline 隔离。
+2. SSRF 防护下沉到抓取链路统一做:按域名解析出的全部 IP 判定(防域名指向内网),重定向每跳重校验(防跳转绕过);环回放行仅做成测试开关,生产保持 false。
+3. 集成测试用 JDK 自带 `com.sun.net.httpserver.HttpServer` 起本机桩站点 + `allow-loopback=true` 跑真实抓取链路;私网/链路本地(169.254.169.254)即便放行环回仍被拒,单独验证。
+4. multipart 上传在 Spring Security CSRF 双提交下:token 走 `X-XSRF-TOKEN` 头、`CsrfFilter` 不消费请求体,集成测试验证通过。
+
+诊断澄清:IDE 报 `pom.xml:79 jsoup 缺 version` 与 `TestcontainersConfiguration 资源泄漏` 均为误报——jsoup 版本实写于 pom 第 87 行(`1.22.2`),Testcontainers 容器生命周期由框架管;`./mvnw test` 全绿为准。
+
+下一步:M5 分组与快捷方式(分组 CRUD + 排序;快捷方式 CRUD + 排序 + 跨组移动,单事务原子更新 sort_order / group_id,均按 user_id 隔离)。

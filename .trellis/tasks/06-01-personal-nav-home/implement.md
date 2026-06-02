@@ -31,8 +31,8 @@
 - 验证:用户 A/B 引擎互不可见;增删改、排序、设默认均生效。
 
 ### M4 文件存储与图标(D5 / D6)
-- [ ] `StorageService` 接口 + `LocalDiskStorageService`;`media_assets` 落库;`GET /api/media/{id}`(校验归属)。
-- [ ] 上传图片、从图片 URL 保存、favicon 抓取(jsoup + 回退 + SSRF 防护 + 超时/大小上限)。
+- [x] `StorageService` 接口 + `LocalDiskStorageService`;`media_assets` 落库;`GET /api/media/{id}`(校验归属)。
+- [x] 上传图片、从图片 URL 保存、favicon 抓取(jsoup + 回退 + SSRF 防护 + 超时/大小上限)。
 - 验证:三种来源图标均能存并经 `/api/media/{id}` 显示;抓取内网地址被拒。
 
 ### M5 分组与快捷方式(R2 / R3 / D7)

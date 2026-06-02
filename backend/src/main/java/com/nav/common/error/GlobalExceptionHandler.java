@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /**
  * 全局异常处理:把各类异常统一转成 {code, message} 响应。
@@ -38,6 +39,16 @@ public class GlobalExceptionHandler {
                 .findFirst().map(FieldError::getDefaultMessage).orElse("参数校验失败");
         // 2. 返回 400
         return ResponseEntity.badRequest().body(new ApiError("VALIDATION_ERROR", message));
+    }
+
+    /**
+     * 上传文件超过大小上限,返回 413。
+     */
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ApiError> handleUploadTooLarge(MaxUploadSizeExceededException ex) {
+        // 1. 返回 413 与统一错误码
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(new ApiError("MEDIA_TOO_LARGE", "文件超过大小上限"));
     }
 
     /**

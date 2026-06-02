@@ -25,6 +25,11 @@ spring:
     redis:
       flush-mode: on_save
       namespace: nav:session
+  # 上传文件大小限制(M4 图标上传)
+  servlet:
+    multipart:
+      max-file-size: ${MEDIA_UPLOAD_MAX_SIZE:2MB}
+      max-request-size: ${MEDIA_UPLOAD_MAX_REQUEST_SIZE:3MB}
 
 server:
   port: ${SERVER_PORT:8080}
@@ -47,6 +52,19 @@ app:
   storage:
     local:
       base-dir: ${STORAGE_BASE_DIR:./data/media}
+  # 远程图标抓取与下载限制(M4):防 SSRF、控大小与超时
+  media:
+    fetch:
+      # 单次下载字节上限,默认 2MB
+      max-bytes: ${MEDIA_FETCH_MAX_BYTES:2097152}
+      # 建立连接超时(毫秒)
+      connect-timeout-ms: ${MEDIA_CONNECT_TIMEOUT_MS:3000}
+      # 读取响应超时(毫秒)
+      read-timeout-ms: ${MEDIA_READ_TIMEOUT_MS:5000}
+      # 最多跟随的重定向次数,每跳都重新做 SSRF 校验
+      max-redirects: ${MEDIA_MAX_REDIRECTS:3}
+      # 是否放行环回地址,仅本地测试用,生产必须保持 false
+      allow-loopback: ${MEDIA_ALLOW_LOOPBACK:false}
   # 初始管理员:仅当库中无 ADMIN 时,启动用这组凭据创建;留空则跳过
   admin:
     username: ${APP_ADMIN_USERNAME:}
