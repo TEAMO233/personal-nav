@@ -79,8 +79,18 @@
 - 状态(Pinia):`authStore`、`engineStore`、`shortcutStore`、`themeStore`。
 - 首页:中央 `SearchBar`(引擎下拉 + 输入框 + 按 URL 模板跳转;框头图标随选中引擎变化)、下方 `GroupGrid`(分组 + 快捷方式卡片,点击新标签打开)。响应式:桌面多列网格,移动单列。
 - 设置/后台:Element Plus 表单与表格;桌面用 vuedraggable 实现组内/组间/分组拖拽排序,移动端降级为「上移/下移/移动到分组」按钮。
-- 主题:Element Plus 暗色方案 + CSS 变量;`themeStore` 持久化到 localStorage,首次按系统偏好初始化。
+- 主题:CSS 变量双主题(亮 `:root` / 暗 `html.dark`,手动切换);`themeStore` 持久化到 localStorage,首次按系统偏好初始化。
 - axios 封装:`withCredentials` 携带 Cookie;响应 401 拦截并跳转登录。
+
+### 7.1 前端首页实现约定(M6 敲定,已与用户确认)
+
+- 视觉风格:采用 Apple HIG(用户选定)。设计令牌(字体/颜色/间距/圆角/动效)集中在 `src/style.css`,亮色 `:root`、暗色 `html.dark` 覆盖(手动切换,不用 media query)。
+- UI 库取舍:M6 首页与登录页全部用原生 HIG 组件,**移除 `main.ts` 的 Element Plus 全局引入**(EP 默认视觉与 HIG 差异大,全局引入再逐一覆盖不划算)。收益:打包产物由含全量 EP 的 ~974KB 降至最大 chunk ~106KB(axios),提前达成「打包优化」目标。Element Plus 依赖保留在 `package.json`,M7 的设置/管理界面(表单/表格/拖拽对话框)按官方推荐(`unplugin-vue-components` + `ElementPlusResolver`)按需引入。
+- CSRF:axios 配 `withCredentials` + `withXSRFToken` + 默认名 `XSRF-TOKEN` / `X-XSRF-TOKEN`,与后端 `CookieCsrfTokenRepository.withHttpOnlyFalse()` 对齐;应用启动经路由守卫调 `GET /api/auth/me` 触发后端下发 CSRF cookie,确保后续登录 POST 带得上 token。
+- 401 策略:登录态探测(`/me`)与登录接口标 `skipAuthInterceptor`(其 401 是正常分支,不跳转);其余业务请求遇 401 视为会话失效,清登录态并跳登录页。拦截器内用动态 `import()` 取 router/authStore,打破 http→router→store→api 循环依赖。
+- 搜索跳转:把引擎 `urlTemplate` 的 `{query}` 用 `encodeURIComponent(关键词)` 替换后 `window.open(_blank, noopener)`。
+- 引擎图标:`iconBuiltin`(google/baidu/bing/duckduckgo)映射 `src/assets/engine-icons/*.svg`;`iconAssetId` 走 `GET /api/media/{id}`;均无则用名称首字母占位。
+- 前端结构:`api/`(http + types + auth/engine/group/shortcut/media)、`stores/`(auth/theme/engine/shortcut)、`components/`(AppIcon/ThemeToggle/EngineIcon/SearchBar/ShortcutCard/GroupGrid)、`views/`(HomeView/LoginView)。
 
 ## 8. 安全与运维(对应 D9)
 

@@ -139,3 +139,25 @@ trellis-check 安全复核发现并已修复:
 踩坑:无新增。IDE 仍报 pom.xml:79 jsoup 缺 version 与 Testcontainers 资源泄漏,均为 M4 已澄清的误报,`./mvnw test` 全绿为准。
 
 下一步:M6 前端首页(SearchBar 引擎下拉 + 按 URL 模板跳转;GroupGrid 分组 + 快捷方式卡片;authStore + 登录页 + axios 401 拦截 + 主题切换)。
+
+---
+
+## 2026-06-02 — M6 前端首页(任务 06-01-personal-nav-home)
+
+完成 M6,前端构建全绿:`npm run build`(vue-tsc -b + vite build)通过,118 模块,最大 chunk ~106KB(axios);相比含 Element Plus 全量引入的 ~974KB 大幅瘦身,无 500KB 警告。
+
+- 视觉:用户选定 Apple HIG 风格(经 apple-hig-designer skill 取规范)。设计令牌集中 `src/style.css`(亮 `:root` / 暗 `html.dark` 手动切换);清理 Vite 模板残留样式与 hero.png/vue.svg/vite.svg;index.html title/lang 改中文。
+- API 层:`api/http.ts` axios 实例(withCredentials + withXSRFToken + XSRF-TOKEN/X-XSRF-TOKEN,对齐后端 CookieCsrfTokenRepository);响应拦截把 `{code,message}` 规范成 `ApiClientError`;业务 401 清登录态跳登录页,探测/登录请求标 `skipAuthInterceptor` 跳过。types + auth/engine/group/shortcut/media 模块。
+- 状态:Pinia setup store —— authStore(init/login/logout/clear)、themeStore(localStorage + 系统偏好)、engineStore(默认引擎 getter)、shortcutStore(按组分桶 getter)。
+- 路由:加 `/login` + 全局守卫(首次导航 `await init()` 探测登录态并拿 CSRF cookie;requiresAuth 未登录跳登录,已登录访问登录页回首页;未知路径回首页)。
+- 组件:AppIcon(内联 SVG 线性图标,零图标库依赖)、ThemeToggle、EngineIcon、SearchBar(引擎下拉图标随选中变、`{query}` 编码后新标签跳转)、ShortcutCard(`a target=_blank rel=noopener`,无图标按名 hash 取色首字母)、GroupGrid(grid auto-fill 响应式 + 空状态)、HomeView(毛玻璃吸顶栏 + 用户菜单 + 并发加载 + 加载/错误态)、LoginView(仅登录,注册留 M7)。
+
+关键决策/取舍:
+1. 移除 Element Plus 全局引入,M6 全用原生 HIG 组件:EP 默认视觉与 HIG 差异大、覆盖不划算,且大幅减小 bundle。EP 依赖保留,M7 设置/管理按需引入(unplugin-vue-components + ElementPlusResolver)。已与用户说明,偏离 design 原「全局 EP」,已同步 design §7.1。
+2. CSRF 鸡生蛋:登录 POST 需 token,故启动守卫先 `GET /me` 让后端下发 XSRF-TOKEN cookie;axios `withXSRFToken: true` 确保 token 一定附带。
+3. 破循环依赖:http.ts 顶层不 import router/store,拦截器内动态 `import()`;build 的 `INEFFECTIVE_DYNAMIC_IMPORT` 提示即此,为预期、无害。
+4. 工具链约束:`erasableSyntaxOnly` 禁 enum(改 union 类型),`verbatimModuleSyntax` 类型导入用 `import type`;svg 静态 import 经 `vite/client` 声明为 URL。
+
+待真机验收(前端无单测,以 build + 真机为准):`cd frontend && npm run dev` + 后端起 PG/Redis 后,验证登录 → 首页展示本人引擎/快捷方式、切引擎图标变化、搜索跳转、暗/亮主题切换并记忆、会话过期 401 跳登录。
+
+下一步:M7 前端设置/管理(引擎/分组/快捷方式 CRUD + vuedraggable 拖拽 + 图标上传/抓取;ADMIN 后台开户/重置密码/邀请码;Element Plus 按需引入)。
