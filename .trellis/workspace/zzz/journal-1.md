@@ -117,3 +117,25 @@ trellis-check 安全复核发现并已修复:
 诊断澄清:IDE 报 `pom.xml:79 jsoup 缺 version` 与 `TestcontainersConfiguration 资源泄漏` 均为误报——jsoup 版本实写于 pom 第 87 行(`1.22.2`),Testcontainers 容器生命周期由框架管;`./mvnw test` 全绿为准。
 
 下一步:M5 分组与快捷方式(分组 CRUD + 排序;快捷方式 CRUD + 排序 + 跨组移动,单事务原子更新 sort_order / group_id,均按 user_id 隔离)。
+
+---
+
+## 2026-06-02 — M5 分组与快捷方式(任务 06-01-personal-nav-home)
+
+完成 M5,后端测试全绿:`./mvnw test` BUILD SUCCESS,46 tests(M1-M4 的 37 + 快捷方式 9)。
+- 分组(本次起始已有):`GroupService`/`GroupController` 暴露 `GET/POST /api/groups`、`PUT/DELETE /{id}`、`PUT /order`,按 user_id 隔离、越权 404、新建排末尾、reorder 要求传全部分组 id 的一个排列。
+- 快捷方式(本次新增):`ShortcutService`/`ShortcutController` 暴露 `GET/POST /api/shortcuts`、`PUT/DELETE /{id}`、`PUT /order`;新建排到组内末尾,update 改名称/URL/图标。
+- 跨组移动 + 排序合一:`PUT /api/shortcuts/order` body `{items:[{id,groupId,sortOrder}]}`,单事务原子更新 group_id + sort_order。
+
+关键决策:
+1. shortcuts/order 采用「全集快照」契约:items 必须覆盖当前用户全部快捷方式(id 集合须完全一致,否则 400 SHORTCUT_ORDER_MISMATCH),且每个 groupId 必须属本人(否则 400 GROUP_NOT_OWNED)。沿用引擎/分组 reorder 的全集排列模式,保证组内 sort_order 一致、原子覆盖;前端拖拽后提交完整快照即可。
+2. update 不改 groupId——跨组移动统一走 order 接口(遵循 design §6 接口划分)。M7 若要「编辑时换组」再评估是否给 update 加 groupId。
+3. 删分组级联删快捷方式(落实 design §4.5 留待 M5 的决策):GroupService.delete 先删组内快捷方式再删分组(外键 NO ACTION,不先删会被阻止),同一事务。
+4. iconAssetId 写入侧不校验归属:读取侧 M4 已按 user 隔离(loadForOwner 越权当不存在),引用他人 media 也读不到、无泄露;若传不存在的 id 会触发外键异常 → 500,属异常输入,记 M8 收尾酌情加显式校验。
+5. sort_order 语义为「组内序号」:list 全局按 sort_order+createdAt 取出,前端按 groupId 分桶展示,组内即有序。
+
+测试覆盖(9):增删改全流程、用户隔离、越权 404、组内重排、跨组移动持久化、order 漏传快照 400、移到他人组 400、在他人组建快捷方式 404、删分组级联删快捷方式。
+
+踩坑:无新增。IDE 仍报 pom.xml:79 jsoup 缺 version 与 Testcontainers 资源泄漏,均为 M4 已澄清的误报,`./mvnw test` 全绿为准。
+
+下一步:M6 前端首页(SearchBar 引擎下拉 + 按 URL 模板跳转;GroupGrid 分组 + 快捷方式卡片;authStore + 登录页 + axios 401 拦截 + 主题切换)。
