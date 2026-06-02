@@ -46,10 +46,31 @@
 - 验证:登录后首页展示本人引擎与快捷方式;切引擎图标变化、搜索跳转正确;暗/亮主题切换并记忆。
 
 ### M7 前端设置 / 管理(D7 / D8 / D10)
-- [ ] 引擎管理、分组/快捷方式管理界面;桌面 vuedraggable 拖拽(组内/组间/分组),移动端按钮降级。
-- [ ] 图标选择:上传 / 填图片 URL / 自动抓取 favicon。
-- [ ] ADMIN 后台:用户开户、重置密码、邀请码。
-- 验证:对照 prd.md 验收标准逐条勾选。
+
+> 体量较大,拆 3 个可独立验证的子提交(M7-1/2/3)。两处偏离原 design 并经用户确认,详见 design §7.2:
+> (a) 后端给引擎 create/update 补 `iconAssetId`(根因修复:M3 时 media 未就绪,致请求体漏该字段;表已有列,无需新迁移)。
+> (b) 拖拽库 `vuedraggable@4.1.0` → `vue-draggable-plus`(规避 Vite 8 下的 CommonJS interop 报错、TS 类型需手写)。
+
+#### M7-1 工具链 + API/Store 补全 + 后端引擎图标
+- [ ] 后端:`CreateEngineRequest`/`UpdateEngineRequest` 加 `iconAssetId`(可空);`EngineService.create/update` 保存;补/改测试。
+- [ ] 前端工具链:装 `unplugin-auto-import` + `unplugin-vue-components`,`vite.config.ts` 配 `ElementPlusResolver` 按需引入;装 `vue-draggable-plus`、移除 `vuedraggable`。
+- [ ] 前端 API:`engine/group/shortcut/media` 补齐写操作,新增 `admin.ts`(开户/重置密码/邀请码),`auth.ts` 加 `register`;`types.ts` 补相应类型。
+- [ ] 前端 Store:`engineStore`/`shortcutStore` 补 CRUD action,新增 `groupStore`(或并入 shortcutStore)。
+- 验证:`cd backend && ./mvnw -q test`(引擎图标新增用例通过);`cd frontend && npm run build`(按需引入生效、产物未因 EP 暴涨)。
+
+#### M7-2 用户设置页 /settings
+- [ ] 引擎管理:列表 + 新增/编辑/删除 + 拖拽排序 + 设默认 + 图标选择。
+- [ ] 分组管理:新增/编辑/删除 + 拖拽排序。
+- [ ] 快捷方式管理:新增/编辑/删除 + 组内拖拽 + 组间拖拽(改 `groupId`);移动端降级为上移/下移/移动到分组按钮。
+- [ ] `IconPicker` 复用组件:三来源(上传 / 图片 URL / 抓 favicon),引擎与快捷方式共用。
+- [ ] 路由 `/settings` + HomeView 用户菜单加入口。
+- 验证:对照 prd 验收(引擎增删改排序设默认、分组与快捷方式增删改、组内/组间拖拽持久化、三来源图标);`npm run build`。
+
+#### M7-3 ADMIN 后台 + 邀请码注册
+- [ ] `/admin`(仅 ADMIN,路由守卫限角色):开户、重置密码、签发邀请码。
+- [ ] `/register` 邀请码注册页:邀请码 + 用户名 + 密码,成功后引导登录。
+- [ ] HomeView 用户菜单:ADMIN 显示「管理后台」入口。
+- 验证:ADMIN 可开户/重置/发码;非 ADMIN 访问 `/admin` 被挡;邀请码注册成功后可登录;`npm run build`。
 
 ### M8 安全与收尾(D9)
 - [ ] 复核 HTTPS / Cookie Secure / CSRF / SSRF / 限流;清理调试代码与未用依赖。

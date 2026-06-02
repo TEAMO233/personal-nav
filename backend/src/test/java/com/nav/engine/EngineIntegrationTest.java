@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +34,10 @@ import static org.assertj.core.api.Assertions.assertThat;
         "app.admin.password=engadminpass123"
 })
 class EngineIntegrationTest {
+
+    /** 1x1 PNG(base64 解码),作引擎自定义图标的上传内容 */
+    private static final byte[] PNG = Base64.getDecoder().decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
 
     @Autowired
     private TestRestTemplate rest;
@@ -114,6 +119,32 @@ class EngineIntegrationTest {
         assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         // 5. 删除后回到 4 个预置
         assertThat(listEngines(user).size()).isEqualTo(4);
+    }
+
+    /**
+     * 自定义引擎可设置上传图标:建引擎带 iconAssetId 时响应回显该 id;更新传 null 可清除图标。
+     */
+    @Test
+    void createEngineWithCustomIcon() throws Exception {
+        // 1. 新用户登录
+        ApiClient admin = loginAs("engadmin", "engadminpass123");
+        ApiClient user = createAndLoginUser(admin, "icon_user", "iconpass123");
+        // 2. 先上传一张图拿媒体 id(引擎图标受外键约束,须引用真实媒体)
+        ResponseEntity<String> uploaded = user.postMultipart("/api/media/upload", "file", "icon.png", "image/png", PNG);
+        assertThat(uploaded.getStatusCode()).isEqualTo(HttpStatus.OK);
+        String assetId = objectMapper.readTree(uploaded.getBody()).path("id").asText();
+        // 3. 建引擎带该图标,响应回显 iconAssetId
+        ResponseEntity<String> created = user.exchange(HttpMethod.POST, "/api/engines",
+                "{\"name\":\"WithIcon\",\"urlTemplate\":\"https://i.com/s?q={query}\",\"iconAssetId\":\"" + assetId + "\"}");
+        assertThat(created.getStatusCode()).isEqualTo(HttpStatus.OK);
+        JsonNode createdNode = objectMapper.readTree(created.getBody());
+        String engineId = createdNode.path("id").asText();
+        assertThat(createdNode.path("iconAssetId").asText()).isEqualTo(assetId);
+        // 4. 更新时把图标清空(iconAssetId 传 null)
+        ResponseEntity<String> updated = user.exchange(HttpMethod.PUT, "/api/engines/" + engineId,
+                "{\"name\":\"WithIcon\",\"urlTemplate\":\"https://i.com/s?q={query}\",\"iconAssetId\":null}");
+        assertThat(updated.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(objectMapper.readTree(updated.getBody()).path("iconAssetId").isNull()).isTrue();
     }
 
     /**

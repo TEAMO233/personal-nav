@@ -90,11 +90,12 @@ public class EngineService {
         validateUrlTemplate(request.urlTemplate());
         // 2. 排到末尾(排序值取现有引擎数)
         int sortOrder = (int) engineRepository.countByUserId(userId);
-        // 3. 建引擎(非预置、非默认)
+        // 3. 建引擎(非预置、非默认,可带自定义图标)
         SearchEngine e = new SearchEngine();
         e.setUserId(userId);
         e.setName(request.name());
         e.setUrlTemplate(request.urlTemplate());
+        e.setIconAssetId(request.iconAssetId());
         e.setSortOrder(sortOrder);
         e.setPreset(false);
         e.setDefault(false);
@@ -116,9 +117,10 @@ public class EngineService {
         validateUrlTemplate(request.urlTemplate());
         // 2. 取本人引擎,不存在或越权均 404
         SearchEngine e = requireOwned(userId, id);
-        // 3. 更新可改字段
+        // 3. 更新可改字段(图标传 null 即清除)
         e.setName(request.name());
         e.setUrlTemplate(request.urlTemplate());
+        e.setIconAssetId(request.iconAssetId());
         // 4. 保存并返回
         return EngineResponse.from(engineRepository.save(e));
     }

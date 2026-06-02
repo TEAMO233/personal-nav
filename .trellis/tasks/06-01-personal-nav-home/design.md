@@ -78,7 +78,7 @@
 - 路由:`/`(首页)、`/login`、`/settings`(个人引擎与快捷方式管理)、`/admin`(ADMIN 后台)。
 - 状态(Pinia):`authStore`、`engineStore`、`shortcutStore`、`themeStore`。
 - 首页:中央 `SearchBar`(引擎下拉 + 输入框 + 按 URL 模板跳转;框头图标随选中引擎变化)、下方 `GroupGrid`(分组 + 快捷方式卡片,点击新标签打开)。响应式:桌面多列网格,移动单列。
-- 设置/后台:Element Plus 表单与表格;桌面用 vuedraggable 实现组内/组间/分组拖拽排序,移动端降级为「上移/下移/移动到分组」按钮。
+- 设置/后台:Element Plus 表单与表格;桌面用 vue-draggable-plus 实现组内/组间/分组拖拽排序,移动端降级为「上移/下移/移动到分组」按钮。
 - 主题:CSS 变量双主题(亮 `:root` / 暗 `html.dark`,手动切换);`themeStore` 持久化到 localStorage,首次按系统偏好初始化。
 - axios 封装:`withCredentials` 携带 Cookie;响应 401 拦截并跳转登录。
 
@@ -91,6 +91,13 @@
 - 搜索跳转:把引擎 `urlTemplate` 的 `{query}` 用 `encodeURIComponent(关键词)` 替换后 `window.open(_blank, noopener)`。
 - 引擎图标:`iconBuiltin`(google/baidu/bing/duckduckgo)映射 `src/assets/engine-icons/*.svg`;`iconAssetId` 走 `GET /api/media/{id}`;均无则用名称首字母占位。
 - 前端结构:`api/`(http + types + auth/engine/group/shortcut/media)、`stores/`(auth/theme/engine/shortcut)、`components/`(AppIcon/ThemeToggle/EngineIcon/SearchBar/ShortcutCard/GroupGrid)、`views/`(HomeView/LoginView)。
+
+### 7.2 前端设置/管理实现约定(M7 敲定,已与用户确认)
+
+- 引擎自定义图标(根因修复):prd 要求自定义引擎可配图标,但 M3 建引擎时 M4 媒体未就绪,致 `CreateEngineRequest`/`UpdateEngineRequest` 漏了 `iconAssetId`。M7 给二者补 `iconAssetId`(可空 UUID),`EngineService.create/update` 一并保存;`search_engines` 表已有 `icon_asset_id` 列,无需新迁移。引擎与快捷方式共用同一套三来源图标(上传 / 图片 URL / 抓 favicon)。
+- 拖拽库:由原定 `vuedraggable@4.1.0` 改为 `vue-draggable-plus`。原因:vuedraggable 维护停滞,且与 Vite 8 有 CommonJS interop 报错史,TS 类型需手写;vue-draggable-plus 为 Vue 3 原生、内置 TS 类型与 typed events、现代 ESM,契合本项目 Vue 3.5 + Vite 8 + TS 6 栈。
+- Element Plus 按需引入:装 `unplugin-auto-import` + `unplugin-vue-components`,`vite.config.ts` 用 `ElementPlusResolver` 自动引入用到的 EP 组件与样式(免全局注册、免手写 import),延续 M6「不全局引入 EP」的瘦身目标。
+- 拖拽移动端降级(D10):触摸端把组内/组间拖拽降级为「上移 / 下移 / 移动到分组」按钮,排序结果同样走 reorder 接口持久化。
 
 ## 8. 安全与运维(对应 D9)
 

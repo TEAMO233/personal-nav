@@ -50,3 +50,55 @@ export interface ApiError {
   code: string
   message: string
 }
+
+/** 新建/更新引擎的入参(iconAssetId 传 null 即清除图标) */
+export interface EngineInput {
+  name: string
+  urlTemplate: string
+  iconAssetId?: string | null
+}
+
+/** 新建/更新分组的入参 */
+export interface GroupInput {
+  name: string
+}
+
+/** 新建/更新快捷方式的入参(更新时后端忽略 groupId,跨组移动走排序接口) */
+export interface ShortcutInput {
+  groupId: string
+  name: string
+  url: string
+  iconAssetId?: string | null
+}
+
+/** 快捷方式排序 + 跨组移动的单项位置 */
+export interface ShortcutOrderItem {
+  id: string
+  groupId: string
+  sortOrder: number
+}
+
+/** 媒体资源(对应后端 MediaResponse) */
+export interface MediaAsset {
+  id: string
+  /** 来源类型:UPLOAD / FAVICON / URL */
+  type: string
+  /** 文件 MIME 类型 */
+  contentType: string
+  /** 读取地址 /api/media/{id} */
+  url: string
+}
+
+/** 管理员开户入参 */
+export interface CreateUserInput {
+  username: string
+  password: string
+  role?: Role
+}
+
+/** 签发的邀请码(对应后端 InviteCodeResponse) */
+export interface InviteCode {
+  code: string
+  /** 过期时间(ISO 8601 字符串) */
+  expiresAt: string
+}

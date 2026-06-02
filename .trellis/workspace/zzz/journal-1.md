@@ -161,3 +161,20 @@ trellis-check 安全复核发现并已修复:
 待真机验收(前端无单测,以 build + 真机为准):`cd frontend && npm run dev` + 后端起 PG/Redis 后,验证登录 → 首页展示本人引擎/快捷方式、切引擎图标变化、搜索跳转、暗/亮主题切换并记忆、会话过期 401 跳登录。
 
 下一步:M7 前端设置/管理(引擎/分组/快捷方式 CRUD + vuedraggable 拖拽 + 图标上传/抓取;ADMIN 后台开户/重置密码/邀请码;Element Plus 按需引入)。
+
+---
+
+## 2026-06-02 — M7-1 工具链 + API/Store + 后端引擎图标(任务 06-01-personal-nav-home)
+
+完成 M7-1(M7 拆为 3 子提交的第 1 个)。后端 `./mvnw test` 47 全绿(原 46 + 引擎图标 1);前端 `npm run build` 通过。
+
+- 后端引擎图标(根因修复 prd 缺口):`CreateEngineRequest`/`UpdateEngineRequest` 补 `iconAssetId`,`EngineService.create/update` 保存。`search_engines.icon_asset_id` V1 即有(外键 →media_assets),无需迁移。测试走「上传图→建引擎带图标→更新传 null 清除」真实链路。
+- 前端工具链:EP 按需引入(`unplugin-auto-import` + `unplugin-vue-components` + `ElementPlusResolver`,css 样式模式免 sass;`dirs:[]` 让本地组件保持显式 import;dts 输出到 `src/`)。拖拽库 `vuedraggable@4.1.0` → `vue-draggable-plus`(查证:前者维护停滞 + 与 Vite 8 有 CommonJS interop 报错史 + TS 类型需手写)。
+- 前端 API:M6 只封装了只读 list,本步补齐 engine/group/shortcut 的增删改/排序、media 上传/外链/抓 favicon,新增 `admin.ts`(开户/重置密码/邀请码)与 `auth.register`;`types.ts` 补 EngineInput/GroupInput/ShortcutInput/ShortcutOrderItem/MediaAsset/InviteCode/CreateUserInput。
+- 前端 Store:`engineStore` 补 create/update/remove/reorder/setDefault,`shortcutStore` 补分组与快捷方式的增删改/排序;用 `import * as xxxApi` 命名空间避免与 action 同名冲突;group 操作并入 shortcutStore(不另建,合 design)。写操作策略:create/update 用返回值精确更新,删引擎(默认重分配)/删分组(级联删快捷方式)用 reload/本地同步保证一致。
+
+关键决策/踩坑:
+1. EP 按需引入与 `vue-tsc -b && vite build` 的顺序:d.ts 由 vite 阶段的 unplugin 生成、vue-tsc 在前;M7-1 尚无 EP 使用,首次 build 生成空 d.ts 脚手架,后续写 EP 代码时由 dev/build 填充并提交。
+2. 引擎图标外键约束:`icon_asset_id REFERENCES media_assets(id)`,故测试必须先真实上传媒体拿 id,不能传随机 UUID(否则外键违反 500)。
+
+下一步:M7-2 用户设置页 `/settings`(引擎/分组/快捷方式管理 + vue-draggable-plus 拖拽 + IconPicker 三来源图标 + 移动端按钮降级)。

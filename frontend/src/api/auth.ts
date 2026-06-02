@@ -1,5 +1,5 @@
 /**
- * 认证相关接口:登录、登出、获取当前用户。
+ * 认证相关接口:登录、登出、获取当前用户、邀请码注册。
  */
 import http, { ApiClientError } from './http'
 import type { UserInfo } from './types'
@@ -41,4 +41,17 @@ export function fetchMe(): Promise<UserInfo | null> {
       if (e instanceof ApiClientError && e.status === 401) return null
       throw e
     })
+}
+
+/**
+ * 用邀请码自助注册(注册后不自动登录,需再登录)。
+ *
+ * @param code     邀请码
+ * @param username 用户名
+ * @param password 密码
+ * @returns 新建用户信息
+ */
+export function register(code: string, username: string, password: string): Promise<UserInfo> {
+  // 1. 提交注册(公开接口,无需登录态)
+  return http.post<UserInfo>('/auth/register', { code, username, password }).then((r) => r.data)
 }
