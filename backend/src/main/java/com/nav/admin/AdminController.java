@@ -5,6 +5,7 @@ import com.nav.admin.dto.CreateInviteCodeRequest;
 import com.nav.admin.dto.CreateUserRequest;
 import com.nav.admin.dto.InviteCodeResponse;
 import com.nav.admin.dto.ResetPasswordRequest;
+import com.nav.admin.dto.UpdateUserStatusRequest;
 import com.nav.auth.dto.UserResponse;
 import com.nav.common.RequestUtils;
 import com.nav.security.RedisRateLimiter;
@@ -79,6 +80,21 @@ public class AdminController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void resetPassword(@PathVariable UUID id, @Valid @RequestBody ResetPasswordRequest request) {
         adminService.resetPassword(id, request.newPassword());
+    }
+
+    /**
+     * 启用或禁用指定用户;禁用会立即把该用户踢下线。
+     *
+     * @param id      用户 id
+     * @param request 目标状态
+     */
+    @PostMapping("/users/{id}/status")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateStatus(@PathVariable UUID id, @Valid @RequestBody UpdateUserStatusRequest request) {
+        // 1. 取当前管理员 id(用于禁止禁用自己)
+        UUID adminId = SecurityUtils.currentUserId();
+        // 2. 更新该用户状态
+        adminService.updateStatus(adminId, id, request.status());
     }
 
     /**

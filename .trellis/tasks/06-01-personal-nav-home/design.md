@@ -66,7 +66,7 @@
 ## 6. API 契约(RESTful JSON,统一 `/api` 前缀)
 
 - 认证:`POST /api/auth/login`、`POST /api/auth/logout`、`GET /api/auth/me`、`POST /api/auth/register`(仅邀请码模式)
-- 管理(ADMIN):`GET /api/admin/users`(列出用户)、`POST /api/admin/users`、`POST /api/admin/users/{id}/reset-password`、`POST /api/admin/invite-codes`
+- 管理(ADMIN):`GET /api/admin/users`(列出用户)、`POST /api/admin/users`、`POST /api/admin/users/{id}/reset-password`、`POST /api/admin/users/{id}/status`(启用/禁用)、`POST /api/admin/invite-codes`
 - 引擎:`GET/POST /api/engines`、`PUT/DELETE /api/engines/{id}`、`PUT /api/engines/order`、`PUT /api/engines/{id}/default`
 - 分组:`GET/POST /api/groups`、`PUT/DELETE /api/groups/{id}`、`PUT /api/groups/order`
 - 快捷方式:`GET/POST /api/shortcuts`、`PUT/DELETE /api/shortcuts/{id}`、`PUT /api/shortcuts/order`(支持跨组移动:body 带 group_id + sort)
@@ -99,6 +99,13 @@
 - Element Plus 按需引入:装 `unplugin-auto-import` + `unplugin-vue-components`,`vite.config.ts` 用 `ElementPlusResolver` 自动引入用到的 EP 组件与样式(免全局注册、免手写 import),延续 M6「不全局引入 EP」的瘦身目标。
 - 拖拽移动端降级(D10):触摸端把组内/组间拖拽降级为「上移 / 下移 / 移动到分组」按钮,排序结果同样走 reorder 接口持久化。
 - 管理后台列用户接口(M7-3 敲定,根因修复):后端原管理接口只有开户 / 按 UUID 重置密码 / 签发邀请码,缺「列出用户」途径,导致重置密码 UI 拿不到用户 UUID 而无法落地。M7-3 补 `GET /api/admin/users`(返回 id / 用户名 / 角色 / 状态 / 创建时间),后台用表格展示并定位重置目标。已与用户确认。注:管理后台只读展示状态,「禁用 / 启用用户」与「主动失效会话」仍归 M8。
+
+### 7.3 安全收尾实现约定(M8 敲定,已与用户确认)
+
+- 即时注销落实:Spring Session 由默认仓库切到带索引的 `RedisIndexedSessionRepository`(`spring.session.redis.repository-type=indexed`),`AdminService` 注入 `FindByIndexNameSessionRepository`,按用户名 `findByPrincipalName` 查删会话。管理员**禁用用户**或**重置密码**后,立即失效该用户全部会话。新增 `POST /api/admin/users/{id}/status` 启用/禁用接口(§6 原缺、`UserStatus` 此前仅用于拒登,M8 补全),并禁止管理员禁用自己(400 `CANNOT_DISABLE_SELF`)。生产 Redis 若禁用 `CONFIG` 命令,需手动开启 keyspace notifications(主动删会话本身不依赖该通知)。
+- 邀请码并发消费(防 TOCTOU):注册改为原子 `UPDATE invite_codes SET used_by=?, used_at=? WHERE id=? AND used_by IS NULL`,按受影响行数判定是否抢到;并发同码注册只会有一个成功,另一个回滚(400 `INVITE_CODE_USED`)。
+- 图标归属校验:引擎 / 快捷方式写入 `iconAssetId` 时,经 `MediaService.assertOwned` 校验该媒体属于本人,不存在或越权一律 400 `ICON_ASSET_INVALID`(此前直接写库会触发外键异常变 500)。
+- Cookie 安全:`COOKIE_SECURE` 生产 HTTPS 下必设为 `true`;`MEDIA_ALLOW_LOOPBACK` 生产保持 `false`。新增根目录 `README.md` 列全部环境变量、构建运行步骤与生产安全必读项;`.gitignore` 显式忽略构建产物使仓库自包含。
 
 ## 8. 安全与运维(对应 D9)
 

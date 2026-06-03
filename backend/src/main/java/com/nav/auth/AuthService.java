@@ -47,7 +47,7 @@ public class AuthService {
         // 1. 查邀请码,不存在视为无效
         InviteCode invite = inviteCodeRepository.findByCode(request.code())
                 .orElseThrow(() -> new ApiException(HttpStatus.BAD_REQUEST, "INVITE_CODE_INVALID", "邀请码无效"));
-        // 2. 已被使用则拒绝
+        // 2. 已被使用则拒绝(快速失败给精确提示;并发同码由第 7 步原子消费兜底)
         if (invite.getUsedBy() != null) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVITE_CODE_USED", "邀请码已被使用");
         }
@@ -66,12 +66,13 @@ public class AuthService {
         user.setRole(Role.USER);
         user.setStatus(UserStatus.ACTIVE);
         User saved = userRepository.save(user);
-        // 6. 为新用户初始化预置引擎(同一事务,与开户一起落库)
+        // 6. 为新用户初始化预置引擎(同一事务,与注册一起落库)
         engineService.initPresetEngines(saved.getId());
-        // 7. 消费邀请码(标记使用者与使用时间)
-        invite.setUsedBy(saved.getId());
-        invite.setUsedAt(Instant.now());
-        inviteCodeRepository.save(invite);
+        // 7. 原子消费邀请码:仅当仍未被使用时标记,受影响 0 行说明并发下被他人抢先,抛错回滚
+        int consumed = inviteCodeRepository.consumeIfUnused(invite.getId(), saved.getId(), Instant.now());
+        if (consumed == 0) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVITE_CODE_USED", "邀请码已被使用");
+        }
         // 8. 返回
         return new UserResponse(saved.getId(), saved.getUsername(), saved.getRole().name());
     }

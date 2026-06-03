@@ -15,6 +15,8 @@ import com.nav.user.UserStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,13 +41,16 @@ public class AdminService {
     private final InviteCodeRepository inviteCodeRepository;
     private final PasswordEncoder passwordEncoder;
     private final EngineService engineService;
+    private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
     public AdminService(UserRepository userRepository, InviteCodeRepository inviteCodeRepository,
-                        PasswordEncoder passwordEncoder, EngineService engineService) {
+                        PasswordEncoder passwordEncoder, EngineService engineService,
+                        FindByIndexNameSessionRepository<? extends Session> sessionRepository) {
         this.userRepository = userRepository;
         this.inviteCodeRepository = inviteCodeRepository;
         this.passwordEncoder = passwordEncoder;
         this.engineService = engineService;
+        this.sessionRepository = sessionRepository;
     }
 
     /**
@@ -88,7 +93,7 @@ public class AdminService {
     }
 
     /**
-     * 重置指定用户密码。
+     * 重置指定用户密码,并立即失效其全部会话,强制用新密码重新登录。
      *
      * @param userId      用户 id
      * @param newPassword 新密码
@@ -101,6 +106,33 @@ public class AdminService {
         // 2. 更新密码哈希
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+        // 3. 失效该用户全部会话(即时注销,旧会话立即作废)
+        invalidateUserSessions(user.getUsername());
+    }
+
+    /**
+     * 启用或禁用用户;禁用后立即失效其全部会话,把已登录的踢下线。
+     *
+     * @param adminId 当前操作的管理员 id
+     * @param userId  目标用户 id
+     * @param status  目标状态(ACTIVE 启用 / DISABLED 禁用)
+     */
+    @Transactional
+    public void updateStatus(UUID adminId, UUID userId, UserStatus status) {
+        // 1. 不允许管理员禁用自己,避免把自己锁在系统外
+        if (status == UserStatus.DISABLED && userId.equals(adminId)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "CANNOT_DISABLE_SELF", "不能禁用当前登录的管理员自己");
+        }
+        // 2. 查用户,不存在抛 404
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "用户不存在"));
+        // 3. 更新状态
+        user.setStatus(status);
+        userRepository.save(user);
+        // 4. 禁用后立即失效该用户全部会话(已登录的被踢下线)
+        if (status == UserStatus.DISABLED) {
+            invalidateUserSessions(user.getUsername());
+        }
     }
 
     /**
@@ -134,5 +166,16 @@ public class AdminService {
         byte[] bytes = new byte[18];
         RANDOM.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * 删除某用户在 Redis 里的全部会话(即时注销)。
+     *
+     * @param username 用户名(Spring Session 按它索引会话)
+     */
+    private void invalidateUserSessions(String username) {
+        // 1. 按用户名找出其全部会话 id 并逐个删除
+        sessionRepository.findByPrincipalName(username).keySet()
+                .forEach(sessionRepository::deleteById);
     }
 }

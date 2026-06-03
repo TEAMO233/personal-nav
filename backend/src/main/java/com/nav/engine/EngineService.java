@@ -4,6 +4,7 @@ import com.nav.common.error.ApiException;
 import com.nav.engine.dto.CreateEngineRequest;
 import com.nav.engine.dto.EngineResponse;
 import com.nav.engine.dto.UpdateEngineRequest;
+import com.nav.media.MediaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +28,11 @@ public class EngineService {
     private static final String QUERY_PLACEHOLDER = "{query}";
 
     private final SearchEngineRepository engineRepository;
+    private final MediaService mediaService;
 
-    public EngineService(SearchEngineRepository engineRepository) {
+    public EngineService(SearchEngineRepository engineRepository, MediaService mediaService) {
         this.engineRepository = engineRepository;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -88,9 +91,13 @@ public class EngineService {
     public EngineResponse create(UUID userId, CreateEngineRequest request) {
         // 1. 校验 URL 模板含查询占位
         validateUrlTemplate(request.urlTemplate());
-        // 2. 排到末尾(排序值取现有引擎数)
+        // 2. 带自定义图标时校验图标属于本人
+        if (request.iconAssetId() != null) {
+            mediaService.assertOwned(userId, request.iconAssetId());
+        }
+        // 3. 排到末尾(排序值取现有引擎数)
         int sortOrder = (int) engineRepository.countByUserId(userId);
-        // 3. 建引擎(非预置、非默认,可带自定义图标)
+        // 4. 建引擎(非预置、非默认,可带自定义图标)
         SearchEngine e = new SearchEngine();
         e.setUserId(userId);
         e.setName(request.name());
@@ -99,7 +106,7 @@ public class EngineService {
         e.setSortOrder(sortOrder);
         e.setPreset(false);
         e.setDefault(false);
-        // 4. 保存并返回
+        // 5. 保存并返回
         return EngineResponse.from(engineRepository.save(e));
     }
 
@@ -117,11 +124,15 @@ public class EngineService {
         validateUrlTemplate(request.urlTemplate());
         // 2. 取本人引擎,不存在或越权均 404
         SearchEngine e = requireOwned(userId, id);
-        // 3. 更新可改字段(图标传 null 即清除)
+        // 3. 带自定义图标时校验图标属于本人(传 null 是清除,不校验)
+        if (request.iconAssetId() != null) {
+            mediaService.assertOwned(userId, request.iconAssetId());
+        }
+        // 4. 更新可改字段(图标传 null 即清除)
         e.setName(request.name());
         e.setUrlTemplate(request.urlTemplate());
         e.setIconAssetId(request.iconAssetId());
-        // 4. 保存并返回
+        // 5. 保存并返回
         return EngineResponse.from(engineRepository.save(e));
     }
 

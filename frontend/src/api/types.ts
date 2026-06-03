@@ -5,6 +5,9 @@
 /** 用户角色 */
 export type Role = 'USER' | 'ADMIN'
 
+/** 账户状态 */
+export type UserStatus = 'ACTIVE' | 'DISABLED'
+
 /** 当前用户信息(对应后端 UserResponse) */
 export interface UserInfo {
   id: string
@@ -95,7 +98,7 @@ export interface AdminUser {
   username: string
   role: Role
   /** 账户状态:ACTIVE / DISABLED */
-  status: string
+  status: UserStatus
   /** 创建时间(ISO 8601 字符串) */
   createdAt: string
 }

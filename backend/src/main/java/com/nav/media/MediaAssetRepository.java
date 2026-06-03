@@ -18,4 +18,13 @@ public interface MediaAssetRepository extends JpaRepository<MediaAsset, UUID> {
      * @return 命中的媒体(可空)
      */
     Optional<MediaAsset> findByIdAndUserId(UUID id, UUID userId);
+
+    /**
+     * 判断某媒体是否存在且属于该用户,用于引擎/快捷方式引用图标时的归属校验。
+     *
+     * @param id     媒体 id
+     * @param userId 归属用户 id
+     * @return 存在且归属本人返回 true
+     */
+    boolean existsByIdAndUserId(UUID id, UUID userId);
 }

@@ -23,6 +23,8 @@ spring:
   session:
     store-type: redis
     redis:
+      # 用带索引的会话仓库,支持按用户名查/删其全部会话(管理员禁用、改密后即时注销)
+      repository-type: indexed
       flush-mode: on_save
       namespace: nav:session
   # 上传文件大小限制(M4 图标上传)

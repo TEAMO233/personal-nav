@@ -227,6 +227,23 @@ class ShortcutIntegrationTest {
         assertThat(listShortcuts(user).size()).isEqualTo(0);
     }
 
+    /**
+     * 快捷方式图标须属于本人:引用不存在的 iconAssetId 返回 400。
+     */
+    @Test
+    void createShortcutWithNonexistentIconReturns400() throws Exception {
+        // 1. 新用户建一个分组
+        ApiClient admin = loginAs("scadmin", "scadminpass123");
+        ApiClient user = createAndLoginUser(admin, "sc_icon", "sciconpass123");
+        String groupId = createGroup(user, "G1");
+        // 2. 引用不存在的图标 id 建快捷方式 -> 400
+        ResponseEntity<String> resp = user.exchange(HttpMethod.POST, "/api/shortcuts",
+                "{\"groupId\":\"" + groupId + "\",\"name\":\"X\",\"url\":\"https://x.com\",\"iconAssetId\":\""
+                        + java.util.UUID.randomUUID() + "\"}");
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(objectMapper.readTree(resp.getBody()).path("code").asText()).isEqualTo("ICON_ASSET_INVALID");
+    }
+
     // ===== 测试辅助 =====
 
     /**

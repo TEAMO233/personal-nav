@@ -109,6 +109,21 @@ public class MediaService {
     }
 
     /**
+     * 校验某媒体存在且属于该用户,供引擎/快捷方式引用图标前调用;不存在或越权都抛 400。
+     * 拦在写入前,避免把非法的 icon_asset_id 写库触发外键异常变成 500。
+     *
+     * @param userId 用户 id
+     * @param id     媒体 id
+     */
+    @Transactional(readOnly = true)
+    public void assertOwned(UUID userId, UUID id) {
+        // 1. 查不到本人名下的该媒体,即视为非法引用(不存在或越权都一样)
+        if (!mediaAssetRepository.existsByIdAndUserId(id, userId)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "ICON_ASSET_INVALID", "图标不存在或不属于当前用户");
+        }
+    }
+
+    /**
      * 把字节存盘并建一条媒体记录。
      */
     private MediaAsset persist(UUID userId, MediaType type, byte[] bytes, String contentType, String sourceUrl) {

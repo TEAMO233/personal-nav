@@ -225,3 +225,25 @@ trellis-check 安全复核发现并已修复:
 待真机验收(前端无单测):ADMIN 登录见「管理后台」→ 开户/列表刷新/重置密码/签发并复制邀请码;普通用户无该入口且直访 /admin 被挡;登录页「去注册」→ 邀请码注册成功 → 跳登录 → 新账号可登录;无效/过期码报错。
 
 下一步:M8 安全与收尾(复核 HTTPS / Cookie Secure / CSRF / SSRF / 限流;清理调试代码与未用依赖;README;并落实前述留待项:禁用用户即时失效会话、邀请码并发 TOCTOU、生产强制 COOKIE_SECURE)。
+
+---
+
+## 2026-06-03 — M8 安全与收尾(任务 06-01-personal-nav-home)
+
+完成 M8(末个里程碑)。后端 `./mvnw test` 55 全绿(原 48 + 即时失效会话 4 + 并发 TOCTOU 1 + 图标归属 2);前端 `npm run build` 通过(AdminView chunk 99.6KB / gzip 33.9KB)。落实 design §3「即时注销」与各里程碑留待的安全加固项。
+
+- 即时失效会话(落实 design §7.2 归 M8 的「禁用/启用 + 主动失效会话」):Spring Session 切带索引仓库(`spring.session.redis.repository-type=indexed`),AdminService 注入 `FindByIndexNameSessionRepository`,按用户名 `findByPrincipalName` 删会话。新增 `POST /api/admin/users/{id}/status` 启用/禁用(原 design §6 缺,UserStatus 此前仅用于拒登);禁用用户、重置密码后即时失效其全部会话;禁止管理员禁用自己(400 CANNOT_DISABLE_SELF)。前端 AdminView 用户表加启用/禁用(禁用走 ElMessageBox 二次确认,隐藏自己那行的按钮)。
+- 邀请码并发 TOCTOU:InviteCodeRepository 加原子 `consumeIfUnused`(`UPDATE...WHERE used_by IS NULL`,`flushAutomatically` 保证 user 先落库满足外键),AuthService 建用户后原子消费、0 行则抛错回滚;保留前置 findByCode 给精确错误。
+- 图标归属校验(M5 留待):MediaService 加 `assertOwned` + Repository `existsByIdAndUserId`;引擎/快捷方式 create/update 写 iconAssetId 非空时校验归属,不存在/越权 400 ICON_ASSET_INVALID(原直接写库触发外键异常 500)。
+- 复核与收尾:确认 HTTPS(forward-headers framework)/Cookie 三属性/CSRF 双提交/SSRF/限流均无回归;无调试代码;补全 `.gitignore` 显式忽略 target/node_modules/dist(原靠全局忽略,不自包含);新建根 README(环境变量全表 + 构建运行 + 生产安全必读)。
+
+关键决策/踩坑:
+1. Spring Session 默认 `RedisSessionRepository` 不支持按用户查会话;须切 indexed(查证 Spring Boot 3.0+ 稳定属性 `repository-type=indexed`),indexed 仓库自动索引 Spring Security 用户名,`findByPrincipalName` 即可批量删。生产 Redis 禁 CONFIG 时 keyspace 通知需手动开,但主动删会话不依赖它。
+2. 原子消费的外键时序:`@Modifying(flushAutomatically=true)` 确保 UPDATE 前先 flush user 的 insert(used_by 外键指向新用户),否则外键违反;`clearAutomatically=true` 避免读到陈旧实体。
+3. 图标归属校验放 media 包(MediaService.assertOwned),engine/shortcut 注入 MediaService,领域内聚、错误码统一;media 不反向依赖,无循环。
+4. 并发 TOCTOU 测试用两线程 + CountDownLatch 同时打同码注册,断言恰好 1 成功 1 被拒;无论时序,原子 UPDATE 保证只一个消费成功。
+5. 前端 ElMessageBox 首次使用,沿用 EP 按需 d.ts 经验先 `npx vite build` 再完整 build(本次 d.ts 无变化,符号已在)。
+
+待真机验收:管理员禁用某用户 → 该用户下次请求即被踢回登录页、无法重登;启用后恢复;改密后旧会话失效;引擎/快捷方式选他人图标被拒。生产部署按 README「生产部署与安全」逐项配置(尤其 COOKIE_SECURE=true、Redis keyspace notifications)。
+
+M0–M8 全部完成;项目主体里程碑收尾。

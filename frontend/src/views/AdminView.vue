@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 管理后台(仅 ADMIN 可达,角色由路由守卫保证):
- * 用户管理(列表 + 开户 + 重置密码) + 邀请码签发。进入时拉取用户列表。
+ * 用户管理(列表 + 开户 + 重置密码 + 启用/禁用) + 邀请码签发。进入时拉取用户列表。
  */
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -9,10 +9,13 @@ import type { FormInstance, FormRules } from 'element-plus'
 import * as adminApi from '@/api/admin'
 import type { AdminUser, InviteCode, Role } from '@/api/types'
 import { ApiClientError } from '@/api/http'
+import { useAuthStore } from '@/stores/auth'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import AppIcon from '@/components/AppIcon.vue'
 
 const router = useRouter()
+// 当前登录管理员(用于隐藏「禁用自己」)
+const auth = useAuthStore()
 
 // ===== 用户列表 =====
 
@@ -175,6 +178,36 @@ async function submitReset(): Promise<void> {
   }
 }
 
+/**
+ * 启用 / 禁用用户:禁用前二次确认,成功后刷新列表。
+ *
+ * @param user 目标用户
+ */
+async function toggleStatus(user: AdminUser): Promise<void> {
+  // 1. 禁用是危险操作,先二次确认
+  const disabling = user.status === 'ACTIVE'
+  if (disabling) {
+    try {
+      await ElMessageBox.confirm(
+        `确定禁用「${user.username}」?该用户会被立即踢下线且无法登录。`,
+        '禁用用户',
+        { type: 'warning', confirmButtonText: '禁用', cancelButtonText: '取消' },
+      )
+    } catch {
+      // 用户取消,不做任何变更
+      return
+    }
+  }
+  // 2. 提交状态变更并刷新列表
+  try {
+    await adminApi.setUserStatus(user.id, disabling ? 'DISABLED' : 'ACTIVE')
+    ElMessage.success(disabling ? '已禁用' : '已启用')
+    await loadUsers()
+  } catch (e) {
+    ElMessage.error(e instanceof ApiClientError ? e.message : '操作失败')
+  }
+}
+
 // ===== 邀请码 =====
 
 // 本次会话签发的邀请码(刷新即清空,仅作临时展示与复制)
@@ -273,9 +306,21 @@ onMounted(loadUsers)
           <el-table-column label="创建时间" min-width="160">
             <template #default="{ row }">{{ formatTime(row.createdAt) }}</template>
           </el-table-column>
-          <el-table-column label="操作" width="100" align="right">
+          <el-table-column label="操作" width="172" align="right">
             <template #default="{ row }">
-              <button type="button" class="s-link-btn" @click="openReset(row as AdminUser)">重置密码</button>
+              <div class="row-actions">
+                <button type="button" class="s-link-btn" @click="openReset(row as AdminUser)">重置密码</button>
+                <!-- 不给当前登录管理员自己显示启用/禁用,避免自锁 -->
+                <button
+                  v-if="(row as AdminUser).id !== auth.user?.id"
+                  type="button"
+                  class="s-link-btn"
+                  :class="{ 's-link-btn--danger': (row as AdminUser).status === 'ACTIVE' }"
+                  @click="toggleStatus(row as AdminUser)"
+                >
+                  {{ (row as AdminUser).status === 'ACTIVE' ? '禁用' : '启用' }}
+                </button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -451,6 +496,18 @@ onMounted(loadUsers)
 
 .user-table {
   width: 100%;
+}
+
+/* 表格行内操作:重置密码 / 启用禁用 */
+.row-actions {
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.s-link-btn--danger {
+  color: var(--system-red, #ff3b30);
 }
 
 /* 邀请码签发控件 */

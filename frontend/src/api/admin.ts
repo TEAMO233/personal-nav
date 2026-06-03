@@ -2,7 +2,7 @@
  * 管理后台接口(仅 ADMIN 可访问,鉴权由后端 /api/admin/** 规则保证):列出用户、开户、重置密码、签发邀请码。
  */
 import http from './http'
-import type { AdminUser, CreateUserInput, InviteCode, UserInfo } from './types'
+import type { AdminUser, CreateUserInput, InviteCode, UserInfo, UserStatus } from './types'
 
 /**
  * 列出全部用户,供管理后台展示与定位重置密码目标。
@@ -34,6 +34,17 @@ export function createUser(input: CreateUserInput): Promise<UserInfo> {
 export function resetPassword(id: string, newPassword: string): Promise<void> {
   // 1. 提交新密码,后端返回 204
   return http.post(`/admin/users/${id}/reset-password`, { newPassword }).then(() => undefined)
+}
+
+/**
+ * 启用 / 禁用用户;禁用会让该用户立即被踢下线且无法登录。
+ *
+ * @param id     用户 id
+ * @param status 目标状态(ACTIVE 启用 / DISABLED 禁用)
+ */
+export function setUserStatus(id: string, status: UserStatus): Promise<void> {
+  // 1. 提交目标状态,后端返回 204
+  return http.post(`/admin/users/${id}/status`, { status }).then(() => undefined)
 }
 
 /**

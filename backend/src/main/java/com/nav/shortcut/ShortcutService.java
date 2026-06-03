@@ -1,6 +1,7 @@
 package com.nav.shortcut;
 
 import com.nav.common.error.ApiException;
+import com.nav.media.MediaService;
 import com.nav.shortcut.dto.CreateShortcutRequest;
 import com.nav.shortcut.dto.ReorderShortcutsRequest;
 import com.nav.shortcut.dto.ShortcutResponse;
@@ -25,10 +26,13 @@ public class ShortcutService {
 
     private final ShortcutRepository shortcutRepository;
     private final ShortcutGroupRepository groupRepository;
+    private final MediaService mediaService;
 
-    public ShortcutService(ShortcutRepository shortcutRepository, ShortcutGroupRepository groupRepository) {
+    public ShortcutService(ShortcutRepository shortcutRepository, ShortcutGroupRepository groupRepository,
+                           MediaService mediaService) {
         this.shortcutRepository = shortcutRepository;
         this.groupRepository = groupRepository;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -55,9 +59,13 @@ public class ShortcutService {
     public ShortcutResponse create(UUID userId, CreateShortcutRequest request) {
         // 1. 校验目标分组属于本人,不存在或越权均 404
         requireOwnedGroup(userId, request.groupId());
-        // 2. 排到组内末尾(排序值取该组现有快捷方式数)
+        // 2. 带自定义图标时校验图标属于本人
+        if (request.iconAssetId() != null) {
+            mediaService.assertOwned(userId, request.iconAssetId());
+        }
+        // 3. 排到组内末尾(排序值取该组现有快捷方式数)
         int sortOrder = (int) shortcutRepository.countByGroupId(request.groupId());
-        // 3. 建快捷方式
+        // 4. 建快捷方式
         Shortcut s = new Shortcut();
         s.setUserId(userId);
         s.setGroupId(request.groupId());
@@ -65,7 +73,7 @@ public class ShortcutService {
         s.setUrl(request.url());
         s.setIconAssetId(request.iconAssetId());
         s.setSortOrder(sortOrder);
-        // 4. 保存并返回
+        // 5. 保存并返回
         return ShortcutResponse.from(shortcutRepository.save(s));
     }
 
@@ -81,11 +89,15 @@ public class ShortcutService {
     public ShortcutResponse update(UUID userId, UUID id, UpdateShortcutRequest request) {
         // 1. 取本人快捷方式,不存在或越权均 404
         Shortcut s = requireOwned(userId, id);
-        // 2. 更新可改字段
+        // 2. 带自定义图标时校验图标属于本人(传 null 是清除,不校验)
+        if (request.iconAssetId() != null) {
+            mediaService.assertOwned(userId, request.iconAssetId());
+        }
+        // 3. 更新可改字段
         s.setName(request.name());
         s.setUrl(request.url());
         s.setIconAssetId(request.iconAssetId());
-        // 3. 保存并返回
+        // 4. 保存并返回
         return ShortcutResponse.from(shortcutRepository.save(s));
     }
 

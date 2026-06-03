@@ -148,6 +148,31 @@ class EngineIntegrationTest {
     }
 
     /**
+     * 引擎自定义图标须属于本人:引用不存在或他人的 iconAssetId 一律 400。
+     */
+    @Test
+    void createEngineWithInvalidIconReturns400() throws Exception {
+        // 1. 开两个用户
+        ApiClient admin = loginAs("engadmin", "engadminpass123");
+        ApiClient userA = createAndLoginUser(admin, "icon_inv_a", "iconinvapass123");
+        ApiClient userB = createAndLoginUser(admin, "icon_inv_b", "iconinvbpass123");
+        // 2. A 引用不存在的图标 id 建引擎 -> 400
+        ResponseEntity<String> nonexistent = userA.exchange(HttpMethod.POST, "/api/engines",
+                "{\"name\":\"X\",\"urlTemplate\":\"https://x.com/s?q={query}\",\"iconAssetId\":\""
+                        + java.util.UUID.randomUUID() + "\"}");
+        assertThat(nonexistent.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(objectMapper.readTree(nonexistent.getBody()).path("code").asText()).isEqualTo("ICON_ASSET_INVALID");
+        // 3. B 上传一张图,A 引用 B 的图标建引擎 -> 同样 400(归属校验)
+        String bAsset = objectMapper.readTree(
+                        userB.postMultipart("/api/media/upload", "file", "b.png", "image/png", PNG).getBody())
+                .path("id").asText();
+        ResponseEntity<String> foreign = userA.exchange(HttpMethod.POST, "/api/engines",
+                "{\"name\":\"Y\",\"urlTemplate\":\"https://y.com/s?q={query}\",\"iconAssetId\":\"" + bAsset + "\"}");
+        assertThat(foreign.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(objectMapper.readTree(foreign.getBody()).path("code").asText()).isEqualTo("ICON_ASSET_INVALID");
+    }
+
+    /**
      * 缺少 {query} 占位的 URL 模板被拒(400)。
      */
     @Test
