@@ -29,6 +29,7 @@ export type IconName =
   | 'close'
   | 'shield'
   | 'copy'
+  | 'clock'
 
 const props = withDefaults(defineProps<{ name: IconName; size?: number }>(), {
   size: 20,
@@ -88,6 +89,8 @@ const paths: Record<IconName, string> = {
   // 复制:复制邀请码到剪贴板
   copy:
     '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>',
+  // 时钟:搜索历史项前缀
+  clock: '<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>',
 }
 </script>
 

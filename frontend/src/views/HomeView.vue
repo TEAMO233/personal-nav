@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useEngineStore } from '@/stores/engine'
 import { useShortcutStore } from '@/stores/shortcut'
+import { useSearchHistoryStore } from '@/stores/searchHistory'
 import { ApiClientError } from '@/api/http'
 import SearchBar from '@/components/SearchBar.vue'
 import GroupGrid from '@/components/GroupGrid.vue'
@@ -18,6 +19,7 @@ const router = useRouter()
 const auth = useAuthStore()
 const engineStore = useEngineStore()
 const shortcutStore = useShortcutStore()
+const searchHistoryStore = useSearchHistoryStore()
 
 const loading = ref(true)
 const error = ref('')
@@ -31,8 +33,8 @@ async function loadAll(): Promise<void> {
   loading.value = true
   error.value = ''
   try {
-    // 2. 三类数据一起拉(分组与快捷方式在 shortcutStore 内已并发)
-    await Promise.all([engineStore.load(), shortcutStore.load()])
+    // 2. 三类数据一起拉(分组与快捷方式在 shortcutStore 内已并发),并带上搜索历史
+    await Promise.all([engineStore.load(), shortcutStore.load(), searchHistoryStore.load()])
   } catch (e) {
     // 3. 展示错误(401 会被拦截器自动跳登录,这里多为网络/服务异常)
     error.value = e instanceof ApiClientError ? e.message : '加载失败,请稍后重试'
@@ -48,9 +50,10 @@ async function onLogout(): Promise<void> {
   // 1. 收起菜单并登出
   userMenuOpen.value = false
   await auth.logout()
-  // 2. 清空本地缓存的引擎与快捷方式,避免残留
+  // 2. 清空本地缓存的引擎、快捷方式与搜索历史,避免残留
   engineStore.reset()
   shortcutStore.reset()
+  searchHistoryStore.reset()
   // 3. 回登录页
   router.replace({ name: 'login' })
 }

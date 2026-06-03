@@ -75,9 +75,14 @@
 - 验证:ADMIN 可开户/重置/发码;非 ADMIN 访问 `/admin` 被挡;邀请码注册成功后可登录;后端 `./mvnw test`、前端 `npm run build`。
 
 ### M8 安全与收尾(D9)
-- [ ] 复核 HTTPS / Cookie Secure / CSRF / SSRF / 限流;清理调试代码与未用依赖。
-- [ ] README:环境变量、构建运行、对接 PostgreSQL/Redis(含 Testcontainers 测试)说明。
-- 验证:全量验收标准复检;lint / test / build 通过。
+- [x] 复核 HTTPS / Cookie Secure / CSRF / SSRF / 限流;清理调试代码与未用依赖。
+- [x] README:环境变量、构建运行、对接 PostgreSQL/Redis(含 Testcontainers 测试)说明。
+- 验证:全量验收标准复检;lint / test / build 通过。(已完成:后端 55 测试全绿、前端 build 通过)
+
+### M9 搜索历史(用户验收期间新增)
+- [x] 后端:`V3__create_search_history.sql` + `com.nav.search`(实体/Repository/Service/Controller/DTO),按 user_id 隔离的列出 / 记录(去重置顶)/ 删除 / 清空。
+- [x] 前端:`searchHistoryStore` + `api/searchHistory`;SearchBar 聚焦展示历史、点击直接搜、单条删除、一键清空;AppIcon 加 clock;HomeView 并发加载 + 登出 reset。
+- 验证:后端 `./mvnw test`(新增 SearchHistoryIntegrationTest);前端 `npm run build`;重启后端跑 V3 迁移后真机验收。
 
 ## 验证命令
 

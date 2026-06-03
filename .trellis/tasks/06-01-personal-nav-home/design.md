@@ -33,7 +33,8 @@
 - `shortcut_groups`(id, user_id, name, sort_order, created_at)
 - `shortcuts`(id, user_id, group_id, name, url, icon_asset_id 可空, sort_order, created_at)
 - `media_assets`(id, user_id, type[upload/favicon/url], storage_key, source_url 可空, content_type, created_at)
-- 索引:各表 `user_id`;排序用 `sort_order`;`username`、`code` 唯一索引。
+- `search_history`(id, user_id, keyword, searched_at, created_at;`UNIQUE(user_id, keyword)` 去重)
+- 索引:各表 `user_id`;排序用 `sort_order`;`username`、`code` 唯一索引;`search_history` 用 `(user_id, searched_at DESC)`。
 
 预置引擎策略:用户首次初始化时,把 Google/Baidu/Bing/DuckDuckGo 作为该用户的 `search_engines` 记录写入(`is_preset=true`),之后用户可改、可删、可排序、可设默认。预置引擎图标用打包内置的静态资源,不进 `media_assets`;仅用户自定义图标才入库,减少存储与抓取开销。
 
@@ -71,6 +72,7 @@
 - 分组:`GET/POST /api/groups`、`PUT/DELETE /api/groups/{id}`、`PUT /api/groups/order`
 - 快捷方式:`GET/POST /api/shortcuts`、`PUT/DELETE /api/shortcuts/{id}`、`PUT /api/shortcuts/order`(支持跨组移动:body 带 group_id + sort)
 - 媒体:`POST /api/media/upload`、`POST /api/media/fetch-favicon`、`POST /api/media/from-url`、`GET /api/media/{id}`
+- 搜索历史:`GET /api/search-history`、`POST /api/search-history`(记录,去重置顶)、`DELETE /api/search-history/{id}`、`DELETE /api/search-history`(清空)
 - 统一错误结构 `{code, message}`;未认证 401,越权 403,校验失败 400,限流 429。
 
 ## 7. 前端结构(对应 D8 / D10)
@@ -106,6 +108,13 @@
 - 邀请码并发消费(防 TOCTOU):注册改为原子 `UPDATE invite_codes SET used_by=?, used_at=? WHERE id=? AND used_by IS NULL`,按受影响行数判定是否抢到;并发同码注册只会有一个成功,另一个回滚(400 `INVITE_CODE_USED`)。
 - 图标归属校验:引擎 / 快捷方式写入 `iconAssetId` 时,经 `MediaService.assertOwned` 校验该媒体属于本人,不存在或越权一律 400 `ICON_ASSET_INVALID`(此前直接写库会触发外键异常变 500)。
 - Cookie 安全:`COOKIE_SECURE` 生产 HTTPS 下必设为 `true`;`MEDIA_ALLOW_LOOPBACK` 生产保持 `false`。新增根目录 `README.md` 列全部环境变量、构建运行步骤与生产安全必读项;`.gitignore` 显式忽略构建产物使仓库自包含。
+
+### 7.4 搜索历史实现约定(M9 敲定,已与用户确认)
+
+- 存储:**后端账户持久化(跨设备)**,非本地。新增 `search_history` 表 + `com.nav.search` 一套(实体/Repository/Service/Controller/DTO),沿引擎/快捷方式的分层与多租户隔离(`SecurityUtils.currentUserId`,越权 404 `SEARCH_HISTORY_NOT_FOUND`)。
+- 去重置顶:`UNIQUE(user_id, keyword)`;`record` 命中同词则更新 `searched_at` 置顶,否则新建。列表取最近 20 条(`findTop20ByUserIdOrderBySearchedAtDesc`);不记录所用引擎(点历史用「当前」引擎搜);空白关键词不记录;关键词上限 256。
+- 接口见 §6;`/api/search-history/**` 由 `anyRequest().authenticated()` 自动要求登录,未在 `SecurityConfig` 单列。
+- 前端:`searchHistoryStore`(load/record/remove/clear/reset);SearchBar 输入框聚焦展示历史(输入时按「包含」过滤),点击历史项用当前引擎搜,单条删除 + 一键清空;历史项用 `@mousedown.prevent` 防输入框失焦抢先关闭,与引擎下拉互斥;HomeView 并发加载 + 登出 reset。
 
 ## 8. 安全与运维(对应 D9)
 

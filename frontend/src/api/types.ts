@@ -116,3 +116,11 @@ export interface InviteCode {
   /** 过期时间(ISO 8601 字符串) */
   expiresAt: string
 }
+
+/** 搜索历史项(对应后端 SearchHistoryResponse) */
+export interface SearchHistoryItem {
+  id: string
+  keyword: string
+  /** 最近搜索时间(ISO 8601 字符串) */
+  searchedAt: string
+}

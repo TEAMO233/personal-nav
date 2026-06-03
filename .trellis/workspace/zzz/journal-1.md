@@ -247,3 +247,22 @@ trellis-check 安全复核发现并已修复:
 待真机验收:管理员禁用某用户 → 该用户下次请求即被踢回登录页、无法重登;启用后恢复;改密后旧会话失效;引擎/快捷方式选他人图标被拒。生产部署按 README「生产部署与安全」逐项配置(尤其 COOKIE_SECURE=true、Redis keyspace notifications)。
 
 M0–M8 全部完成;项目主体里程碑收尾。
+
+---
+
+## 2026-06-03 — M9 搜索历史(任务 06-01-personal-nav-home,验收期间新增)
+
+完成 M9,验证全绿:后端 `./mvnw test` 62(原 55 + 搜索历史 7),前端 `npm run build` 通过。沿引擎/快捷方式既有的分层与多租户模式实现,零新坑。
+
+- 后端:`V3__create_search_history.sql` 建 `search_history` 表(`UNIQUE(user_id, keyword)` 去重 + `(user_id, searched_at DESC)` 索引);`com.nav.search` 全套(实体/Repository/Service/Controller/DTO),按 user_id 隔离的列出(最近 20)/记录(去重置顶)/删除(越权 404 `SEARCH_HISTORY_NOT_FOUND`)/清空。
+- 前端:`searchHistoryStore`(load/record/remove/clear/reset)+ `api/searchHistory`;SearchBar 输入框聚焦展示历史、输入时按「包含」过滤、点历史项用当前引擎搜、单条删除 + 一键清空;AppIcon 加 clock;HomeView 并发加载 + 登出 reset。
+
+关键决策/踩坑:
+1. 存储选后端账户持久化(跨设备),非 localStorage(用户拍板)。新增表与一套分层,接口 §6:`GET/POST/DELETE{id}/DELETE /api/search-history`;`/**` 由 `anyRequest().authenticated()` 自动要求登录,未在 SecurityConfig 单列。
+2. 去重置顶:`UNIQUE(user_id, keyword)`,record 命中同词更新 `searchedAt` 置顶、否则新建;空白词不记录;关键词上限 256(DTO `@NotBlank @Size(max=256)` + Service `trim` 双保险)。列表只取最近 20 条(`findTop20...`),库内不限总量。
+3. record 返回更新后的最近列表,前端直接覆盖本地(免二次拉取);删除/清空本地同步移除。记录失败前端静默(不阻塞搜索跳转)。
+4. SearchBar 历史下拉与引擎下拉互斥:历史项 `@mousedown.prevent` 防输入框失焦抢先关闭下拉,失焦延迟 150ms 关闭兜底。
+
+待真机验收:重启后端跑 V3 迁移后,登录搜索 → 历史出现在输入框聚焦下拉、去重置顶、点历史直接搜、单条删/清空、A/B 用户互不可见。
+
+下一步:首页苹果风深色玻璃拟态改版(`未命名.md`),进入 Trellis 规划。
