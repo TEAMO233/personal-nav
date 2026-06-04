@@ -24,7 +24,7 @@ import NotePanel from './NotePanel.vue'
 <style scoped>
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1.1fr 0.85fr 0.9fr 1.05fr;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 18px;
   align-items: stretch;
   width: 100%;
@@ -55,7 +55,7 @@ import NotePanel from './NotePanel.vue'
 
 @media (max-width: 1199px) {
   .dashboard-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   }
 
   .dashboard-grid :deep(.panel) {
@@ -65,7 +65,7 @@ import NotePanel from './NotePanel.vue'
 
 @media (max-width: 760px) {
   .dashboard-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
   }
 }

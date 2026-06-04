@@ -163,6 +163,7 @@ function displayTime(item: TodoItem): string {
 .todo__row time {
   font-size: 13px;
   color: var(--home-text-tertiary);
+  white-space: nowrap;
 }
 
 .todo__delete {
@@ -218,5 +219,27 @@ function displayTime(item: TodoItem): string {
   font-size: 14px;
   color: var(--home-text-tertiary);
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .panel {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .panel__head h2 {
+    font-size: 16px;
+  }
+
+  .todo__row {
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    gap: 8px;
+    min-height: 42px;
+  }
+
+  .todo__tag,
+  .todo__row time {
+    display: none;
+  }
 }
 </style>

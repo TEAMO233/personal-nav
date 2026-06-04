@@ -62,7 +62,7 @@ function iconName(shortcut: Shortcut): IconName {
 <style scoped>
 .shortcut-grid {
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
   gap: 22px;
   width: 100%;
 }
@@ -110,10 +110,14 @@ function iconName(shortcut: Shortcut): IconName {
 }
 
 .feature-card__title {
+  width: 100%;
   margin-bottom: 8px;
+  overflow: hidden;
   font-size: 17px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .feature-card__desc {
@@ -142,15 +146,9 @@ function iconName(shortcut: Shortcut): IconName {
 .feature-card--violet { --feature-color: #7c5cff; }
 .feature-card--yellow { --feature-color: #ffc857; }
 
-@media (max-width: 1399px) {
-  .shortcut-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
 @media (max-width: 900px) {
   .shortcut-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 156px), 1fr));
     gap: 14px;
   }
 
@@ -195,12 +193,8 @@ function iconName(shortcut: Shortcut): IconName {
   }
 
   .feature-card__title {
-    width: 100%;
     margin-bottom: 4px;
-    overflow: hidden;
     font-size: 15px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .feature-card__desc {

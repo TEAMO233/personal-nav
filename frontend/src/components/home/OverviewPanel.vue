@@ -182,7 +182,12 @@ const ringStyle = computed(() => ({
 
 @media (max-width: 480px) {
   .panel {
+    min-height: auto;
     padding: 14px;
+  }
+
+  .panel__head h2 {
+    font-size: 16px;
   }
 
   .overview__main {

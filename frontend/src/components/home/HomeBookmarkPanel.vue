@@ -235,4 +235,15 @@ function goSettings(): void {
   border-radius: 999px;
   cursor: pointer;
 }
+
+@media (max-width: 480px) {
+  .panel {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .panel__head h2 {
+    font-size: 16px;
+  }
+}
 </style>

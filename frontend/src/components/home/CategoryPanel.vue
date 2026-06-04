@@ -59,7 +59,7 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
 
 .category__row {
   display: grid;
-  grid-template-columns: 28px 1fr auto;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
   align-items: center;
   min-height: 36px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -70,8 +70,12 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
 }
 
 .category__row span {
+  min-width: 0;
+  overflow: hidden;
   font-size: 14px;
   color: var(--home-text-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .category__row b {
@@ -94,5 +98,16 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
   font-size: 14px;
   color: var(--home-text-tertiary);
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .panel {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .panel__head h2 {
+    font-size: 16px;
+  }
 }
 </style>
