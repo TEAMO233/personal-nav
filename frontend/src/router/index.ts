@@ -9,13 +9,12 @@ declare module 'vue-router' {
   }
 }
 
-// 路由表:首页/设置/后台需登录(后台另需 ADMIN),登录/注册公开;未知路径回首页
+// 路由表:首页/登录/注册公开,设置/后台需登录(后台另需 ADMIN);未知路径回首页
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
     component: () => import('@/views/HomeView.vue'),
-    meta: { requiresAuth: true },
   },
   {
     path: '/login',

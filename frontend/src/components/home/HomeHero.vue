@@ -10,9 +10,9 @@ const auth = useAuthStore()
 
 <template>
   <section class="hero">
-    <h1 class="hero__title">欢迎回来，{{ auth.user?.username }} 👋</h1>
-    <p class="hero__subtitle">高效连接你的工具、资源与灵感，开启专注的一天。</p>
-    <div class="hero__search">
+    <h1 v-if="auth.isLoggedIn" class="hero__title">欢迎回来，{{ auth.user?.username }} 👋</h1>
+    <p v-if="auth.isLoggedIn" class="hero__subtitle">高效连接你的工具、资源与灵感，开启专注的一天。</p>
+    <div class="hero__search" :class="{ 'hero__search--solo': !auth.isLoggedIn }">
       <SearchBar />
     </div>
   </section>
@@ -44,6 +44,10 @@ const auth = useAuthStore()
   justify-content: center;
   width: 100%;
   margin-top: 28px;
+}
+
+.hero__search--solo {
+  margin-top: 0;
 }
 
 @media (max-width: 420px) {

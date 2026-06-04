@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 首页顶栏:左侧品牌,右侧搜索 / 通知 / 主题 / 用户胶囊菜单。
+ * 首页顶栏:左侧品牌,右侧搜索 / 通知 / 主题 / 用户入口。
  */
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -37,6 +37,19 @@ function focusSearch(): void {
 }
 
 /**
+ * 点击用户入口:未登录直接去登录页,已登录展开菜单。
+ */
+function onUserTrigger(): void {
+  // 1. 匿名态把头像作为登录入口
+  if (!auth.isLoggedIn) {
+    router.push({ name: 'login', query: { redirect: '/' } })
+    return
+  }
+  // 2. 登录态正常展开菜单
+  userMenuOpen.value = !userMenuOpen.value
+}
+
+/**
  * 退出登录:销毁会话、清空本地数据、回登录页。
  */
 async function onLogout(): Promise<void> {
@@ -51,8 +64,8 @@ async function onLogout(): Promise<void> {
   noteStore.reset()
   recentVisitStore.reset()
   notificationStore.reset()
-  // 3. 回登录页
-  router.replace({ name: 'login' })
+  // 3. 留在公开首页
+  router.replace({ name: 'home' })
 }
 
 /**
@@ -88,7 +101,7 @@ function onOpenAdmin(): void {
         <AppIcon name="search" :size="22" />
       </button>
 
-      <NotificationMenu />
+      <NotificationMenu v-if="auth.isLoggedIn" />
 
       <ThemeToggle />
 
@@ -96,15 +109,20 @@ function onOpenAdmin(): void {
         <button
           type="button"
           class="user-trigger"
-          aria-label="用户菜单"
-          @click="userMenuOpen = !userMenuOpen"
+          :aria-label="auth.isLoggedIn ? '用户菜单' : '登录'"
+          @click="onUserTrigger"
         >
-          <span class="user-avatar">{{ auth.user?.username?.charAt(0).toUpperCase() || 'A' }}</span>
-          <span class="user-name">{{ auth.user?.username }}</span>
-          <AppIcon name="chevron-down" :size="14" />
+          <span class="user-avatar">
+            <template v-if="auth.isLoggedIn">
+              {{ auth.user?.username?.charAt(0).toUpperCase() || 'U' }}
+            </template>
+            <AppIcon v-else name="user" :size="18" />
+          </span>
+          <span v-if="auth.isLoggedIn" class="user-name">{{ auth.user?.username }}</span>
+          <AppIcon v-if="auth.isLoggedIn" name="chevron-down" :size="14" />
         </button>
 
-        <template v-if="userMenuOpen">
+        <template v-if="auth.isLoggedIn && userMenuOpen">
           <div class="dropdown-backdrop" @click="userMenuOpen = false"></div>
           <div class="user-dropdown glass-panel">
             <div class="user-info">

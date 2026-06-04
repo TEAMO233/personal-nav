@@ -5,11 +5,25 @@
  * 按当前引擎的 URL 模板把 {query} 替换为编码后的关键词,新标签打开。
  */
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { useEngineStore } from '@/stores/engine'
 import { useSearchHistoryStore } from '@/stores/searchHistory'
 import EngineIcon from './EngineIcon.vue'
 import AppIcon from './AppIcon.vue'
+import type { Engine } from '@/api/types'
 
+const publicEngine: Engine = {
+  id: 'public-google',
+  name: 'Google',
+  urlTemplate: 'https://www.google.com/search?q={query}',
+  iconBuiltin: 'google',
+  iconAssetId: null,
+  isDefault: true,
+  sortOrder: 0,
+  isPreset: true,
+}
+
+const auth = useAuthStore()
 const engineStore = useEngineStore()
 const searchHistoryStore = useSearchHistoryStore()
 
@@ -19,13 +33,21 @@ const dropdownOpen = ref(false)
 const historyOpen = ref(false)
 const inputEl = ref<HTMLInputElement | null>(null)
 
-// 当前选中引擎:本地选择优先,兜底默认引擎
+// 可用引擎:登录后使用个人引擎,匿名态提供公开默认引擎
+const availableEngines = computed<Engine[]>(() =>
+  auth.isLoggedIn ? engineStore.engines : [publicEngine],
+)
+
+// 当前选中引擎:本地选择优先,兜底默认引擎 / 公开引擎
 const selected = computed(
-  () => engineStore.engines.find((e) => e.id === selectedId.value) ?? engineStore.defaultEngine,
+  () =>
+    availableEngines.value.find((e) => e.id === selectedId.value) ??
+    (auth.isLoggedIn ? engineStore.defaultEngine : publicEngine),
 )
 
 // 历史下拉展示的条目:有输入时按「包含」过滤,空输入显示最近全部
 const historyMatches = computed(() => {
+  if (!auth.isLoggedIn) return []
   const kw = keyword.value.trim().toLowerCase()
   const all = searchHistoryStore.items
   if (!kw) return all
@@ -34,9 +56,9 @@ const historyMatches = computed(() => {
 
 // 引擎加载后,若用户还没手动选,跟随默认引擎
 watch(
-  () => engineStore.defaultEngine,
-  (def) => {
-    if (!selectedId.value && def) selectedId.value = def.id
+  selected,
+  (eng) => {
+    if (eng && selectedId.value !== eng.id) selectedId.value = eng.id
   },
   { immediate: true },
 )
@@ -74,7 +96,9 @@ function doSearch(): void {
   const url = eng.urlTemplate.split('{query}').join(encodeURIComponent(kw))
   window.open(url, '_blank', 'noopener')
   // 3. 记录搜索历史(失败静默,不阻塞跳转),收起历史下拉
-  searchHistoryStore.record(kw)
+  if (auth.isLoggedIn) {
+    searchHistoryStore.record(kw)
+  }
   historyOpen.value = false
 }
 
@@ -122,7 +146,7 @@ async function clearHistory(): Promise<void> {
 function onInputFocus(): void {
   // 1. 开历史下拉、关引擎下拉
   dropdownOpen.value = false
-  historyOpen.value = true
+  historyOpen.value = auth.isLoggedIn
 }
 
 /**
@@ -177,7 +201,7 @@ onUnmounted(() => {
       <template v-if="dropdownOpen">
         <div class="dropdown-backdrop" @click="dropdownOpen = false"></div>
         <ul class="engine-menu" role="listbox">
-          <li v-for="e in engineStore.engines" :key="e.id">
+          <li v-for="e in availableEngines" :key="e.id">
             <button
               type="button"
               class="engine-option"

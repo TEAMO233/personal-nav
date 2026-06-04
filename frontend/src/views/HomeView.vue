@@ -1,9 +1,10 @@
 <script setup lang="ts">
 /**
  * 首页:参考图像素级深色玻璃拟态工作台。
- * 进入时并发加载搜索、导航、待办、便签、首页书签和通知等真实数据。
+ * 进入时按登录态加载真实数据;未登录仅保留公开搜索入口。
  */
 import { onMounted, ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 import { useEngineStore } from '@/stores/engine'
 import { useShortcutStore } from '@/stores/shortcut'
 import { useSearchHistoryStore } from '@/stores/searchHistory'
@@ -18,6 +19,7 @@ import HomeHero from '@/components/home/HomeHero.vue'
 import FeaturedShortcutGrid from '@/components/home/FeaturedShortcutGrid.vue'
 import DashboardGrid from '@/components/home/DashboardGrid.vue'
 
+const auth = useAuthStore()
 const engineStore = useEngineStore()
 const shortcutStore = useShortcutStore()
 const searchHistoryStore = useSearchHistoryStore()
@@ -36,6 +38,10 @@ async function loadAll(): Promise<void> {
   // 1. 进入加载态
   loading.value = true
   error.value = ''
+  if (!auth.isLoggedIn) {
+    loading.value = false
+    return
+  }
   try {
     // 2. 并发加载首页需要的数据
     await Promise.all([
@@ -68,12 +74,12 @@ onMounted(loadAll)
       <main class="home__main">
         <HomeHero class="home__hero" />
 
-        <div v-if="loading" class="home__state">加载中…</div>
-        <div v-else-if="error" class="home__state">
+        <div v-if="auth.isLoggedIn && loading" class="home__state">加载中…</div>
+        <div v-else-if="auth.isLoggedIn && error" class="home__state">
           <p>{{ error }}</p>
           <button type="button" class="retry-btn" @click="loadAll">重试</button>
         </div>
-        <template v-else>
+        <template v-else-if="auth.isLoggedIn">
           <FeaturedShortcutGrid class="home__features" />
           <DashboardGrid />
         </template>
