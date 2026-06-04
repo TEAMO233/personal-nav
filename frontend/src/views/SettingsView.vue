@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 设置页:顶栏(返回首页 + 主题切换) + 选项卡切换"搜索引擎 / 快捷方式"两块管理区。
+ * 设置页:顶栏(返回首页 + 主题切换) + 选项卡切换外观、搜索引擎、快捷方式等管理区。
  * 进入时确保引擎、分组、快捷方式已加载(直接访问/刷新时需要)。
  */
 import { ref, onMounted, watch } from 'vue'
@@ -14,6 +14,7 @@ import AppIcon from '@/components/AppIcon.vue'
 import EngineSection from '@/components/settings/EngineSection.vue'
 import ShortcutSection from '@/components/settings/ShortcutSection.vue'
 import HomeBookmarkSection from '@/components/settings/HomeBookmarkSection.vue'
+import AppearanceSection from '@/components/settings/AppearanceSection.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -21,9 +22,9 @@ const engineStore = useEngineStore()
 const shortcutStore = useShortcutStore()
 const homeBookmarkStore = useHomeBookmarkStore()
 
-type SettingsTab = 'engines' | 'shortcuts' | 'homeBookmarks'
+type SettingsTab = 'appearance' | 'engines' | 'shortcuts' | 'homeBookmarks'
 
-const activeTab = ref<SettingsTab>('engines')
+const activeTab = ref<SettingsTab>('appearance')
 const error = ref('')
 
 /**
@@ -58,7 +59,7 @@ function goHome(): void {
 function syncTabFromQuery(): void {
   // 1. 只接受已知标签
   const tab = route.query.tab
-  if (tab === 'engines' || tab === 'shortcuts' || tab === 'homeBookmarks') {
+  if (tab === 'appearance' || tab === 'engines' || tab === 'shortcuts' || tab === 'homeBookmarks') {
     activeTab.value = tab
   }
 }
@@ -84,22 +85,31 @@ watch(() => route.query.tab, syncTabFromQuery)
 
     <!-- 主体 -->
     <main class="settings__main">
-      <!-- 错误态 -->
-      <div v-if="error" class="settings__state">
-        <p>{{ error }}</p>
-        <el-button type="primary" round @click="ensureLoaded">重试</el-button>
-      </div>
-
-      <!-- 选项卡:两块管理区 -->
-      <el-tabs v-else v-model="activeTab" class="settings__tabs">
+      <!-- 选项卡:外观不依赖接口,资源管理区失败时在标签内提示 -->
+      <el-tabs v-model="activeTab" class="settings__tabs">
+        <el-tab-pane label="外观" name="appearance">
+          <AppearanceSection />
+        </el-tab-pane>
         <el-tab-pane label="搜索引擎" name="engines">
-          <EngineSection />
+          <div v-if="error" class="settings__state">
+            <p>{{ error }}</p>
+            <el-button type="primary" round @click="ensureLoaded">重试</el-button>
+          </div>
+          <EngineSection v-else />
         </el-tab-pane>
         <el-tab-pane label="快捷方式" name="shortcuts">
-          <ShortcutSection />
+          <div v-if="error" class="settings__state">
+            <p>{{ error }}</p>
+            <el-button type="primary" round @click="ensureLoaded">重试</el-button>
+          </div>
+          <ShortcutSection v-else />
         </el-tab-pane>
         <el-tab-pane label="首页书签" name="homeBookmarks">
-          <HomeBookmarkSection />
+          <div v-if="error" class="settings__state">
+            <p>{{ error }}</p>
+            <el-button type="primary" round @click="ensureLoaded">重试</el-button>
+          </div>
+          <HomeBookmarkSection v-else />
         </el-tab-pane>
       </el-tabs>
     </main>

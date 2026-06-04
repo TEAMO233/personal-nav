@@ -85,7 +85,7 @@ async function markRead(id: string): Promise<void> {
   justify-content: center;
   width: 44px;
   height: 44px;
-  color: rgba(235, 242, 255, 0.86);
+  color: var(--home-text-secondary);
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
@@ -111,7 +111,7 @@ async function markRead(id: string): Promise<void> {
   line-height: 16px;
   color: #ffffff;
   text-align: center;
-  background: #2f7cff;
+  background: var(--system-blue);
   border-radius: var(--radius-full);
   box-shadow: 0 0 0 2px rgba(3, 14, 35, 0.9);
 }
@@ -144,7 +144,7 @@ async function markRead(id: string): Promise<void> {
 .notify-menu__action {
   padding: 4px 8px;
   font-size: var(--text-caption1);
-  color: #68a2ff;
+  color: var(--system-blue);
   background: transparent;
   border: none;
   border-radius: var(--radius-sm);
@@ -184,8 +184,8 @@ async function markRead(id: string): Promise<void> {
 }
 
 .notify-item--unread .notify-item__dot {
-  background: #3b82f6;
-  box-shadow: 0 0 16px rgba(59, 130, 246, 0.8);
+  background: var(--system-blue);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--system-blue) 80%, transparent);
 }
 
 .notify-item__body {

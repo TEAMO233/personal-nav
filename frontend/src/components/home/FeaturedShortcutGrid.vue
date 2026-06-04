@@ -93,7 +93,7 @@ function iconName(shortcut: Shortcut): IconName {
 
 .feature-card:hover {
   background: rgba(255, 255, 255, 0.11);
-  border-color: rgba(160, 190, 255, 0.35);
+  border-color: var(--home-search-border);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 22px 45px rgba(0, 0, 0, 0.22);
   transform: translateY(-4px);
 }
@@ -121,7 +121,7 @@ function iconName(shortcut: Shortcut): IconName {
   overflow: hidden;
   font-size: 14px;
   line-height: 1.35;
-  color: rgba(220, 230, 255, 0.62);
+  color: var(--home-text-tertiary);
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -130,10 +130,10 @@ function iconName(shortcut: Shortcut): IconName {
   position: absolute;
   bottom: 14px;
   left: 24px;
-  color: rgba(220, 230, 255, 0.78);
+  color: var(--home-text-secondary);
 }
 
-.feature-card--blue { --feature-color: #4c8dff; }
+.feature-card--blue { --feature-color: var(--feature-blue); }
 .feature-card--green { --feature-color: #64d9ad; }
 .feature-card--purple { --feature-color: #8066f4; }
 .feature-card--orange { --feature-color: #ff9f3f; }

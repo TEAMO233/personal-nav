@@ -117,11 +117,11 @@ function goSettings(): void {
   align-items: center;
   gap: 8px;
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .panel__head svg {
-  color: #5f9cff;
+  color: var(--system-blue);
 }
 
 .panel__action {
@@ -130,7 +130,7 @@ function goSettings(): void {
   justify-content: center;
   width: 30px;
   height: 30px;
-  color: rgba(220, 230, 255, 0.72);
+  color: var(--home-text-secondary);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
@@ -175,7 +175,7 @@ function goSettings(): void {
   font-size: 13px;
   font-weight: 800;
   color: #ffffff;
-  background: linear-gradient(135deg, #111827, #3b82f6);
+  background: var(--avatar-grad);
   border-radius: 8px;
 }
 
@@ -194,16 +194,16 @@ function goSettings(): void {
 
 .bookmark__text strong {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--home-text-primary);
 }
 
 .bookmark__text small {
   font-size: 12px;
-  color: rgba(220, 230, 255, 0.55);
+  color: var(--home-text-tertiary);
 }
 
 .bookmark__open {
-  color: rgba(220, 230, 255, 0.48);
+  color: color-mix(in srgb, var(--home-text-secondary) 70%, transparent);
 }
 
 .panel__empty {
@@ -216,7 +216,7 @@ function goSettings(): void {
   min-height: 140px;
   margin: 0;
   font-size: 14px;
-  color: rgba(220, 230, 255, 0.54);
+  color: var(--home-text-tertiary);
   text-align: center;
 }
 
@@ -230,7 +230,7 @@ function goSettings(): void {
   font-size: 13px;
   font-weight: 650;
   color: #ffffff;
-  background: rgba(74, 144, 255, 0.8);
+  background: color-mix(in srgb, var(--system-blue) 80%, transparent);
   border: none;
   border-radius: 999px;
   cursor: pointer;

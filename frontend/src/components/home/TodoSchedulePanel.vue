@@ -97,16 +97,16 @@ function displayTime(item: TodoItem): string {
   align-items: center;
   gap: 8px;
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .panel__head svg {
-  color: #73a7ff;
+  color: var(--system-blue);
 }
 
 .panel__head button {
   font-size: 13px;
-  color: #3b82f6;
+  color: var(--system-blue);
   background: transparent;
   border: none;
 }
@@ -134,14 +134,14 @@ function displayTime(item: TodoItem): string {
   height: 18px;
   color: #ffffff;
   background: transparent;
-  border: 1px solid rgba(220, 230, 255, 0.65);
+  border: 1px solid var(--home-text-secondary);
   border-radius: 5px;
   cursor: pointer;
 }
 
 .todo__check--done {
-  background: #3b82f6;
-  border-color: #3b82f6;
+  background: var(--system-blue);
+  border-color: var(--system-blue);
 }
 
 .todo__title {
@@ -162,14 +162,14 @@ function displayTime(item: TodoItem): string {
 
 .todo__row time {
   font-size: 13px;
-  color: rgba(220, 230, 255, 0.64);
+  color: var(--home-text-tertiary);
 }
 
 .todo__delete {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: rgba(220, 230, 255, 0.46);
+  color: color-mix(in srgb, var(--home-text-secondary) 68%, transparent);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -181,7 +181,7 @@ function displayTime(item: TodoItem): string {
   align-items: center;
   gap: 8px;
   margin-top: 10px;
-  color: rgba(220, 230, 255, 0.68);
+  color: var(--home-text-secondary);
 }
 
 .todo__add {
@@ -204,7 +204,7 @@ function displayTime(item: TodoItem): string {
   height: 34px;
   padding: 0 14px;
   color: #ffffff;
-  background: #2f78ff;
+  background: var(--system-blue);
   border: none;
   border-radius: var(--radius-full);
 }
@@ -216,7 +216,7 @@ function displayTime(item: TodoItem): string {
   justify-content: center;
   margin: 0;
   font-size: 14px;
-  color: rgba(220, 230, 255, 0.54);
+  color: var(--home-text-tertiary);
   text-align: center;
 }
 </style>

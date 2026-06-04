@@ -95,7 +95,7 @@ onMounted(loadAll)
   min-height: 100vh;
   padding: 8px;
   overflow-x: clip;
-  background: #020617;
+  background: var(--home-shell-bg);
 }
 
 .home__shell {
@@ -106,7 +106,7 @@ onMounted(loadAll)
   height: calc(100vh - 16px);
   min-height: 880px;
   overflow: hidden;
-  border: 1px solid rgba(160, 190, 255, 0.15);
+  border: 1px solid var(--home-shell-border);
   border-radius: 24px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -141,11 +141,11 @@ onMounted(loadAll)
 }
 
 .home :deep(.glass-panel) {
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(18, 43, 82, 0.54);
-  border: 1px solid rgba(178, 203, 255, 0.16);
+  color: var(--home-text-primary);
+  background: var(--home-panel-bg);
+  border: 1px solid var(--home-panel-border);
   border-radius: 16px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 20px 50px rgba(0, 0, 0, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), var(--home-panel-shadow);
   backdrop-filter: blur(26px) saturate(170%);
   -webkit-backdrop-filter: blur(26px) saturate(170%);
 }
@@ -156,7 +156,7 @@ onMounted(loadAll)
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-12) 0;
-  color: rgba(220, 230, 255, 0.7);
+  color: var(--home-text-secondary);
 }
 
 .retry-btn {

@@ -158,9 +158,7 @@ function onOpenAdmin(): void {
   justify-content: space-between;
   height: 64px;
   padding: 0 32px;
-  background:
-    linear-gradient(180deg, rgba(4, 15, 34, 0.58) 0%, rgba(4, 15, 34, 0.26) 68%, rgba(4, 15, 34, 0.08) 100%),
-    linear-gradient(90deg, rgba(35, 95, 180, 0.1), rgba(24, 55, 110, 0.04) 58%, rgba(5, 18, 42, 0.08));
+  background: var(--home-topbar-bg);
   border: none;
   border-radius: 22px 22px 0 0;
 }
@@ -170,7 +168,7 @@ function onOpenAdmin(): void {
   inset: 0 0 auto;
   height: 1px;
   content: '';
-  background: linear-gradient(90deg, transparent, rgba(190, 215, 255, 0.2), transparent);
+  background: linear-gradient(90deg, transparent, var(--home-line-highlight), transparent);
   opacity: 0.42;
 }
 
@@ -191,9 +189,9 @@ function onOpenAdmin(): void {
   width: 34px;
   height: 34px;
   color: #ffffff;
-  background: linear-gradient(135deg, #69a8ff, #1d5eff);
+  background: var(--brand-grad);
   border-radius: 11px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 10px 25px rgba(37, 99, 235, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 10px 25px var(--brand-shadow);
 }
 
 .topbar__actions {
@@ -208,7 +206,7 @@ function onOpenAdmin(): void {
   justify-content: center;
   width: 44px;
   height: 44px;
-  color: rgba(235, 242, 255, 0.86);
+  color: var(--home-text-secondary);
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
@@ -223,7 +221,7 @@ function onOpenAdmin(): void {
 }
 
 :deep(.theme-toggle) {
-  color: rgba(235, 242, 255, 0.86);
+  color: var(--home-text-secondary);
 }
 
 :deep(.theme-toggle:hover) {
@@ -252,7 +250,7 @@ function onOpenAdmin(): void {
 
 .user-trigger:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(160, 190, 255, 0.32);
+  border-color: var(--home-search-border);
 }
 
 .user-avatar {
@@ -264,7 +262,7 @@ function onOpenAdmin(): void {
   font-size: 16px;
   font-weight: 700;
   color: #ffffff;
-  background: linear-gradient(135deg, #7c82ff, #4451c9);
+  background: var(--avatar-grad);
   border-radius: var(--radius-full);
 }
 

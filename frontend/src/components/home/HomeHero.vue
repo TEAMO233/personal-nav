@@ -30,13 +30,13 @@ const auth = useAuthStore()
   font-size: clamp(34px, 3.2vw, 46px);
   font-weight: 800;
   line-height: 1.1;
-  color: rgba(255, 255, 255, 0.96);
+  color: var(--home-text-primary);
 }
 
 .hero__subtitle {
   margin-top: 12px;
   font-size: 17px;
-  color: rgba(220, 230, 255, 0.72);
+  color: var(--home-text-secondary);
 }
 
 .hero__search {

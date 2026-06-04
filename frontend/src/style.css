@@ -23,7 +23,8 @@
   --text-large-title: 34px;
 
   /* 系统强调色 */
-  --system-blue: #007aff;
+  --system-blue: #b45309;
+  --system-purple: #7c3aed;
   --system-red: #ff3b30;
   --system-green: #34c759;
   --system-gray: #8e8e93;
@@ -81,7 +82,7 @@
   color-scheme: light;
 
   /* 预留:M7 按需引入 Element Plus 时,让其控件主色与圆角对齐 HIG */
-  --el-color-primary: #007aff;
+  --el-color-primary: #b45309;
   --el-border-radius-base: 10px;
 
   /* 玻璃面板(首页玻璃拟态;亮色:偏白半透明) */
@@ -89,19 +90,43 @@
   --glass-border: rgba(255, 255, 255, 0.7);
   --glass-highlight: rgba(255, 255, 255, 0.9);
   --glass-blur: 24px;
-  --glass-shadow: 0 20px 50px rgba(30, 80, 160, 0.12);
+  --glass-shadow: 0 20px 50px rgba(146, 64, 14, 0.12);
 
-  /* 首页动态背景(亮色:浅蓝白柔光) */
+  /* 首页动态背景(亮色:暖砂柔光) */
   --home-bg:
-    radial-gradient(circle at 50% 0%, rgba(120, 170, 255, 0.25), transparent 40%),
-    radial-gradient(circle at 15% 25%, rgba(150, 210, 255, 0.18), transparent 35%),
-    linear-gradient(135deg, #eef3fb 0%, #e6eef9 45%, #eef3fb 100%);
-  --home-glow-1: rgba(90, 150, 255, 0.28);
-  --home-glow-2: rgba(120, 200, 255, 0.22);
-  --home-glow-3: rgba(150, 130, 255, 0.2);
+    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.24), transparent 40%),
+    radial-gradient(circle at 15% 25%, rgba(234, 88, 12, 0.14), transparent 35%),
+    linear-gradient(135deg, #fbf4ea 0%, #f3e4cf 45%, #fbf7f0 100%);
+  --home-glow-1: rgba(245, 158, 11, 0.28);
+  --home-glow-2: rgba(234, 88, 12, 0.18);
+  --home-glow-3: rgba(124, 58, 237, 0.12);
+  --home-shell-bg: #1f1308;
+  --home-shell-border: rgba(255, 213, 148, 0.18);
+  --home-panel-bg: rgba(64, 36, 16, 0.56);
+  --home-panel-border: rgba(255, 219, 166, 0.18);
+  --home-panel-shadow: 0 20px 50px rgba(35, 20, 8, 0.28);
+  --home-topbar-bg:
+    linear-gradient(180deg, rgba(40, 24, 10, 0.6) 0%, rgba(40, 24, 10, 0.28) 68%, rgba(40, 24, 10, 0.08) 100%),
+    linear-gradient(90deg, rgba(180, 83, 9, 0.12), rgba(120, 53, 15, 0.08) 58%, rgba(31, 19, 8, 0.12));
+  --home-line-highlight: rgba(255, 222, 170, 0.24);
+  --home-text-primary: rgba(255, 250, 242, 0.96);
+  --home-text-secondary: rgba(255, 236, 214, 0.72);
+  --home-text-tertiary: rgba(255, 236, 214, 0.62);
+  --home-search-bg: rgba(255, 255, 255, 0.08);
+  --home-search-border: rgba(255, 213, 148, 0.34);
+  --home-search-shadow: 0 20px 60px rgba(146, 64, 14, 0.2);
+  --home-menu-bg: rgba(46, 28, 13, 0.9);
+  --home-arc-border: rgba(251, 191, 36, 0.24) transparent transparent transparent;
+  --home-arc-border-soft: rgba(253, 230, 138, 0.16) transparent transparent transparent;
+  --home-arc-shadow: rgba(245, 158, 11, 0.16);
+  --brand-grad: linear-gradient(135deg, #f59e0b, #b45309);
+  --brand-shadow: rgba(180, 83, 9, 0.35);
+  --avatar-grad: linear-gradient(135deg, #f97316, #a16207);
+  --feature-blue: #d97706;
 
-  /* 圆形主按钮的蓝色渐变 */
-  --accent-grad: linear-gradient(135deg, #5ea0ff, #2563eb);
+  /* 圆形主按钮渐变 */
+  --accent-grad: linear-gradient(135deg, #f59e0b, #b45309);
+  --accent-shadow: rgba(180, 83, 9, 0.38);
 
   font-family: var(--font-system);
   -webkit-font-smoothing: antialiased;
@@ -111,7 +136,8 @@
 
 /* 2. 设计令牌:暗色(html.dark 覆盖) */
 html.dark {
-  --system-blue: #0a84ff;
+  --system-blue: #f59e0b;
+  --system-purple: #a78bfa;
   --system-red: #ff453a;
   --system-green: #30d158;
   --system-gray: #8e8e93;
@@ -136,7 +162,7 @@ html.dark {
 
   color-scheme: dark;
 
-  --el-color-primary: #0a84ff;
+  --el-color-primary: #f59e0b;
 
   /* 玻璃面板(深色:偏白低透明,贴近 macOS 暗色玻璃) */
   --glass-bg: rgba(255, 255, 255, 0.075);
@@ -145,7 +171,88 @@ html.dark {
   --glass-blur: 26px;
   --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
 
-  /* 首页动态背景(深色:深蓝→午夜蓝 + 蓝/青/紫光) */
+  /* 首页动态背景(深色:深棕黑 + 琥珀柔光) */
+  --home-bg:
+    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.3), transparent 38%),
+    radial-gradient(circle at 18% 28%, rgba(234, 88, 12, 0.16), transparent 32%),
+    linear-gradient(135deg, #120b05 0%, #2a1708 45%, #120b05 100%);
+  --home-glow-1: rgba(245, 158, 11, 0.36);
+  --home-glow-2: rgba(234, 88, 12, 0.24);
+  --home-glow-3: rgba(124, 58, 237, 0.18);
+  --home-shell-bg: #120b05;
+  --home-shell-border: rgba(255, 213, 148, 0.15);
+  --home-panel-bg: rgba(64, 36, 16, 0.54);
+  --home-panel-border: rgba(255, 219, 166, 0.16);
+  --home-panel-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+  --home-topbar-bg:
+    linear-gradient(180deg, rgba(40, 24, 10, 0.58) 0%, rgba(40, 24, 10, 0.26) 68%, rgba(40, 24, 10, 0.08) 100%),
+    linear-gradient(90deg, rgba(180, 83, 9, 0.1), rgba(120, 53, 15, 0.05) 58%, rgba(31, 19, 8, 0.08));
+  --home-line-highlight: rgba(255, 222, 170, 0.2);
+  --home-text-primary: rgba(255, 250, 242, 0.96);
+  --home-text-secondary: rgba(255, 236, 214, 0.72);
+  --home-text-tertiary: rgba(255, 236, 214, 0.62);
+  --home-search-bg: rgba(255, 255, 255, 0.08);
+  --home-search-border: rgba(255, 213, 148, 0.34);
+  --home-search-shadow: 0 20px 60px rgba(146, 64, 14, 0.22);
+  --home-menu-bg: rgba(46, 28, 13, 0.9);
+  --home-arc-border: rgba(251, 191, 36, 0.22) transparent transparent transparent;
+  --home-arc-border-soft: rgba(253, 230, 138, 0.16) transparent transparent transparent;
+  --home-arc-shadow: rgba(245, 158, 11, 0.16);
+  --brand-grad: linear-gradient(135deg, #f59e0b, #b45309);
+  --brand-shadow: rgba(180, 83, 9, 0.35);
+  --avatar-grad: linear-gradient(135deg, #f97316, #a16207);
+  --feature-blue: #d97706;
+  --accent-grad: linear-gradient(135deg, #f59e0b, #b45309);
+  --accent-shadow: rgba(180, 83, 9, 0.4);
+}
+
+/* 2b. 经典蓝配色:用户可在设置里切回原风格 */
+html[data-color-theme='classic'] {
+  --system-blue: #007aff;
+  --system-purple: #7c3aed;
+  --el-color-primary: #007aff;
+
+  --glass-shadow: 0 20px 50px rgba(30, 80, 160, 0.12);
+
+  --home-bg:
+    radial-gradient(circle at 50% 0%, rgba(120, 170, 255, 0.25), transparent 40%),
+    radial-gradient(circle at 15% 25%, rgba(150, 210, 255, 0.18), transparent 35%),
+    linear-gradient(135deg, #eef3fb 0%, #e6eef9 45%, #eef3fb 100%);
+  --home-glow-1: rgba(90, 150, 255, 0.28);
+  --home-glow-2: rgba(120, 200, 255, 0.22);
+  --home-glow-3: rgba(150, 130, 255, 0.2);
+  --home-shell-bg: #020617;
+  --home-shell-border: rgba(160, 190, 255, 0.15);
+  --home-panel-bg: rgba(18, 43, 82, 0.54);
+  --home-panel-border: rgba(178, 203, 255, 0.16);
+  --home-panel-shadow: 0 20px 50px rgba(0, 0, 0, 0.24);
+  --home-topbar-bg:
+    linear-gradient(180deg, rgba(4, 15, 34, 0.58) 0%, rgba(4, 15, 34, 0.26) 68%, rgba(4, 15, 34, 0.08) 100%),
+    linear-gradient(90deg, rgba(35, 95, 180, 0.1), rgba(24, 55, 110, 0.04) 58%, rgba(5, 18, 42, 0.08));
+  --home-line-highlight: rgba(190, 215, 255, 0.2);
+  --home-text-primary: rgba(255, 255, 255, 0.96);
+  --home-text-secondary: rgba(220, 230, 255, 0.72);
+  --home-text-tertiary: rgba(220, 230, 255, 0.62);
+  --home-search-bg: rgba(255, 255, 255, 0.08);
+  --home-search-border: rgba(160, 190, 255, 0.34);
+  --home-search-shadow: 0 20px 60px rgba(30, 100, 255, 0.22);
+  --home-menu-bg: rgba(11, 28, 58, 0.9);
+  --home-arc-border: rgba(96, 165, 250, 0.24) transparent transparent transparent;
+  --home-arc-border-soft: rgba(125, 180, 255, 0.16) transparent transparent transparent;
+  --home-arc-shadow: rgba(59, 130, 246, 0.16);
+  --brand-grad: linear-gradient(135deg, #69a8ff, #1d5eff);
+  --brand-shadow: rgba(37, 99, 235, 0.35);
+  --avatar-grad: linear-gradient(135deg, #7c82ff, #4451c9);
+  --feature-blue: #4c8dff;
+  --accent-grad: linear-gradient(135deg, #5ea0ff, #2563eb);
+  --accent-shadow: rgba(37, 99, 235, 0.4);
+}
+
+html.dark[data-color-theme='classic'] {
+  --system-blue: #0a84ff;
+  --system-purple: #a78bfa;
+  --el-color-primary: #0a84ff;
+
   --home-bg:
     radial-gradient(circle at 50% 0%, rgba(70, 130, 255, 0.35), transparent 38%),
     radial-gradient(circle at 18% 28%, rgba(56, 189, 248, 0.18), transparent 32%),

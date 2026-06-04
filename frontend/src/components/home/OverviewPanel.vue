@@ -9,7 +9,7 @@ import AppIcon from '@/components/AppIcon.vue'
 const todoStore = useTodoStore()
 
 const ringStyle = computed(() => ({
-  background: `conic-gradient(#2f78ff 0 ${todoStore.todayCompletionRate}%, rgba(255,255,255,0.1) ${todoStore.todayCompletionRate}% 100%)`,
+  '--ring-percent': `${todoStore.todayCompletionRate}%`,
 }))
 </script>
 
@@ -69,11 +69,11 @@ const ringStyle = computed(() => ({
   align-items: center;
   gap: 8px;
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .panel__head svg {
-  color: #5f9cff;
+  color: var(--system-blue);
 }
 
 .overview__main {
@@ -114,12 +114,12 @@ const ringStyle = computed(() => ({
 
 .overview__text strong {
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--home-text-primary);
 }
 
 .overview__text span {
   font-size: 14px;
-  color: rgba(220, 230, 255, 0.62);
+  color: var(--home-text-tertiary);
 }
 
 .overview__stats {
@@ -139,17 +139,17 @@ const ringStyle = computed(() => ({
 }
 
 .mini-stat svg {
-  color: #3b82f6;
+  color: var(--system-blue);
 }
 
 .mini-stat span {
   font-size: 12px;
-  color: rgba(220, 230, 255, 0.58);
+  color: var(--home-text-tertiary);
 }
 
 .mini-stat strong {
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--home-text-primary);
 }
 
 .mini-stat--ok strong,
@@ -160,7 +160,7 @@ const ringStyle = computed(() => ({
 .overview__quote {
   margin: 14px 0 0;
   padding: 14px 20px;
-  color: rgba(220, 230, 255, 0.7);
+  color: var(--home-text-secondary);
   background: rgba(255, 255, 255, 0.055);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
@@ -173,6 +173,10 @@ const ringStyle = computed(() => ({
 
 .overview__quote small {
   margin-top: 8px;
-  color: rgba(220, 230, 255, 0.5);
+  color: var(--home-text-tertiary);
 }
 </style>
+  background: conic-gradient(
+    var(--system-blue) 0 var(--ring-percent),
+    rgba(255, 255, 255, 0.1) var(--ring-percent) 100%
+  );

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * 首页动态背景:深蓝渐变底色 + macOS 风弧形流线光效。
+ * 首页动态背景:主题渐变底色 + macOS 风弧形流线光效。
  */
 </script>
 
@@ -21,10 +21,7 @@
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(70, 130, 255, 0.35), transparent 38%),
-    radial-gradient(circle at 16% 26%, rgba(56, 189, 248, 0.18), transparent 30%),
-    linear-gradient(135deg, #020617 0%, #061b3a 48%, #020617 100%);
+  background: var(--home-bg);
 }
 
 .dyn-bg__arc {
@@ -32,8 +29,8 @@
   left: 50%;
   width: 1900px;
   height: 520px;
-  border: 1px solid rgba(96, 165, 250, 0.22);
-  border-color: rgba(96, 165, 250, 0.24) transparent transparent transparent;
+  border: 1px solid color-mix(in srgb, var(--system-blue) 24%, transparent);
+  border-color: var(--home-arc-border);
   border-radius: 50%;
   filter: blur(3px);
   transform: translateX(-50%) rotate(-5deg);
@@ -41,13 +38,13 @@
 
 .dyn-bg__arc--1 {
   top: 185px;
-  box-shadow: 0 -22px 75px rgba(59, 130, 246, 0.16);
+  box-shadow: 0 -22px 75px var(--home-arc-shadow);
 }
 
 .dyn-bg__arc--2 {
   top: 250px;
   width: 2100px;
-  border-color: rgba(125, 180, 255, 0.16) transparent transparent transparent;
+  border-color: var(--home-arc-border-soft);
   transform: translateX(-50%) rotate(4deg);
 }
 
@@ -63,7 +60,7 @@
   left: 33%;
   width: 430px;
   height: 430px;
-  background: rgba(56, 130, 255, 0.42);
+  background: var(--home-glow-1);
   animation: dyn-float-1 26s var(--ease-default) infinite alternate;
 }
 
@@ -72,7 +69,7 @@
   right: 2%;
   width: 360px;
   height: 360px;
-  background: rgba(56, 189, 248, 0.22);
+  background: var(--home-glow-2);
   animation: dyn-float-2 32s var(--ease-default) infinite alternate;
 }
 
@@ -81,7 +78,7 @@
   left: 18%;
   width: 560px;
   height: 560px;
-  background: rgba(37, 99, 235, 0.18);
+  background: var(--home-glow-3);
   animation: dyn-float-3 30s var(--ease-default) infinite alternate;
 }
 

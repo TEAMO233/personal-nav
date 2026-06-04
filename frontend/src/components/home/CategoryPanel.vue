@@ -40,7 +40,7 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-  color: rgba(220, 230, 255, 0.72);
+  color: var(--home-text-secondary);
 }
 
 .panel__head h2 {
@@ -48,7 +48,7 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
   align-items: center;
   gap: 8px;
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .category__list {
@@ -66,19 +66,19 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
 }
 
 .category__icon {
-  color: #3bb6ff;
+  color: var(--system-blue);
 }
 
 .category__row span {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--home-text-primary);
 }
 
 .category__row b {
   min-width: 34px;
   padding: 3px 10px;
   font-size: 13px;
-  color: rgba(220, 230, 255, 0.8);
+  color: var(--home-text-secondary);
   text-align: center;
   background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-full);
@@ -92,7 +92,7 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
   min-height: 140px;
   margin: 0;
   font-size: 14px;
-  color: rgba(220, 230, 255, 0.54);
+  color: var(--home-text-tertiary);
   text-align: center;
 }
 </style>

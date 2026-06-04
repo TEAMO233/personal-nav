@@ -40,6 +40,13 @@ Apple-HIG-flavored token set. Always prefer a token over a hard-coded value.
 - The same `html.dark` class drives both these tokens and Element Plus dark mode.
 - **Every new visual must define both light and dark values.** Glass differs per theme: dark = low-opacity white over deep blue; light = higher-opacity white over soft light.
 
+## Accent palette themes
+
+- Color palette is separate from light/dark mode. `src/stores/theme.ts` writes `document.documentElement.dataset.colorTheme` and persists it to `localStorage` key `nav-color-theme`.
+- Palette options currently are `warm` (default, no `data-color-theme`-specific override needed) and `classic` (`html[data-color-theme='classic']` in `src/style.css`).
+- Home visuals must consume semantic home tokens such as `--home-bg`, `--home-text-secondary`, `--home-search-border`, `--brand-grad`, `--avatar-grad`, `--accent-grad`, and `--feature-blue`. Do not hard-code blue gradients or blue-tinted RGBA values inside home components.
+- If adding another palette, add the option in `PALETTE_OPTIONS`, then provide both normal and `html.dark[data-color-theme='<key>']` token values in `src/style.css`.
+
 ---
 
 ## Glassmorphism Convention

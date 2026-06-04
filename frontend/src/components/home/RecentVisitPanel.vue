@@ -70,11 +70,11 @@ function relativeTime(value: string): string {
   align-items: center;
   gap: 8px;
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .panel__head svg {
-  color: #5f9cff;
+  color: var(--system-blue);
 }
 
 .recent__list {
@@ -107,7 +107,7 @@ function relativeTime(value: string): string {
   font-size: 13px;
   font-weight: 800;
   color: #ffffff;
-  background: linear-gradient(135deg, #111827, #3b82f6);
+  background: var(--avatar-grad);
   border-radius: 8px;
 }
 
@@ -126,13 +126,13 @@ function relativeTime(value: string): string {
 
 .recent__text strong {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--home-text-primary);
 }
 
 .recent__text small,
 .recent__time {
   font-size: 12px;
-  color: rgba(220, 230, 255, 0.55);
+  color: var(--home-text-tertiary);
 }
 
 .panel__empty {
@@ -143,7 +143,7 @@ function relativeTime(value: string): string {
   min-height: 140px;
   margin: 0;
   font-size: 14px;
-  color: rgba(220, 230, 255, 0.54);
+  color: var(--home-text-tertiary);
   text-align: center;
 }
 </style>

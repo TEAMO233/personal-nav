@@ -164,7 +164,7 @@ function displayDate(value: string): string {
   align-items: center;
   gap: 8px;
   font-size: 17px;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .panel__actions {
@@ -179,7 +179,7 @@ function displayDate(value: string): string {
   justify-content: center;
   width: 28px;
   height: 28px;
-  color: rgba(220, 230, 255, 0.7);
+  color: var(--home-text-secondary);
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 9px;
@@ -206,7 +206,7 @@ function displayDate(value: string): string {
 }
 
 .note__list::-webkit-scrollbar-thumb {
-  background: rgba(220, 230, 255, 0.18);
+  background: color-mix(in srgb, var(--home-text-secondary) 24%, transparent);
   border-radius: var(--radius-full);
 }
 
@@ -231,7 +231,7 @@ function displayDate(value: string): string {
   gap: 6px;
   min-width: 0;
   font-size: 12px;
-  color: rgba(220, 230, 255, 0.48);
+  color: color-mix(in srgb, var(--home-text-secondary) 66%, transparent);
 }
 
 .note__pin {
@@ -263,7 +263,7 @@ function displayDate(value: string): string {
   justify-content: center;
   width: 24px;
   height: 24px;
-  color: rgba(220, 230, 255, 0.58);
+  color: var(--home-text-tertiary);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
@@ -286,8 +286,8 @@ function displayDate(value: string): string {
   padding: 0 14px;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.92);
-  background: rgba(47, 120, 255, 0.24);
-  border: 1px solid rgba(125, 172, 255, 0.28);
+  background: color-mix(in srgb, var(--system-blue) 24%, transparent);
+  border: 1px solid color-mix(in srgb, var(--system-blue) 28%, transparent);
   border-radius: var(--radius-full);
   cursor: pointer;
 }
@@ -321,13 +321,13 @@ function displayDate(value: string): string {
   height: 34px;
   padding: 0 16px;
   color: #ffffff;
-  background: #2f78ff;
+  background: var(--system-blue);
   border: none;
   border-radius: var(--radius-full);
 }
 
 .note__editor-actions .note__cancel {
-  color: rgba(220, 230, 255, 0.78);
+  color: var(--home-text-secondary);
   background: rgba(255, 255, 255, 0.1);
 }
 </style>

@@ -282,20 +282,20 @@ onUnmounted(() => {
   max-width: 800px;
   height: 64px;
   padding: 0 8px 0 24px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(160, 190, 255, 0.34);
+  background: var(--home-search-bg);
+  border: 1px solid var(--home-search-border);
   border-radius: var(--radius-full);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 20px 60px rgba(30, 100, 255, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), var(--home-search-shadow);
   transition: box-shadow var(--duration-fast) var(--ease-default),
     border-color var(--duration-fast) var(--ease-default);
 }
 
 .search-bar:focus-within {
   border-color: color-mix(in srgb, var(--system-blue) 55%, transparent);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 20px 60px rgba(30, 100, 255, 0.28),
-    0 0 0 4px rgba(59, 130, 246, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--home-search-shadow),
+    0 0 0 4px color-mix(in srgb, var(--system-blue) 18%, transparent);
 }
 
 .engine-select {
@@ -310,7 +310,7 @@ onUnmounted(() => {
   height: 44px;
   width: 44px;
   padding: 0;
-  color: rgba(235, 242, 255, 0.92);
+  color: var(--home-text-primary);
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
@@ -347,7 +347,7 @@ onUnmounted(() => {
 }
 
 .search-input::placeholder {
-  color: rgba(220, 230, 255, 0.46);
+  color: color-mix(in srgb, var(--home-text-secondary) 64%, transparent);
 }
 
 .search-kbd {
@@ -357,7 +357,7 @@ onUnmounted(() => {
   font-size: var(--text-caption1);
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: rgba(235, 242, 255, 0.86);
+  color: var(--home-text-secondary);
   background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-full);
 }
@@ -370,11 +370,11 @@ onUnmounted(() => {
   width: 44px;
   height: 44px;
   color: #ffffff;
-  background: linear-gradient(135deg, #5ea0ff, #2563eb);
+  background: var(--accent-grad);
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 10px 30px var(--accent-shadow);
   transition: opacity var(--duration-fast) var(--ease-default),
     transform var(--duration-instant) var(--ease-default);
 }
@@ -408,8 +408,8 @@ onUnmounted(() => {
   margin: 0;
   padding: var(--space-1);
   list-style: none;
-  background: rgba(11, 28, 58, 0.9);
-  border: 1px solid rgba(178, 203, 255, 0.18);
+  background: var(--home-menu-bg);
+  border: 1px solid var(--home-panel-border);
   border-radius: 18px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 55px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(22px) saturate(170%);
@@ -457,8 +457,8 @@ onUnmounted(() => {
   padding: var(--space-1);
   overflow-y: auto;
   list-style: none;
-  background: rgba(11, 28, 58, 0.9);
-  border: 1px solid rgba(178, 203, 255, 0.18);
+  background: var(--home-menu-bg);
+  border: 1px solid var(--home-panel-border);
   border-radius: 18px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 55px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(22px) saturate(170%);
@@ -525,7 +525,7 @@ onUnmounted(() => {
 
 .history-foot {
   margin-top: var(--space-1);
-  border-top: 0.5px solid rgba(178, 203, 255, 0.14);
+  border-top: 0.5px solid var(--home-panel-border);
 }
 
 .history-clear {
