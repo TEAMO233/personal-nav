@@ -7,11 +7,6 @@
 <template>
   <div class="dyn-bg" aria-hidden="true">
     <span class="dyn-bg__grid"></span>
-    <span class="dyn-bg__arc dyn-bg__arc--1"></span>
-    <span class="dyn-bg__arc dyn-bg__arc--2"></span>
-    <span class="dyn-bg__beam dyn-bg__beam--1"></span>
-    <span class="dyn-bg__beam dyn-bg__beam--2"></span>
-    <span class="dyn-bg__beam dyn-bg__beam--3"></span>
   </div>
 </template>
 
@@ -45,83 +40,4 @@
   opacity: 0.7;
 }
 
-.dyn-bg__arc {
-  position: absolute;
-  width: 58%;
-  height: 1px;
-  border: none;
-  border-radius: var(--radius-full);
-  opacity: 0.78;
-  background: linear-gradient(90deg, transparent, var(--home-line-highlight), transparent);
-}
-
-.dyn-bg__arc--1 {
-  top: 218px;
-  left: 14%;
-  box-shadow: 0 0 44px var(--home-arc-shadow);
-  transform: rotate(-7deg);
-}
-
-.dyn-bg__arc--2 {
-  top: 286px;
-  right: 10%;
-  width: 42%;
-  opacity: 0.55;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--system-blue) 20%, transparent), transparent);
-  transform: rotate(9deg);
-}
-
-.dyn-bg__beam {
-  position: absolute;
-  height: 1px;
-  border-radius: var(--radius-full);
-  filter: blur(0.4px);
-  opacity: 0.9;
-  will-change: transform;
-}
-
-.dyn-bg__beam--1 {
-  top: 118px;
-  left: 22%;
-  width: 56%;
-  background: var(--home-glow-1);
-  animation: dyn-drift-1 18s var(--ease-default) infinite alternate;
-}
-
-.dyn-bg__beam--2 {
-  top: 335px;
-  right: 6%;
-  width: 34%;
-  background: var(--home-glow-2);
-  animation: dyn-drift-2 24s var(--ease-default) infinite alternate;
-}
-
-.dyn-bg__beam--3 {
-  bottom: 22%;
-  left: 8%;
-  width: 42%;
-  background: var(--home-glow-3);
-  animation: dyn-drift-3 22s var(--ease-default) infinite alternate;
-}
-
-@keyframes dyn-drift-1 {
-  from { transform: translateX(-22px); }
-  to { transform: translateX(42px); }
-}
-
-@keyframes dyn-drift-2 {
-  from { transform: translateX(36px); }
-  to { transform: translateX(-46px); }
-}
-
-@keyframes dyn-drift-3 {
-  from { transform: translateX(-28px); }
-  to { transform: translateX(34px); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dyn-bg__beam {
-    animation: none;
-  }
-}
 </style>
