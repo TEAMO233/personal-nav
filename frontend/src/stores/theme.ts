@@ -6,7 +6,7 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 
 export type ThemeMode = 'light' | 'dark'
-export type ThemePalette = 'warm' | 'classic'
+export type ThemePalette = 'warm' | 'classic' | 'obsidian' | 'ocean' | 'violet' | 'mist'
 
 const MODE_STORAGE_KEY = 'nav-theme'
 const PALETTE_STORAGE_KEY = 'nav-color-theme'
@@ -28,6 +28,30 @@ export const PALETTE_OPTIONS: Array<{
     label: '经典蓝',
     description: '保留原来的清冷蓝色玻璃风格。',
     swatches: ['#2563EB', '#60A5FA', '#EEF3FB'],
+  },
+  {
+    value: 'obsidian',
+    label: '曜石绿',
+    description: '深色高对比工作台,用绿色突出状态与行动。',
+    swatches: ['#020617', '#0E1223', '#22C55E'],
+  },
+  {
+    value: 'ocean',
+    label: '深海蓝',
+    description: '更沉稳的冷色夜间主题,适合长时间浏览。',
+    swatches: ['#06111F', '#0B1B2E', '#38BDF8'],
+  },
+  {
+    value: 'violet',
+    label: '紫夜金',
+    description: '暗紫底色搭配金色点缀,更具个性和高级感。',
+    swatches: ['#0F0F23', '#312E81', '#CA8A04'],
+  },
+  {
+    value: 'mist',
+    label: '雾白青',
+    description: '清爽明亮的日间主题,用青绿色保持专注感。',
+    swatches: ['#F0FDFA', '#0D9488', '#EA580C'],
   },
 ]
 
@@ -52,7 +76,16 @@ function readInitialMode(): ThemeMode {
 function readInitialPalette(): ThemePalette {
   // 1. 只接受已知配色 key
   const saved = localStorage.getItem(PALETTE_STORAGE_KEY)
-  if (saved === 'warm' || saved === 'classic') return saved
+  if (
+    saved === 'warm' ||
+    saved === 'classic' ||
+    saved === 'obsidian' ||
+    saved === 'ocean' ||
+    saved === 'violet' ||
+    saved === 'mist'
+  ) {
+    return saved
+  }
   // 2. 新用户默认暖色,符合当前主页改色目标
   return 'warm'
 }
