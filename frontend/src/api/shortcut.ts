@@ -15,6 +15,16 @@ export function listShortcuts(): Promise<Shortcut[]> {
 }
 
 /**
+ * 获取当前用户首页精选快捷方式。
+ *
+ * @returns 首页精选快捷方式列表
+ */
+export function listFeaturedShortcuts(): Promise<Shortcut[]> {
+  // 1. 拉取本人首页精选快捷方式
+  return http.get<Shortcut[]>('/shortcuts/featured').then((r) => r.data)
+}
+
+/**
  * 新建快捷方式(追加到所属分组末尾)。
  *
  * @param input 分组、名称、URL、可选图标
@@ -34,7 +44,16 @@ export function createShortcut(input: ShortcutInput): Promise<Shortcut> {
  */
 export function updateShortcut(id: string, input: ShortcutInput): Promise<Shortcut> {
   // 1. 只提交可改字段(groupId 由排序接口处理)
-  const body = { name: input.name, url: input.url, iconAssetId: input.iconAssetId }
+  const body = {
+    name: input.name,
+    url: input.url,
+    iconAssetId: input.iconAssetId,
+    description: input.description,
+    iconKey: input.iconKey,
+    accent: input.accent,
+    featured: input.featured,
+    featuredOrder: input.featuredOrder,
+  }
   return http.put<Shortcut>(`/shortcuts/${id}`, body).then((r) => r.data)
 }
 

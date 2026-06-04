@@ -13,10 +13,20 @@ import java.util.UUID;
  * @param name        名称
  * @param url         目标 URL
  * @param iconAssetId 图标媒体 id(可空)
+ * @param description 首页卡片描述(可空)
+ * @param iconKey     首页内置图标 key(可空)
+ * @param accent      首页强调色 key(可空)
+ * @param featured    是否首页精选(可空,默认 false)
+ * @param featuredOrder 首页精选排序(可空,默认 0)
  */
 public record CreateShortcutRequest(
         @NotNull(message = "分组 id 不能为空") UUID groupId,
         @NotBlank(message = "名称不能为空") @Size(max = 64, message = "名称过长") String name,
         @NotBlank(message = "URL 不能为空") @Size(max = 2048, message = "URL 过长") String url,
-        UUID iconAssetId) {
+        UUID iconAssetId,
+        @Size(max = 160, message = "描述过长") String description,
+        @Size(max = 32, message = "图标 key 过长") String iconKey,
+        @Size(max = 32, message = "强调色 key 过长") String accent,
+        Boolean featured,
+        Integer featuredOrder) {
 }

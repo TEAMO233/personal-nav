@@ -16,6 +16,7 @@ export interface GroupWithShortcuts {
 export const useShortcutStore = defineStore('shortcut', () => {
   const groups = ref<Group[]>([])
   const shortcuts = ref<Shortcut[]>([])
+  const featuredShortcuts = ref<Shortcut[]>([])
   const loaded = ref(false)
 
   // 按分组分桶:分组按 sortOrder,组内也按 sortOrder(用副本排序,不动原数组)
@@ -33,10 +34,15 @@ export const useShortcutStore = defineStore('shortcut', () => {
    * 并发加载分组与快捷方式。
    */
   async function load(): Promise<void> {
-    // 1. 两个列表一起拉
-    const [g, s] = await Promise.all([groupApi.listGroups(), shortcutApi.listShortcuts()])
+    // 1. 分组、全部快捷方式与首页精选一起拉
+    const [g, s, f] = await Promise.all([
+      groupApi.listGroups(),
+      shortcutApi.listShortcuts(),
+      shortcutApi.listFeaturedShortcuts(),
+    ])
     groups.value = g
     shortcuts.value = s
+    featuredShortcuts.value = f
     loaded.value = true
   }
 
@@ -102,6 +108,11 @@ export const useShortcutStore = defineStore('shortcut', () => {
     // 1. 建好后追加
     const s = await shortcutApi.createShortcut(input)
     shortcuts.value.push(s)
+    if (s.featured) {
+      featuredShortcuts.value = [...featuredShortcuts.value, s].sort(
+        (a, b) => a.featuredOrder - b.featuredOrder || a.sortOrder - b.sortOrder,
+      )
+    }
     return s
   }
 
@@ -116,6 +127,12 @@ export const useShortcutStore = defineStore('shortcut', () => {
     const s = await shortcutApi.updateShortcut(id, input)
     const i = shortcuts.value.findIndex((x) => x.id === id)
     if (i >= 0) shortcuts.value[i] = s
+    // 2. 同步首页精选列表
+    featuredShortcuts.value = s.featured
+      ? [...featuredShortcuts.value.filter((x) => x.id !== id), s].sort(
+          (a, b) => a.featuredOrder - b.featuredOrder || a.sortOrder - b.sortOrder,
+        )
+      : featuredShortcuts.value.filter((x) => x.id !== id)
   }
 
   /**
@@ -127,6 +144,7 @@ export const useShortcutStore = defineStore('shortcut', () => {
     // 1. 删除后本地移除
     await shortcutApi.deleteShortcut(id)
     shortcuts.value = shortcuts.value.filter((s) => s.id !== id)
+    featuredShortcuts.value = featuredShortcuts.value.filter((s) => s.id !== id)
   }
 
   /**
@@ -137,6 +155,9 @@ export const useShortcutStore = defineStore('shortcut', () => {
   async function reorderShortcuts(items: ShortcutOrderItem[]): Promise<void> {
     // 1. 提交全量新位置并用返回列表覆盖
     shortcuts.value = await shortcutApi.reorderShortcuts(items)
+    featuredShortcuts.value = featuredShortcuts.value
+      .map((s) => shortcuts.value.find((x) => x.id === s.id) ?? s)
+      .sort((a, b) => a.featuredOrder - b.featuredOrder || a.sortOrder - b.sortOrder)
   }
 
   /**
@@ -145,12 +166,14 @@ export const useShortcutStore = defineStore('shortcut', () => {
   function reset(): void {
     groups.value = []
     shortcuts.value = []
+    featuredShortcuts.value = []
     loaded.value = false
   }
 
   return {
     groups,
     shortcuts,
+    featuredShortcuts,
     loaded,
     grouped,
     load,

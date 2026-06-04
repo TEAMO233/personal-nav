@@ -4,48 +4,32 @@
 
 ---
 
-## Overview
-
-<!--
-Document your project's quality standards here.
-
-Questions to answer:
-- What patterns are forbidden?
-- What linting rules do you enforce?
-- What are your testing requirements?
-- What code review standards apply?
--->
-
-(To be filled by the team)
-
----
-
 ## Forbidden Patterns
 
-<!-- Patterns that should never be used and why -->
+### No fake data / fake features for visual effect
+The UI must render **only real data** backed by the API/stores. If a design/template asks for a module with no data source (e.g. todos, "focus score", visit history), do NOT fabricate front-end mock data to fill it — either propose a real backend change or drop the module. This mirrors the project's anti-fallback rule (never mask a missing capability with fake output).
 
-(To be filled by the team)
+### No new styling/runtime stacks
+No SCSS/Sass, no alternative UI framework, no Three.js for backgrounds. Backgrounds are pure CSS.
 
 ---
 
 ## Required Patterns
 
-<!-- Patterns that must always be used -->
-
-(To be filled by the team)
+- **Real-data mapping**: when a "dashboard" is desired, build it from real stores (e.g. category nav from `shortcutStore.grouped`, counts from store array lengths) instead of inventing metrics.
+- Pair `backdrop-filter` with `-webkit-` prefix; respect `prefers-reduced-motion`.
+- Define both light and dark values for any new visual (see styling.md).
 
 ---
 
 ## Testing Requirements
 
-<!-- What level of testing is expected -->
-
-(To be filled by the team)
+- No automated frontend test suite yet. The current bar is:
+  - `npm run build` (= `vue-tsc -b && vite build`) must pass — **type-check is part of the build**.
+  - Manual smoke test of affected flows (theme toggle, search/engine/history, navigation).
 
 ---
 
-## Code Review Checklist
+## Build Gotcha
 
-<!-- What reviewers should check -->
-
-(To be filled by the team)
+When adding components that rely on auto-import generated `*.d.ts`, run `npx vite build` once to refresh the d.ts files before `npm run build` (avoids spurious type errors). See project memory `frontend-build-ep-dts`.

@@ -84,6 +84,25 @@
   --el-color-primary: #007aff;
   --el-border-radius-base: 10px;
 
+  /* 玻璃面板(首页玻璃拟态;亮色:偏白半透明) */
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-highlight: rgba(255, 255, 255, 0.9);
+  --glass-blur: 24px;
+  --glass-shadow: 0 20px 50px rgba(30, 80, 160, 0.12);
+
+  /* 首页动态背景(亮色:浅蓝白柔光) */
+  --home-bg:
+    radial-gradient(circle at 50% 0%, rgba(120, 170, 255, 0.25), transparent 40%),
+    radial-gradient(circle at 15% 25%, rgba(150, 210, 255, 0.18), transparent 35%),
+    linear-gradient(135deg, #eef3fb 0%, #e6eef9 45%, #eef3fb 100%);
+  --home-glow-1: rgba(90, 150, 255, 0.28);
+  --home-glow-2: rgba(120, 200, 255, 0.22);
+  --home-glow-3: rgba(150, 130, 255, 0.2);
+
+  /* 圆形主按钮的蓝色渐变 */
+  --accent-grad: linear-gradient(135deg, #5ea0ff, #2563eb);
+
   font-family: var(--font-system);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -118,6 +137,22 @@ html.dark {
   color-scheme: dark;
 
   --el-color-primary: #0a84ff;
+
+  /* 玻璃面板(深色:偏白低透明,贴近 macOS 暗色玻璃) */
+  --glass-bg: rgba(255, 255, 255, 0.075);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.16);
+  --glass-blur: 26px;
+  --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+
+  /* 首页动态背景(深色:深蓝→午夜蓝 + 蓝/青/紫光) */
+  --home-bg:
+    radial-gradient(circle at 50% 0%, rgba(70, 130, 255, 0.35), transparent 38%),
+    radial-gradient(circle at 18% 28%, rgba(56, 189, 248, 0.18), transparent 32%),
+    linear-gradient(135deg, #020617 0%, #061b3a 45%, #020617 100%);
+  --home-glow-1: rgba(56, 130, 255, 0.45);
+  --home-glow-2: rgba(56, 189, 248, 0.35);
+  --home-glow-3: rgba(139, 92, 246, 0.3);
 }
 
 /* 3. 基础重置与排版 */
@@ -414,4 +449,14 @@ a {
 
 .auth-alt a {
   font-weight: 600;
+}
+
+/* 8. 首页玻璃面板:概览看板共用 */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
 }

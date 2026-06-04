@@ -6,7 +6,8 @@
 
 ## Overview
 
-This directory contains guidelines for frontend development. Fill in each file with your project's specific conventions.
+Conventions for the Vue 3 + TypeScript + Element Plus + Pinia frontend (`frontend/`).
+Stack facts: plain CSS (no Sass), Vite build with `vue-tsc` type-check, in-house `AppIcon` (no icon library).
 
 ---
 
@@ -14,11 +15,12 @@ This directory contains guidelines for frontend development. Fill in each file w
 
 | Guide | Description | Status |
 |-------|-------------|--------|
-| [Directory Structure](./directory-structure.md) | Module organization and file layout | To fill |
-| [Component Guidelines](./component-guidelines.md) | Component patterns, props, composition | To fill |
-| [Hook Guidelines](./hook-guidelines.md) | Custom hooks, data fetching patterns | To fill |
+| [Directory Structure](./directory-structure.md) | Module organization and file layout | Drafted |
+| [Component Guidelines](./component-guidelines.md) | Component patterns, props, composition | Drafted |
+| [Styling & Design Tokens](./styling.md) | CSS tokens, theming, glassmorphism | Drafted |
+| [Hook Guidelines](./hook-guidelines.md) | Composables, data fetching patterns | To fill |
 | [State Management](./state-management.md) | Local state, global state, server state | To fill |
-| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | To fill |
+| [Quality Guidelines](./quality-guidelines.md) | Code standards, forbidden patterns | Drafted |
 | [Type Safety](./type-safety.md) | Type patterns, validation | To fill |
 
 ---

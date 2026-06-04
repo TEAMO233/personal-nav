@@ -3,21 +3,27 @@
  * 设置页:顶栏(返回首页 + 主题切换) + 选项卡切换"搜索引擎 / 快捷方式"两块管理区。
  * 进入时确保引擎、分组、快捷方式已加载(直接访问/刷新时需要)。
  */
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useEngineStore } from '@/stores/engine'
 import { useShortcutStore } from '@/stores/shortcut'
+import { useHomeBookmarkStore } from '@/stores/homeBookmark'
 import { ApiClientError } from '@/api/http'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import AppIcon from '@/components/AppIcon.vue'
 import EngineSection from '@/components/settings/EngineSection.vue'
 import ShortcutSection from '@/components/settings/ShortcutSection.vue'
+import HomeBookmarkSection from '@/components/settings/HomeBookmarkSection.vue'
 
+const route = useRoute()
 const router = useRouter()
 const engineStore = useEngineStore()
 const shortcutStore = useShortcutStore()
+const homeBookmarkStore = useHomeBookmarkStore()
 
-const activeTab = ref<'engines' | 'shortcuts'>('engines')
+type SettingsTab = 'engines' | 'shortcuts' | 'homeBookmarks'
+
+const activeTab = ref<SettingsTab>('engines')
 const error = ref('')
 
 /**
@@ -30,6 +36,7 @@ async function ensureLoaded(): Promise<void> {
     await Promise.all([
       engineStore.loaded ? Promise.resolve() : engineStore.load(),
       shortcutStore.loaded ? Promise.resolve() : shortcutStore.load(),
+      homeBookmarkStore.allLoaded ? Promise.resolve() : homeBookmarkStore.loadAll(),
     ])
   } catch (e) {
     // 2. 失败展示错误(401 会被拦截器跳登录)
@@ -45,7 +52,22 @@ function goHome(): void {
   router.push({ name: 'home' })
 }
 
-onMounted(ensureLoaded)
+/**
+ * 从 query 读取默认标签。
+ */
+function syncTabFromQuery(): void {
+  // 1. 只接受已知标签
+  const tab = route.query.tab
+  if (tab === 'engines' || tab === 'shortcuts' || tab === 'homeBookmarks') {
+    activeTab.value = tab
+  }
+}
+
+onMounted(() => {
+  syncTabFromQuery()
+  void ensureLoaded()
+})
+watch(() => route.query.tab, syncTabFromQuery)
 </script>
 
 <template>
@@ -75,6 +97,9 @@ onMounted(ensureLoaded)
         </el-tab-pane>
         <el-tab-pane label="快捷方式" name="shortcuts">
           <ShortcutSection />
+        </el-tab-pane>
+        <el-tab-pane label="首页书签" name="homeBookmarks">
+          <HomeBookmarkSection />
         </el-tab-pane>
       </el-tabs>
     </main>

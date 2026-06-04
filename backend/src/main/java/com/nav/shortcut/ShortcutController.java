@@ -45,6 +45,17 @@ public class ShortcutController {
     }
 
     /**
+     * 列出当前用户首页精选快捷方式。
+     *
+     * @return 首页精选快捷方式列表
+     */
+    @GetMapping("/featured")
+    public List<ShortcutResponse> featured() {
+        // 1. 取当前用户首页精选快捷方式
+        return shortcutService.featured(SecurityUtils.currentUserId());
+    }
+
+    /**
      * 新建快捷方式。
      *
      * @param request 新建请求

@@ -4,6 +4,7 @@ import com.nav.auth.dto.RegisterRequest;
 import com.nav.auth.dto.UserResponse;
 import com.nav.common.error.ApiException;
 import com.nav.engine.EngineService;
+import com.nav.shortcut.ShortcutService;
 import com.nav.user.InviteCode;
 import com.nav.user.InviteCodeRepository;
 import com.nav.user.Role;
@@ -27,13 +28,15 @@ public class AuthService {
     private final InviteCodeRepository inviteCodeRepository;
     private final PasswordEncoder passwordEncoder;
     private final EngineService engineService;
+    private final ShortcutService shortcutService;
 
     public AuthService(UserRepository userRepository, InviteCodeRepository inviteCodeRepository,
-                       PasswordEncoder passwordEncoder, EngineService engineService) {
+                       PasswordEncoder passwordEncoder, EngineService engineService, ShortcutService shortcutService) {
         this.userRepository = userRepository;
         this.inviteCodeRepository = inviteCodeRepository;
         this.passwordEncoder = passwordEncoder;
         this.engineService = engineService;
+        this.shortcutService = shortcutService;
     }
 
     /**
@@ -66,8 +69,9 @@ public class AuthService {
         user.setRole(Role.USER);
         user.setStatus(UserStatus.ACTIVE);
         User saved = userRepository.save(user);
-        // 6. 为新用户初始化预置引擎(同一事务,与注册一起落库)
+        // 6. 为新用户初始化预置引擎与首页精选入口(同一事务,与注册一起落库)
         engineService.initPresetEngines(saved.getId());
+        shortcutService.initPresetShortcuts(saved.getId());
         // 7. 原子消费邀请码:仅当仍未被使用时标记,受影响 0 行说明并发下被他人抢先,抛错回滚
         int consumed = inviteCodeRepository.consumeIfUnused(invite.getId(), saved.getId(), Instant.now());
         if (consumed == 0) {

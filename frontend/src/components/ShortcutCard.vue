@@ -1,10 +1,11 @@
 <script setup lang="ts">
 /**
- * 快捷方式卡片:图标 + 名称,点击在新标签打开目标网址。
+ * 快捷方式卡片(玻璃):图标 + 名称 + 域名,点击在新标签打开目标网址。
  */
 import { computed } from 'vue'
 import type { Shortcut } from '@/api/types'
 import { mediaUrl } from '@/api/media'
+import AppIcon from './AppIcon.vue'
 
 const props = defineProps<{ shortcut: Shortcut }>()
 
@@ -15,6 +16,17 @@ const iconSrc = computed(() =>
 
 // 占位首字母
 const initial = computed(() => props.shortcut.name.trim().charAt(0).toUpperCase() || '?')
+
+// 从网址提取域名做副文本;解析失败就回退显示原始串
+const domain = computed(() => {
+  // 1. 正常网址:取主机名并去掉 www. 前缀
+  try {
+    return new URL(props.shortcut.url).hostname.replace(/^www\./, '')
+  } catch {
+    // 2. 不是合法网址就直接显示原串
+    return props.shortcut.url
+  }
+})
 
 // 无图标时按名称取一个稳定的 HIG 系统色做底色(类似联系人头像)
 const palette = [
@@ -52,35 +64,45 @@ const monoColor = computed(() => {
         initial
       }}</span>
     </span>
-    <!-- 名称 -->
-    <span class="shortcut-name">{{ shortcut.name }}</span>
+    <!-- 名称 + 域名 -->
+    <span class="shortcut-text">
+      <span class="shortcut-name">{{ shortcut.name }}</span>
+      <span class="shortcut-domain">{{ domain }}</span>
+    </span>
+    <!-- hover 时显现的外链箭头 -->
+    <AppIcon name="external-link" :size="16" class="shortcut-arrow" />
   </a>
 </template>
 
 <style scoped>
 .shortcut-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-2);
+  gap: var(--space-3);
+  padding: var(--space-3);
   color: var(--label-primary);
   text-decoration: none;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-default),
+    border-color var(--duration-fast) var(--ease-default),
     box-shadow var(--duration-fast) var(--ease-default),
     transform var(--duration-fast) var(--ease-default);
 }
 
 .shortcut-card:hover {
-  background: var(--bg-elevated);
-  box-shadow: var(--shadow-card);
-  transform: translateY(-2px);
+  background: var(--glass-highlight);
+  border-color: color-mix(in srgb, var(--system-blue) 35%, transparent);
+  box-shadow: var(--glass-shadow);
+  transform: translateY(-3px);
 }
 
 .shortcut-card:active {
-  transform: translateY(0) scale(0.98);
+  transform: translateY(-1px) scale(0.99);
 }
 
 .shortcut-icon {
@@ -88,8 +110,8 @@ const monoColor = computed(() => {
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 40px;
+  height: 40px;
 }
 
 .shortcut-icon__img {
@@ -106,24 +128,44 @@ const monoColor = computed(() => {
   justify-content: center;
   width: 100%;
   height: 100%;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 600;
   color: #ffffff;
   border-radius: var(--radius-md);
 }
 
-.shortcut-name {
-  max-width: 100%;
-  overflow: hidden;
-  font-size: var(--text-footnote);
-  color: var(--label-secondary);
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  transition: color var(--duration-fast) var(--ease-default);
+.shortcut-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.shortcut-card:hover .shortcut-name {
+.shortcut-name {
+  overflow: hidden;
+  font-size: var(--text-subhead);
+  font-weight: 500;
   color: var(--label-primary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shortcut-domain {
+  overflow: hidden;
+  font-size: var(--text-caption1);
+  color: var(--label-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shortcut-arrow {
+  flex-shrink: 0;
+  color: var(--label-tertiary);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-default);
+}
+
+.shortcut-card:hover .shortcut-arrow {
+  opacity: 1;
 }
 </style>

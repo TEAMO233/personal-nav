@@ -34,6 +34,26 @@ public class Shortcut extends BaseEntity {
     @Column(name = "icon_asset_id")
     private UUID iconAssetId;
 
+    /** 首页卡片描述,可空 */
+    @Column(length = 160)
+    private String description;
+
+    /** 内置线性图标 key,用于首页精选卡片,可空 */
+    @Column(name = "icon_key", length = 32)
+    private String iconKey;
+
+    /** 强调色 key,用于首页精选卡片,可空 */
+    @Column(length = 32)
+    private String accent;
+
+    /** 是否在首页顶部精选入口展示 */
+    @Column(nullable = false)
+    private boolean featured = false;
+
+    /** 首页精选入口排序值 */
+    @Column(name = "featured_order", nullable = false)
+    private int featuredOrder = 0;
+
     /** 排序值 */
     @Column(name = "sort_order", nullable = false)
     private int sortOrder = 0;
@@ -76,6 +96,46 @@ public class Shortcut extends BaseEntity {
 
     public void setIconAssetId(UUID iconAssetId) {
         this.iconAssetId = iconAssetId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getIconKey() {
+        return iconKey;
+    }
+
+    public void setIconKey(String iconKey) {
+        this.iconKey = iconKey;
+    }
+
+    public String getAccent() {
+        return accent;
+    }
+
+    public void setAccent(String accent) {
+        this.accent = accent;
+    }
+
+    public boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(boolean featured) {
+        this.featured = featured;
+    }
+
+    public int getFeaturedOrder() {
+        return featuredOrder;
+    }
+
+    public void setFeaturedOrder(int featuredOrder) {
+        this.featuredOrder = featuredOrder;
     }
 
     public int getSortOrder() {

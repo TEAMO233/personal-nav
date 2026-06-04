@@ -1,6 +1,7 @@
 package com.nav.user;
 
 import com.nav.engine.EngineService;
+import com.nav.shortcut.ShortcutService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,16 +22,18 @@ public class AdminInitializer implements ApplicationRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EngineService engineService;
+    private final ShortcutService shortcutService;
     private final String adminUsername;
     private final String adminPassword;
 
     public AdminInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                            EngineService engineService,
+                            EngineService engineService, ShortcutService shortcutService,
                             @Value("${app.admin.username:}") String adminUsername,
                             @Value("${app.admin.password:}") String adminPassword) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.engineService = engineService;
+        this.shortcutService = shortcutService;
         this.adminUsername = adminUsername;
         this.adminPassword = adminPassword;
     }
@@ -58,8 +61,9 @@ public class AdminInitializer implements ApplicationRunner {
         admin.setRole(Role.ADMIN);
         admin.setStatus(UserStatus.ACTIVE);
         User saved = userRepository.save(admin);
-        // 5. 为初始管理员初始化预置引擎
+        // 5. 为初始管理员初始化预置引擎与首页精选入口
         engineService.initPresetEngines(saved.getId());
+        shortcutService.initPresetShortcuts(saved.getId());
         log.info("已创建初始管理员:{}", adminUsername);
     }
 }

@@ -6,6 +6,7 @@ import com.nav.admin.dto.InviteCodeResponse;
 import com.nav.auth.dto.UserResponse;
 import com.nav.common.error.ApiException;
 import com.nav.engine.EngineService;
+import com.nav.shortcut.ShortcutService;
 import com.nav.user.InviteCode;
 import com.nav.user.InviteCodeRepository;
 import com.nav.user.Role;
@@ -41,15 +42,18 @@ public class AdminService {
     private final InviteCodeRepository inviteCodeRepository;
     private final PasswordEncoder passwordEncoder;
     private final EngineService engineService;
+    private final ShortcutService shortcutService;
     private final FindByIndexNameSessionRepository<? extends Session> sessionRepository;
 
     public AdminService(UserRepository userRepository, InviteCodeRepository inviteCodeRepository,
                         PasswordEncoder passwordEncoder, EngineService engineService,
+                        ShortcutService shortcutService,
                         FindByIndexNameSessionRepository<? extends Session> sessionRepository) {
         this.userRepository = userRepository;
         this.inviteCodeRepository = inviteCodeRepository;
         this.passwordEncoder = passwordEncoder;
         this.engineService = engineService;
+        this.shortcutService = shortcutService;
         this.sessionRepository = sessionRepository;
     }
 
@@ -72,8 +76,9 @@ public class AdminService {
         user.setRole(request.role() == null ? Role.USER : request.role());
         user.setStatus(UserStatus.ACTIVE);
         User saved = userRepository.save(user);
-        // 3. 为新用户初始化预置引擎(同一事务,与开户一起落库)
+        // 3. 为新用户初始化预置引擎与首页精选入口(同一事务,与开户一起落库)
         engineService.initPresetEngines(saved.getId());
+        shortcutService.initPresetShortcuts(saved.getId());
         // 4. 返回
         return new UserResponse(saved.getId(), saved.getUsername(), saved.getRole().name());
     }

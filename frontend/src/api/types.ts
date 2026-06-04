@@ -45,6 +45,16 @@ export interface Shortcut {
   url: string
   /** 自定义图标的媒体 id,可空 */
   iconAssetId: string | null
+  /** 首页精选卡片描述,可空 */
+  description: string | null
+  /** 首页精选卡片内置图标 key,可空 */
+  iconKey: string | null
+  /** 首页精选卡片强调色 key,可空 */
+  accent: string | null
+  /** 是否首页精选 */
+  featured: boolean
+  /** 首页精选排序 */
+  featuredOrder: number
   sortOrder: number
 }
 
@@ -72,6 +82,11 @@ export interface ShortcutInput {
   name: string
   url: string
   iconAssetId?: string | null
+  description?: string | null
+  iconKey?: string | null
+  accent?: string | null
+  featured?: boolean
+  featuredOrder?: number
 }
 
 /** 快捷方式排序 + 跨组移动的单项位置 */
@@ -123,4 +138,94 @@ export interface SearchHistoryItem {
   keyword: string
   /** 最近搜索时间(ISO 8601 字符串) */
   searchedAt: string
+}
+
+/** 待办 / 日程项(对应 TodoResponse) */
+export interface TodoItem {
+  id: string
+  title: string
+  tag: string | null
+  /** 计划时间(ISO 8601 字符串,可空) */
+  scheduledAt: string | null
+  done: boolean
+  sortOrder: number
+  createdAt: string
+}
+
+/** 新建 / 更新待办入参 */
+export interface TodoInput {
+  title: string
+  tag?: string | null
+  scheduledAt?: string | null
+  done?: boolean
+}
+
+/** 灵感便签(对应 NoteResponse) */
+export interface NoteItem {
+  id: string
+  content: string
+  pinned: boolean
+  sortOrder: number
+  createdAt: string
+}
+
+/** 新建 / 更新便签入参 */
+export interface NoteInput {
+  content: string
+  pinned?: boolean
+}
+
+/** 最近访问项(对应 RecentVisitResponse) */
+export interface RecentVisit {
+  id: string
+  shortcutId: string | null
+  name: string
+  url: string
+  domain: string
+  visitedAt: string
+}
+
+/** 记录访问入参 */
+export interface RecordVisitInput {
+  shortcutId?: string
+  name?: string
+  url?: string
+}
+
+/** 首页书签项(对应 HomeBookmarkResponse) */
+export interface HomeBookmark {
+  id: string
+  name: string
+  url: string
+  description: string | null
+  /** 自定义图标的媒体 id,可空 */
+  iconAssetId: string | null
+  enabled: boolean
+  sortOrder: number
+}
+
+/** 新建 / 更新首页书签入参 */
+export interface HomeBookmarkInput {
+  name: string
+  url: string
+  description?: string | null
+  iconAssetId?: string | null
+  enabled?: boolean
+}
+
+/** 通知项(对应 NotificationResponse) */
+export interface NotificationItem {
+  id: string
+  type: 'TODO_OVERDUE'
+  sourceId: string | null
+  title: string
+  content: string | null
+  read: boolean
+  resolved: boolean
+  notifiedAt: string
+}
+
+/** 未读通知数响应 */
+export interface UnreadCount {
+  count: number
 }

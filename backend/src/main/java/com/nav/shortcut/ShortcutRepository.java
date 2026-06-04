@@ -28,6 +28,14 @@ public interface ShortcutRepository extends JpaRepository<Shortcut, UUID> {
     List<Shortcut> findByUserId(UUID userId);
 
     /**
+     * 按首页精选排序取当前用户的精选快捷方式。
+     *
+     * @param userId 用户 id
+     * @return 首页精选快捷方式
+     */
+    List<Shortcut> findByUserIdAndFeaturedTrueOrderByFeaturedOrderAscSortOrderAscCreatedAtAsc(UUID userId);
+
+    /**
      * 按 id 取快捷方式并校验归属,不属于该用户则返回空。
      *
      * @param id     快捷方式 id
@@ -43,6 +51,14 @@ public interface ShortcutRepository extends JpaRepository<Shortcut, UUID> {
      * @return 快捷方式数
      */
     long countByGroupId(UUID groupId);
+
+    /**
+     * 统计某用户的快捷方式数,用于判断是否需要初始化默认导航入口。
+     *
+     * @param userId 用户 id
+     * @return 快捷方式数
+     */
+    long countByUserId(UUID userId);
 
     /**
      * 删除某分组下的全部快捷方式,供删除分组时级联清理。

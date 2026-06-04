@@ -4,7 +4,7 @@
  * 输入框聚焦时展示搜索历史(可点击直接搜、单条删除、一键清空)。
  * 按当前引擎的 URL 模板把 {query} 替换为编码后的关键词,新标签打开。
  */
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useEngineStore } from '@/stores/engine'
 import { useSearchHistoryStore } from '@/stores/searchHistory'
 import EngineIcon from './EngineIcon.vue'
@@ -135,8 +135,28 @@ function onInputBlur(): void {
   }, 150)
 }
 
-// 进入首页自动聚焦输入框
-onMounted(() => inputEl.value?.focus())
+/**
+ * 全局快捷键:Cmd/Ctrl + K 聚焦搜索框。
+ *
+ * @param e 键盘事件
+ */
+function onGlobalKeydown(e: KeyboardEvent): void {
+  // 1. 命中 Cmd/Ctrl + K:阻止浏览器默认并聚焦输入框
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault()
+    inputEl.value?.focus()
+  }
+}
+
+// 进入首页注册全局快捷键;不自动聚焦,避免首屏弹出历史下拉遮挡内容
+onMounted(() => {
+  window.addEventListener('keydown', onGlobalKeydown)
+})
+
+// 离开页面时解绑,避免在其他页面继续拦截 Cmd/Ctrl+K
+onUnmounted(() => {
+  window.removeEventListener('keydown', onGlobalKeydown)
+})
 </script>
 
 <template>
@@ -150,8 +170,7 @@ onMounted(() => inputEl.value?.focus())
         :aria-label="selected ? `当前引擎 ${selected.name},点击切换` : '无可用引擎'"
         @click="toggleEngineDropdown"
       >
-        <EngineIcon v-if="selected" :engine="selected" :size="26" />
-        <AppIcon name="chevron-down" :size="16" class="engine-caret" />
+        <AppIcon name="search" :size="26" />
       </button>
 
       <!-- 引擎下拉:遮罩点击关闭 -->
@@ -182,8 +201,11 @@ onMounted(() => inputEl.value?.focus())
       v-model="keyword"
       class="search-input"
       type="text"
-      autocomplete="off"
-      :placeholder="selected ? `用 ${selected.name} 搜索` : '搜索'"
+      name="personal-nav-search"
+      autocomplete="new-password"
+      autocapitalize="off"
+      spellcheck="false"
+      placeholder="搜索常用网站、工具或内容"
       @focus="onInputFocus"
       @blur="onInputBlur"
     />
@@ -215,9 +237,12 @@ onMounted(() => inputEl.value?.focus())
       </li>
     </ul>
 
+    <!-- 快捷键提示 -->
+    <kbd class="search-kbd" aria-hidden="true">⌘K</kbd>
+
     <!-- 搜索按钮 -->
     <button type="submit" class="search-go" :disabled="!keyword.trim() || !selected" aria-label="搜索">
-      <AppIcon name="search" :size="20" />
+      <AppIcon name="arrow-right" :size="24" />
     </button>
   </form>
 </template>
@@ -230,17 +255,23 @@ onMounted(() => inputEl.value?.focus())
   gap: var(--space-2);
   box-sizing: border-box;
   width: 100%;
-  max-width: 640px;
-  height: 60px;
-  padding: 0 var(--space-2) 0 var(--space-3);
-  background: var(--bg-elevated);
+  max-width: 800px;
+  height: 64px;
+  padding: 0 8px 0 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(160, 190, 255, 0.34);
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-card);
-  transition: box-shadow var(--duration-fast) var(--ease-default);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 20px 60px rgba(30, 100, 255, 0.22);
+  transition: box-shadow var(--duration-fast) var(--ease-default),
+    border-color var(--duration-fast) var(--ease-default);
 }
 
 .search-bar:focus-within {
-  box-shadow: var(--shadow-card), 0 0 0 4px color-mix(in srgb, var(--system-blue) 18%, transparent);
+  border-color: color-mix(in srgb, var(--system-blue) 55%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 20px 60px rgba(30, 100, 255, 0.28),
+    0 0 0 4px rgba(59, 130, 246, 0.18);
 }
 
 .engine-select {
@@ -253,7 +284,9 @@ onMounted(() => inputEl.value?.focus())
   align-items: center;
   gap: var(--space-1);
   height: 44px;
-  padding: 0 var(--space-2);
+  width: 44px;
+  padding: 0;
+  color: rgba(235, 242, 255, 0.92);
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
@@ -262,7 +295,7 @@ onMounted(() => inputEl.value?.focus())
 }
 
 .engine-trigger:hover:not(:disabled) {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .engine-trigger:disabled {
@@ -274,27 +307,35 @@ onMounted(() => inputEl.value?.focus())
   color: var(--label-tertiary);
 }
 
-.search-divider {
-  flex-shrink: 0;
-  width: 1px;
-  height: 26px;
-  background: var(--separator);
-}
+.search-divider { display: none; }
 
 .search-input {
   flex: 1;
   min-width: 0;
   height: 100%;
   font-family: inherit;
-  font-size: var(--text-title3);
-  color: var(--label-primary);
+  font-size: 17px;
+  font-weight: 550;
+  color: rgba(255, 255, 255, 0.92);
   background: transparent;
   border: none;
   outline: none;
 }
 
 .search-input::placeholder {
-  color: var(--label-tertiary);
+  color: rgba(220, 230, 255, 0.46);
+}
+
+.search-kbd {
+  flex-shrink: 0;
+  padding: 5px 9px;
+  font-family: var(--font-system);
+  font-size: var(--text-caption1);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: rgba(235, 242, 255, 0.86);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
 }
 
 .search-go {
@@ -305,10 +346,11 @@ onMounted(() => inputEl.value?.focus())
   width: 44px;
   height: 44px;
   color: #ffffff;
-  background: var(--system-blue);
+  background: linear-gradient(135deg, #5ea0ff, #2563eb);
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
   transition: opacity var(--duration-fast) var(--ease-default),
     transform var(--duration-instant) var(--ease-default);
 }
@@ -330,21 +372,24 @@ onMounted(() => inputEl.value?.focus())
 .dropdown-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: 90;
 }
 
 .engine-menu {
   position: absolute;
   top: calc(100% + var(--space-2));
   left: 0;
-  z-index: 11;
+  z-index: 100;
   min-width: 220px;
   margin: 0;
   padding: var(--space-1);
   list-style: none;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-elevated);
+  background: rgba(11, 28, 58, 0.9);
+  border: 1px solid rgba(178, 203, 255, 0.18);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 55px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
 }
 
 .engine-option {
@@ -364,7 +409,7 @@ onMounted(() => inputEl.value?.focus())
 }
 
 .engine-option:hover {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .engine-option--active {
@@ -382,15 +427,18 @@ onMounted(() => inputEl.value?.focus())
   top: calc(100% + var(--space-2));
   left: 0;
   right: 0;
-  z-index: 11;
+  z-index: 100;
   max-height: 360px;
   margin: 0;
   padding: var(--space-1);
   overflow-y: auto;
   list-style: none;
-  background: var(--bg-elevated);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-elevated);
+  background: rgba(11, 28, 58, 0.9);
+  border: 1px solid rgba(178, 203, 255, 0.18);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 55px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(22px) saturate(170%);
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
 }
 
 .history-item {
@@ -416,7 +464,7 @@ onMounted(() => inputEl.value?.focus())
 }
 
 .history-pick:hover {
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .history-icon {
@@ -453,7 +501,7 @@ onMounted(() => inputEl.value?.focus())
 
 .history-foot {
   margin-top: var(--space-1);
-  border-top: 0.5px solid var(--separator);
+  border-top: 0.5px solid rgba(178, 203, 255, 0.14);
 }
 
 .history-clear {
@@ -475,7 +523,7 @@ onMounted(() => inputEl.value?.focus())
 
 .history-clear:hover {
   color: var(--system-red, #ff3b30);
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* 移动端:搜索框略矮 */
@@ -486,6 +534,11 @@ onMounted(() => inputEl.value?.focus())
 
   .search-input {
     font-size: var(--text-body);
+  }
+
+  /* 小屏隐藏快捷键提示 */
+  .search-kbd {
+    display: none;
   }
 }
 </style>

@@ -1,54 +1,38 @@
 # Directory Structure
 
-> How frontend code is organized in this project.
-
----
-
-## Overview
-
-<!--
-Document your project's frontend directory structure here.
-
-Questions to answer:
-- Where do components live?
-- How are features/modules organized?
-- Where are shared utilities?
-- How are assets organized?
--->
-
-(To be filled by the team)
+> How frontend code is organized in this project (`frontend/src`).
 
 ---
 
 ## Directory Layout
 
 ```
-<!-- Replace with your actual structure -->
 src/
-├── ...
-└── ...
+├── api/            # axios clients + types.ts (one module per resource: auth, engine, group, shortcut, ...)
+├── assets/         # static assets (e.g. engine-icons/*.svg)
+├── components/     # shared components (AppIcon, SearchBar, GroupGrid, ShortcutCard, ThemeToggle, ...)
+│   ├── home/       # components used ONLY by HomeView (DynamicBackground, HomeTopbar, HomeHero, CategoryNav, StatsPanel)
+│   └── settings/   # components used ONLY by SettingsView
+├── composables/    # useXxx.ts (e.g. useIsMobile)
+├── router/         # index.ts (routes + global auth/admin guards)
+├── stores/         # Pinia stores (auth, engine, shortcut, searchHistory, theme)
+├── views/          # route-level pages: <Name>View.vue (FLAT)
+├── App.vue
+├── main.ts
+└── style.css       # global design tokens + shared classes
 ```
 
 ---
 
 ## Module Organization
 
-<!-- How should new features be organized? -->
-
-(To be filled by the team)
+- **Views are flat** `*View.vue` files under `views/`, registered in `router/index.ts`. Do NOT create nested view folders (e.g. `views/navigation/`).
+- **Page-specific subcomponents** go under `components/<page>/` (e.g. `components/home/`). Cross-page reusable components stay at the `components/` root.
+- Data access is centralized: components read from Pinia `stores/`, stores call `api/` clients. Components do not call `api/` directly.
 
 ---
 
 ## Naming Conventions
 
-<!-- File and folder naming rules -->
-
-(To be filled by the team)
-
----
-
-## Examples
-
-<!-- Link to well-organized modules as examples -->
-
-(To be filled by the team)
+- Views: `PascalCaseView.vue`. Components: `PascalCase.vue`. Stores/composables/api: `camelCase.ts`.
+- Components are referenced via **explicit `import`** (auto-import is configured, but the code style is explicit imports for readability).

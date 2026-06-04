@@ -12,7 +12,12 @@ const shortcutStore = useShortcutStore()
   <section class="group-grid">
     <!-- 有分组:逐组渲染标题 + 卡片网格 -->
     <template v-if="shortcutStore.grouped.length">
-      <div v-for="g in shortcutStore.grouped" :key="g.group.id" class="group">
+      <div
+        v-for="g in shortcutStore.grouped"
+        :id="`group-${g.group.id}`"
+        :key="g.group.id"
+        class="group"
+      >
         <h2 class="group__title">{{ g.group.name }}</h2>
         <div v-if="g.shortcuts.length" class="group__items">
           <ShortcutCard v-for="s in g.shortcuts" :key="s.id" :shortcut="s" />
@@ -38,6 +43,11 @@ const shortcutStore = useShortcutStore()
   width: 100%;
 }
 
+/* 锚点跳转时给吸顶顶栏留出空间 */
+.group {
+  scroll-margin-top: 80px;
+}
+
 .group__title {
   margin: 0 0 var(--space-4);
   padding-left: var(--space-1);
@@ -48,7 +58,7 @@ const shortcutStore = useShortcutStore()
 
 .group__items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--space-3);
 }
 
@@ -78,10 +88,10 @@ const shortcutStore = useShortcutStore()
   color: var(--label-tertiary);
 }
 
-/* 移动端:卡片更密 */
+/* 移动端:卡片单列铺满 */
 @media (max-width: 640px) {
   .group__items {
-    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    grid-template-columns: 1fr;
     gap: var(--space-2);
   }
 }

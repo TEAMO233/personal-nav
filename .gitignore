@@ -19,3 +19,4 @@ frontend/dist/
 # 后端运行时本地文件存储目录
 backend/data/
 data/
+.ace-tool/
