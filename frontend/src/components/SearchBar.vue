@@ -285,8 +285,8 @@ onUnmounted(() => {
   background: var(--home-search-bg);
   border: 1px solid var(--home-search-border);
   border-radius: var(--radius-full);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), var(--home-search-shadow);
   transition: box-shadow var(--duration-fast) var(--ease-default),
     border-color var(--duration-fast) var(--ease-default);
@@ -295,7 +295,7 @@ onUnmounted(() => {
 .search-bar:focus-within {
   border-color: color-mix(in srgb, var(--system-blue) 55%, transparent);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--home-search-shadow),
-    0 0 0 4px color-mix(in srgb, var(--system-blue) 18%, transparent);
+    0 0 0 3px color-mix(in srgb, var(--system-blue) 16%, transparent);
 }
 
 .engine-select {
@@ -374,7 +374,7 @@ onUnmounted(() => {
   border: none;
   border-radius: var(--radius-full);
   cursor: pointer;
-  box-shadow: 0 10px 30px var(--accent-shadow);
+  box-shadow: 0 8px 22px var(--accent-shadow);
   transition: opacity var(--duration-fast) var(--ease-default),
     transform var(--duration-instant) var(--ease-default);
 }

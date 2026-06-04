@@ -108,7 +108,8 @@ onMounted(loadAll)
   overflow: hidden;
   border: 1px solid var(--home-shell-border);
   border-radius: 24px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.018);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 28px 90px rgba(0, 0, 0, 0.22);
 }
 
 .home__main {
@@ -145,9 +146,9 @@ onMounted(loadAll)
   background: var(--home-panel-bg);
   border: 1px solid var(--home-panel-border);
   border-radius: 16px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), var(--home-panel-shadow);
-  backdrop-filter: blur(26px) saturate(170%);
-  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--home-panel-shadow);
+  backdrop-filter: blur(28px) saturate(135%);
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
 }
 
 .home__state {

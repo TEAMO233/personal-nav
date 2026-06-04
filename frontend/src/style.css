@@ -92,33 +92,35 @@
   --glass-blur: 24px;
   --glass-shadow: 0 20px 50px rgba(146, 64, 14, 0.12);
 
-  /* 首页动态背景(亮色:暖砂柔光) */
+  /* 首页动态背景(默认:现代石墨暗底 + 琥珀光源) */
   --home-bg:
-    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.24), transparent 40%),
-    radial-gradient(circle at 15% 25%, rgba(234, 88, 12, 0.14), transparent 35%),
-    linear-gradient(135deg, #fbf4ea 0%, #f3e4cf 45%, #fbf7f0 100%);
-  --home-glow-1: rgba(245, 158, 11, 0.28);
-  --home-glow-2: rgba(234, 88, 12, 0.18);
-  --home-glow-3: rgba(124, 58, 237, 0.12);
-  --home-shell-bg: #1f1308;
-  --home-shell-border: rgba(255, 213, 148, 0.18);
-  --home-panel-bg: rgba(64, 36, 16, 0.56);
-  --home-panel-border: rgba(255, 219, 166, 0.18);
-  --home-panel-shadow: 0 20px 50px rgba(35, 20, 8, 0.28);
+    radial-gradient(ellipse at 50% -12%, rgba(245, 158, 11, 0.18), transparent 38%),
+    radial-gradient(ellipse at 14% 18%, rgba(255, 255, 255, 0.055), transparent 28%),
+    linear-gradient(145deg, #090a0c 0%, #15130f 46%, #07080a 100%);
+  --home-glow-1: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.28), transparent);
+  --home-glow-2: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  --home-glow-3: linear-gradient(90deg, transparent, rgba(217, 119, 6, 0.16), transparent);
+  --home-shell-bg: #08090b;
+  --home-shell-border: rgba(255, 255, 255, 0.1);
+  --home-panel-bg: rgba(20, 20, 22, 0.58);
+  --home-panel-border: rgba(255, 255, 255, 0.11);
+  --home-panel-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
   --home-topbar-bg:
-    linear-gradient(180deg, rgba(40, 24, 10, 0.6) 0%, rgba(40, 24, 10, 0.28) 68%, rgba(40, 24, 10, 0.08) 100%),
-    linear-gradient(90deg, rgba(180, 83, 9, 0.12), rgba(120, 53, 15, 0.08) 58%, rgba(31, 19, 8, 0.12));
-  --home-line-highlight: rgba(255, 222, 170, 0.24);
-  --home-text-primary: rgba(255, 250, 242, 0.96);
-  --home-text-secondary: rgba(255, 236, 214, 0.72);
-  --home-text-tertiary: rgba(255, 236, 214, 0.62);
-  --home-search-bg: rgba(255, 255, 255, 0.08);
-  --home-search-border: rgba(255, 213, 148, 0.34);
-  --home-search-shadow: 0 20px 60px rgba(146, 64, 14, 0.2);
-  --home-menu-bg: rgba(46, 28, 13, 0.9);
-  --home-arc-border: rgba(251, 191, 36, 0.24) transparent transparent transparent;
-  --home-arc-border-soft: rgba(253, 230, 138, 0.16) transparent transparent transparent;
-  --home-arc-shadow: rgba(245, 158, 11, 0.16);
+    linear-gradient(180deg, rgba(12, 12, 14, 0.76) 0%, rgba(12, 12, 14, 0.38) 68%, rgba(12, 12, 14, 0.12) 100%),
+    linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(255, 255, 255, 0.035) 54%, rgba(0, 0, 0, 0.08));
+  --home-line-highlight: rgba(255, 255, 255, 0.22);
+  --home-text-primary: rgba(255, 255, 255, 0.96);
+  --home-text-secondary: rgba(244, 241, 235, 0.7);
+  --home-text-tertiary: rgba(244, 241, 235, 0.56);
+  --home-search-bg: rgba(255, 255, 255, 0.07);
+  --home-search-border: rgba(255, 255, 255, 0.16);
+  --home-search-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+  --home-menu-bg: rgba(16, 16, 18, 0.92);
+  --home-arc-border: rgba(255, 255, 255, 0.13) transparent transparent transparent;
+  --home-arc-border-soft: rgba(245, 158, 11, 0.13) transparent transparent transparent;
+  --home-arc-shadow: rgba(245, 158, 11, 0.1);
+  --home-grid-line: rgba(255, 255, 255, 0.055);
+  --home-grid-fade: rgba(245, 158, 11, 0.12);
   --brand-grad: linear-gradient(135deg, #f59e0b, #b45309);
   --brand-shadow: rgba(180, 83, 9, 0.35);
   --avatar-grad: linear-gradient(135deg, #f97316, #a16207);
@@ -171,33 +173,35 @@ html.dark {
   --glass-blur: 26px;
   --glass-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
 
-  /* 首页动态背景(深色:深棕黑 + 琥珀柔光) */
+  /* 首页动态背景(深色:现代石墨暗底 + 琥珀光源) */
   --home-bg:
-    radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.3), transparent 38%),
-    radial-gradient(circle at 18% 28%, rgba(234, 88, 12, 0.16), transparent 32%),
-    linear-gradient(135deg, #120b05 0%, #2a1708 45%, #120b05 100%);
-  --home-glow-1: rgba(245, 158, 11, 0.36);
-  --home-glow-2: rgba(234, 88, 12, 0.24);
-  --home-glow-3: rgba(124, 58, 237, 0.18);
-  --home-shell-bg: #120b05;
-  --home-shell-border: rgba(255, 213, 148, 0.15);
-  --home-panel-bg: rgba(64, 36, 16, 0.54);
-  --home-panel-border: rgba(255, 219, 166, 0.16);
-  --home-panel-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+    radial-gradient(ellipse at 50% -12%, rgba(245, 158, 11, 0.2), transparent 38%),
+    radial-gradient(ellipse at 14% 18%, rgba(255, 255, 255, 0.05), transparent 28%),
+    linear-gradient(145deg, #08090b 0%, #14120f 48%, #060708 100%);
+  --home-glow-1: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.3), transparent);
+  --home-glow-2: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.13), transparent);
+  --home-glow-3: linear-gradient(90deg, transparent, rgba(217, 119, 6, 0.15), transparent);
+  --home-shell-bg: #07080a;
+  --home-shell-border: rgba(255, 255, 255, 0.09);
+  --home-panel-bg: rgba(18, 18, 20, 0.58);
+  --home-panel-border: rgba(255, 255, 255, 0.1);
+  --home-panel-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
   --home-topbar-bg:
-    linear-gradient(180deg, rgba(40, 24, 10, 0.58) 0%, rgba(40, 24, 10, 0.26) 68%, rgba(40, 24, 10, 0.08) 100%),
-    linear-gradient(90deg, rgba(180, 83, 9, 0.1), rgba(120, 53, 15, 0.05) 58%, rgba(31, 19, 8, 0.08));
-  --home-line-highlight: rgba(255, 222, 170, 0.2);
-  --home-text-primary: rgba(255, 250, 242, 0.96);
-  --home-text-secondary: rgba(255, 236, 214, 0.72);
-  --home-text-tertiary: rgba(255, 236, 214, 0.62);
-  --home-search-bg: rgba(255, 255, 255, 0.08);
-  --home-search-border: rgba(255, 213, 148, 0.34);
-  --home-search-shadow: 0 20px 60px rgba(146, 64, 14, 0.22);
-  --home-menu-bg: rgba(46, 28, 13, 0.9);
-  --home-arc-border: rgba(251, 191, 36, 0.22) transparent transparent transparent;
-  --home-arc-border-soft: rgba(253, 230, 138, 0.16) transparent transparent transparent;
-  --home-arc-shadow: rgba(245, 158, 11, 0.16);
+    linear-gradient(180deg, rgba(10, 10, 12, 0.78) 0%, rgba(10, 10, 12, 0.38) 68%, rgba(10, 10, 12, 0.12) 100%),
+    linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(255, 255, 255, 0.03) 54%, rgba(0, 0, 0, 0.08));
+  --home-line-highlight: rgba(255, 255, 255, 0.2);
+  --home-text-primary: rgba(255, 255, 255, 0.96);
+  --home-text-secondary: rgba(244, 241, 235, 0.7);
+  --home-text-tertiary: rgba(244, 241, 235, 0.56);
+  --home-search-bg: rgba(255, 255, 255, 0.07);
+  --home-search-border: rgba(255, 255, 255, 0.15);
+  --home-search-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+  --home-menu-bg: rgba(14, 14, 16, 0.92);
+  --home-arc-border: rgba(255, 255, 255, 0.12) transparent transparent transparent;
+  --home-arc-border-soft: rgba(245, 158, 11, 0.12) transparent transparent transparent;
+  --home-arc-shadow: rgba(245, 158, 11, 0.1);
+  --home-grid-line: rgba(255, 255, 255, 0.052);
+  --home-grid-fade: rgba(245, 158, 11, 0.12);
   --brand-grad: linear-gradient(135deg, #f59e0b, #b45309);
   --brand-shadow: rgba(180, 83, 9, 0.35);
   --avatar-grad: linear-gradient(135deg, #f97316, #a16207);
