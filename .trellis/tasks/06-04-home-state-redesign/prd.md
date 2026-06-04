@@ -25,6 +25,7 @@ The logged-in experience should feel like a focused personal navigation workspac
 - After the guest scope was narrowed, `ui-ux-pro-max` was run again for a minimal search-only homepage. The relevant recommendation is "Minimal Single Column" plus "search bar is the CTA"; marketing sections, category sections, and CTAs are intentionally excluded by user request.
 - Overall color/style was also researched with `ui-ux-pro-max`. Relevant results: Portfolio/Personal monochrome + blue accent, Productivity Tool teal + orange, OLED/dark high-contrast, Glassmorphism with 4.5:1 contrast caution, and Inclusive Design high-contrast focus states.
 - After implementation review, the user required a home-page login entry. `ui-ux-pro-max` follow-up guidance supports a minimal single auxiliary action with high contrast and visible focus state, while keeping search as the primary CTA.
+- Follow-up requirement on 2026-06-05: logged-in mobile home should be reduced to only the search box and home bookmarks.
 
 ## Requirements
 
@@ -37,6 +38,7 @@ The logged-in experience should feel like a focused personal navigation workspac
 - Guest views must not show register CTAs, feature previews, marketing copy, dashboard widgets, or shortcut grids. The only non-search action allowed is a minimal login entry.
 - Logged-in desktop home must present a dense but polished workspace: search, featured shortcuts, dashboard panels, and topbar actions.
 - Logged-in mobile home must be a separate mobile composition, not just desktop blocks squeezed by media queries.
+- Logged-in mobile home must show only search and enabled home bookmarks; it must not show featured shortcuts, category panels, overview, todos, notes, or other dashboard widgets.
 - Preserve existing search behavior, engine selection, search history behavior for logged-in users, and public Google fallback for guests.
 - Preserve existing theme and palette support through semantic CSS variables.
 - Overall default color direction should come from the design research: high-contrast graphite/neutral foundation, restrained accent usage, readable light/dark variants, and no one-note saturated theme.
@@ -50,6 +52,7 @@ The logged-in experience should feel like a focused personal navigation workspac
 - [ ] Guest mobile view contains the search box as the only primary page content, includes a minimal login entry, and has no register or feature-preview UI.
 - [ ] Logged-in desktop view keeps full workspace functionality: topbar, hero/search, featured shortcuts, dashboard widgets, loading, error retry.
 - [ ] Logged-in mobile view has a distinct layout optimized for narrow screens, with stable spacing and no overlapping text or controls.
+- [ ] Logged-in mobile view contains only search and enabled home bookmarks after loading succeeds.
 - [ ] Existing stores still load for logged-in users and are not loaded for guests.
 - [ ] Search works in guest and logged-in states.
 - [ ] Build/type-check passes with `npm run build` in `frontend/`.

@@ -14,12 +14,14 @@
 - [x] Ensure loading/error states are announced and retry remains available.
 - [x] Run `npm run build` in `frontend/`.
 - [x] Run a local dev server and visually inspect desktop + mobile home states where feasible.
+- [x] Follow-up: reduce logged-in mobile home to search plus enabled home bookmarks only.
 
 ## Implementation Notes
 
 - Design source: `ui-ux-pro-max` Minimal Single Column, Search-as-CTA, Portfolio/Personal monochrome + blue accent, OLED/dark high contrast, Glassmorphism contrast cautions, Inclusive Design focus/contrast guidance, mobile touch target and spacing guidance.
 - Follow-up design source for login entry: `ui-ux-pro-max` Minimal Single Column + focus/contrast guidance; login is a single auxiliary text action, not a second primary CTA.
 - Follow-up correction: logged-in desktop also treats search as the primary home CTA, so its hero uses a centered vertical search-first composition instead of a right-column search block.
+- Follow-up mobile redesign source: `ui-ux-pro-max` Minimal Single Column and no-navigation-clutter guidance; logged-in mobile now removes topbar shortcuts and dashboard widgets, keeping search plus real enabled home bookmarks only.
 - Project adaptations: no external font imports, no icon libraries, no fake data, scoped CSS, and semantic tokens in `style.css`.
 - Guest desktop/mobile were visually checked at 1440px and 390px widths. Login-state components were verified by build/type-check and structural review; no fake store data was added for visual fill.
 

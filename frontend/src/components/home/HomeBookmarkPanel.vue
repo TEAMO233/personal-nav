@@ -10,11 +10,23 @@ import { useRecentVisitStore } from '@/stores/recentVisit'
 import type { HomeBookmark } from '@/api/types'
 import AppIcon from '@/components/AppIcon.vue'
 
+const props = withDefaults(
+  defineProps<{
+    limit?: number
+  }>(),
+  {
+    limit: 6,
+  },
+)
+
 const router = useRouter()
 const bookmarkStore = useHomeBookmarkStore()
 const recentVisitStore = useRecentVisitStore()
 
-const bookmarks = computed(() => bookmarkStore.enabledItems.slice(0, 6))
+const bookmarks = computed(() => {
+  if (props.limit <= 0) return bookmarkStore.enabledItems
+  return bookmarkStore.enabledItems.slice(0, props.limit)
+})
 
 /**
  * 取 URL 域名。

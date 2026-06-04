@@ -1,13 +1,11 @@
 <script setup lang="ts">
 /**
- * 登录态移动首页:独立单列工作台,优先搜索与常用入口。
+ * 登录态移动首页:极简单列入口,只保留搜索和首页书签。
  */
 import { useAuthStore } from '@/stores/auth'
 import DynamicBackground from './DynamicBackground.vue'
-import HomeTopbar from './HomeTopbar.vue'
 import SearchBar from '@/components/SearchBar.vue'
-import FeaturedShortcutGrid from './FeaturedShortcutGrid.vue'
-import DashboardGrid from './DashboardGrid.vue'
+import HomeBookmarkPanel from './HomeBookmarkPanel.vue'
 
 defineProps<{
   loading: boolean
@@ -26,8 +24,6 @@ const auth = useAuthStore()
   <div class="mobile-home">
     <DynamicBackground />
     <div class="mobile-home__shell">
-      <HomeTopbar />
-
       <main class="mobile-home__main">
         <section class="mobile-home__search" aria-label="首页搜索">
           <p class="mobile-home__hello">欢迎回来，{{ auth.user?.username }}</p>
@@ -40,14 +36,7 @@ const auth = useAuthStore()
           <button type="button" class="mobile-home__retry" @click="$emit('retry')">重试</button>
         </div>
         <template v-else-if="isReady">
-          <section class="mobile-home__section" aria-label="快捷入口">
-            <h2>快捷入口</h2>
-            <FeaturedShortcutGrid />
-          </section>
-          <section class="mobile-home__section" aria-label="工作台">
-            <h2>工作台</h2>
-            <DashboardGrid />
-          </section>
+          <HomeBookmarkPanel class="mobile-home__bookmarks" :limit="0" />
         </template>
       </main>
     </div>
@@ -72,8 +61,11 @@ const auth = useAuthStore()
 .mobile-home__main {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
   box-sizing: border-box;
+  max-width: 520px;
+  min-height: 100svh;
+  margin: 0 auto;
   padding: 18px 14px max(28px, env(safe-area-inset-bottom));
 }
 
@@ -81,6 +73,7 @@ const auth = useAuthStore()
   display: flex;
   flex-direction: column;
   gap: 14px;
+  padding-top: max(18px, env(safe-area-inset-top));
 }
 
 .mobile-home__hello {
@@ -96,20 +89,6 @@ const auth = useAuthStore()
   min-height: 54px;
 }
 
-.mobile-home__section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 0;
-}
-
-.mobile-home__section h2 {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 750;
-  color: var(--home-text-primary);
-}
-
 .mobile-home :deep(.glass-panel) {
   color: var(--home-text-primary);
   background: var(--home-panel-bg);
@@ -120,9 +99,13 @@ const auth = useAuthStore()
   -webkit-backdrop-filter: blur(18px) saturate(135%);
 }
 
-.mobile-home :deep(.dashboard-grid) {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 14px;
+.mobile-home__bookmarks {
+  flex: 1;
+  min-height: 0;
+}
+
+.mobile-home__bookmarks :deep(.bookmark__item) {
+  min-height: 52px;
 }
 
 .mobile-home__state {

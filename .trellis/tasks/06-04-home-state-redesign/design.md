@@ -24,6 +24,7 @@ Existing reusable components remain in place where appropriate:
 - `FeaturedShortcutGrid.vue`
 - `DashboardGrid.vue`
 - `SearchBar.vue`
+- `HomeBookmarkPanel.vue` for logged-in mobile's only content below search
 
 ## Data Flow
 
@@ -84,8 +85,9 @@ Logged-in desktop:
 Logged-in mobile:
 
 - Dedicated vertical composition.
-- Prioritize topbar/search, shortcuts, then dashboard panels.
-- Use stable one-column sections and compact headings.
+- Follow-up mobile scope: only search and home bookmarks remain.
+- Use `ui-ux-pro-max` Minimal Single Column guidance: one-column, high contrast, generous spacing, no navigation clutter.
+- Reuse real enabled home bookmark data through `HomeBookmarkPanel.vue`; do not render dashboard-only widgets or fabricate mobile content.
 
 ## Compatibility
 
