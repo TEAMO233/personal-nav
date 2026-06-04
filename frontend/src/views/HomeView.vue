@@ -94,7 +94,7 @@ onMounted(loadAll)
   box-sizing: border-box;
   min-height: 100vh;
   padding: 8px;
-  overflow-x: clip;
+  overflow-x: hidden;
   background: var(--home-shell-bg);
 }
 
@@ -103,6 +103,8 @@ onMounted(loadAll)
   flex-direction: column;
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 100%;
   height: calc(100vh - 16px);
   min-height: 880px;
   overflow: hidden;
@@ -118,7 +120,9 @@ onMounted(loadAll)
   grid-template-rows: auto auto minmax(0, 1fr);
   position: relative;
   z-index: 1;
+  box-sizing: border-box;
   width: 100%;
+  min-width: 0;
   margin: 0 auto;
   padding: 38px 52px 52px;
 }
@@ -172,21 +176,32 @@ onMounted(loadAll)
   cursor: pointer;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .home {
     padding: 0;
   }
 
   .home__shell {
     height: auto;
-    min-height: 100vh;
+    min-height: 100svh;
     border: none;
     border-radius: 0;
   }
 
   .home__main {
     display: block;
-    padding: 30px 18px 28px;
+    padding: 28px 16px 32px;
+    overflow: hidden;
+  }
+
+  .home__hero {
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-width: 430px) {
+  .home__main {
+    padding: 22px 12px 28px;
   }
 }
 </style>

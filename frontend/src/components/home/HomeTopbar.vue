@@ -156,6 +156,9 @@ function onOpenAdmin(): void {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
   height: 64px;
   padding: 0 32px;
   background: var(--home-topbar-bg);
@@ -174,8 +177,10 @@ function onOpenAdmin(): void {
 
 .topbar__brand {
   display: flex;
+  flex: 1 1 auto;
   align-items: center;
   gap: 14px;
+  min-width: 0;
   white-space: nowrap;
   font-size: 20px;
   font-weight: 700;
@@ -196,6 +201,7 @@ function onOpenAdmin(): void {
 
 .topbar__actions {
   display: flex;
+  flex: 0 0 auto;
   align-items: center;
   gap: 14px;
 }
@@ -333,53 +339,87 @@ function onOpenAdmin(): void {
 @media (max-width: 768px) {
   .topbar {
     height: auto;
-    min-height: 64px;
-    padding: 10px 16px;
+    min-height: 58px;
+    gap: 8px;
+    padding: 8px 12px;
     border-radius: 0;
   }
 
-  .user-name {
-    display: none;
-  }
-}
-
-@media (max-width: 420px) {
-  .topbar {
-    min-height: 72px;
-    padding: 10px 12px;
-  }
-
   .topbar__brand {
-    gap: 8px;
+    gap: 10px;
     font-size: 18px;
   }
 
-  .brand-mark {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
+  .topbar__brand > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .topbar__actions {
-    gap: 8px;
+    gap: 4px;
   }
 
   .top-icon-btn,
   :deep(.top-icon-btn),
   :deep(.theme-toggle) {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
   }
 
   .user-trigger {
-    gap: 6px;
-    height: 40px;
-    padding: 0 8px 0 4px;
+    gap: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .user-trigger > svg {
+    display: none;
+  }
+
+  .user-name {
+    display: none;
   }
 
   .user-avatar {
     width: 30px;
     height: 30px;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    min-height: 56px;
+    padding: 8px 10px;
+  }
+
+  .topbar__brand {
+    gap: 8px;
+    font-size: 17px;
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .top-icon-btn,
+  :deep(.top-icon-btn),
+  :deep(.theme-toggle) {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-trigger {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
   }
 }
 </style>

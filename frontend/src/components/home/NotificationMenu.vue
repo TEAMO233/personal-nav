@@ -214,4 +214,16 @@ async function markRead(id: string): Promise<void> {
   color: var(--label-secondary);
   text-align: center;
 }
+
+@media (max-width: 480px) {
+  .notify-menu {
+    position: fixed;
+    top: 64px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: min(420px, calc(100svh - 84px));
+    overflow-y: auto;
+  }
+}
 </style>

@@ -89,6 +89,10 @@ const ringStyle = computed(() => ({
   justify-content: center;
   width: 92px;
   height: 92px;
+  background: conic-gradient(
+    var(--system-blue) 0 var(--ring-percent),
+    rgba(255, 255, 255, 0.1) var(--ring-percent) 100%
+  );
   border-radius: var(--radius-full);
   box-shadow: 0 12px 35px rgba(47, 120, 255, 0.26);
 }
@@ -175,8 +179,39 @@ const ringStyle = computed(() => ({
   margin-top: 8px;
   color: var(--home-text-tertiary);
 }
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 14px;
+  }
+
+  .overview__main {
+    gap: 14px;
+  }
+
+  .ring {
+    width: 78px;
+    height: 78px;
+  }
+
+  .ring__inner {
+    width: 58px;
+    height: 58px;
+    font-size: 20px;
+  }
+
+  .overview__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .mini-stat {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .overview__quote {
+    padding: 12px;
+  }
+}
 </style>
-  background: conic-gradient(
-    var(--system-blue) 0 var(--ring-percent),
-    rgba(255, 255, 255, 0.1) var(--ring-percent) 100%
-  );

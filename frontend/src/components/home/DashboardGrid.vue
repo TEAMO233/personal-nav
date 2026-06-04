@@ -28,6 +28,7 @@ import NotePanel from './NotePanel.vue'
   gap: 18px;
   align-items: stretch;
   width: 100%;
+  min-width: 0;
   min-height: 0;
 }
 
@@ -35,10 +36,12 @@ import NotePanel from './NotePanel.vue'
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
   min-height: 0;
 }
 
 .dashboard-grid :deep(.panel) {
+  min-width: 0;
   height: 100%;
 }
 
@@ -63,6 +66,7 @@ import NotePanel from './NotePanel.vue'
 @media (max-width: 760px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 }
 </style>

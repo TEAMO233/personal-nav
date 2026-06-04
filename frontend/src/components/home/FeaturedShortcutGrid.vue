@@ -72,6 +72,7 @@ function iconName(shortcut: Shortcut): IconName {
   position: relative;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
   height: 154px;
   min-height: 154px;
   padding: 18px 24px 42px;
@@ -175,6 +176,45 @@ function iconName(shortcut: Shortcut): IconName {
 }
 
 @media (max-width: 560px) {
+  .shortcut-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .feature-card {
+    height: 112px;
+    min-height: 112px;
+    padding: 12px 12px 30px;
+    border-radius: 14px;
+  }
+
+  .feature-card__icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 6px;
+  }
+
+  .feature-card__title {
+    width: 100%;
+    margin-bottom: 4px;
+    overflow: hidden;
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .feature-card__desc {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+
+  .feature-card__arrow {
+    bottom: 8px;
+    left: 12px;
+  }
+}
+
+@media (max-width: 360px) {
   .shortcut-grid {
     grid-template-columns: 1fr;
   }

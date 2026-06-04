@@ -280,6 +280,7 @@ onUnmounted(() => {
   box-sizing: border-box;
   width: 100%;
   max-width: 800px;
+  min-width: 0;
   height: 64px;
   padding: 0 8px 0 24px;
   background: var(--home-search-bg);
@@ -554,15 +555,50 @@ onUnmounted(() => {
 @media (max-width: 640px) {
   .search-bar {
     height: 54px;
+    gap: 6px;
+    max-width: 100%;
+    padding: 0 6px 0 14px;
   }
 
   .search-input {
+    min-width: 0;
     font-size: var(--text-body);
+  }
+
+  .engine-trigger {
+    width: 38px;
+    height: 38px;
   }
 
   /* 小屏隐藏快捷键提示 */
   .search-kbd {
     display: none;
+  }
+
+  .search-go {
+    width: 40px;
+    height: 40px;
+  }
+
+  .engine-menu {
+    min-width: min(220px, calc(100vw - 24px));
+  }
+}
+
+@media (max-width: 380px) {
+  .search-bar {
+    height: 50px;
+    padding-left: 10px;
+  }
+
+  .engine-trigger,
+  .search-go {
+    width: 36px;
+    height: 36px;
+  }
+
+  .search-input {
+    font-size: 15px;
   }
 }
 </style>

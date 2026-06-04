@@ -23,10 +23,15 @@ const auth = useAuthStore()
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  min-width: 0;
   text-align: center;
 }
 
 .hero__title {
+  width: 100%;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-size: clamp(34px, 3.2vw, 46px);
   font-weight: 800;
   line-height: 1.1;
@@ -34,7 +39,10 @@ const auth = useAuthStore()
 }
 
 .hero__subtitle {
+  width: 100%;
+  max-width: 680px;
   margin-top: 12px;
+  overflow-wrap: anywhere;
   font-size: 17px;
   color: var(--home-text-secondary);
 }
@@ -42,7 +50,9 @@ const auth = useAuthStore()
 .hero__search {
   display: flex;
   justify-content: center;
+  box-sizing: border-box;
   width: 100%;
+  min-width: 0;
   margin-top: 28px;
 }
 
@@ -52,13 +62,20 @@ const auth = useAuthStore()
 
 @media (max-width: 420px) {
   .hero__title {
-    font-size: 31px;
+    font-size: 30px;
+    line-height: 1.18;
   }
 
   .hero__subtitle {
-    max-width: 320px;
+    max-width: 100%;
     font-size: 16px;
     line-height: 1.55;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero__title {
+    font-size: 27px;
   }
 }
 </style>
