@@ -1,124 +1,218 @@
-# 个人导航主页
+# Personal Navigation Homepage / 个人导航主页
 
-多用户的个人导航起始页:每个用户独立管理自己的搜索引擎与快捷方式分组,支持自定义图标(上传 / 图片外链 / 抓取站点 favicon)、亮暗主题切换。采用受控开户(管理员后台开户,或凭有效邀请码自助注册),没有公开注册入口。
+一个面向多用户场景的个人导航起始页。每个用户都拥有独立的搜索引擎配置、快捷方式分组和首页工作台，支持自定义图标、亮暗主题切换，以及受控开户与邀请码注册。
+
+这个项目不是“公开注册的导航站模板”，而是一套更适合个人部署、小团队内部使用、家庭共享或私有化托管的导航首页系统。
+
+## 项目特性
+
+- 多用户隔离：每个用户拥有独立的搜索引擎、快捷方式、首页书签、待办、便签、搜索历史和最近访问记录。
+- 受控注册：不提供公开注册入口，只支持管理员后台开户，或使用有效邀请码自助注册。
+- 首页工作台：包含搜索区、精选快捷方式、分类导航、首页书签、概览面板、待办日程、便签等模块。
+- 搜索引擎管理：支持新增、编辑、删除、排序、设默认，用户初始化时自动带预置引擎。
+- 快捷方式管理：支持分组、排序、自定义图标、首页展示。
+- 图标能力：支持上传图片、保存远程图片地址、抓取站点 favicon，并带基础安全限制。
+- 管理后台：支持用户列表、开户、重置密码、启用/禁用用户、签发邀请码。
+- 服务端会话：基于 Spring Session + Redis 存储登录态，管理员禁用用户或重置密码后可即时踢下线。
+- 安全防护：内置 CSRF、防会话固定、限流、SSRF 防护、多租户数据隔离。
+
+## 当前已实现的页面
+
+- `/login`：登录
+- `/register`：邀请码注册
+- `/`：首页工作台
+- `/settings`：搜索引擎、快捷方式、首页书签管理
+- `/admin`：管理员后台
 
 ## 技术栈
 
-- 后端:Spring Boot 3.5 / JDK 21 / Maven / Spring Security 6 / Spring Session(Redis)/ Spring Data JPA / Flyway / PostgreSQL 16 / Redis 7 / jsoup
-- 前端:Vue 3 / Vite 8 / TypeScript / Element Plus(按需引入)/ Pinia / Vue Router / axios
-- 测试:JUnit 5 + Spring Boot Test;集成测试用 Testcontainers 起临时 PostgreSQL + Redis(需本机 Docker)
+### 后端
 
-## 目录结构
+- Spring Boot 3.5.14
+- JDK 21
+- Spring Security 6
+- Spring Session (Redis)
+- Spring Data JPA
+- Flyway
+- PostgreSQL 16
+- Redis 7
+- jsoup
 
-```
+### 前端
+
+- Vue 3
+- Vite 8
+- TypeScript
+- Element Plus
+- Pinia
+- Vue Router
+- axios
+
+### 测试
+
+- JUnit 5
+- Spring Boot Test
+- Testcontainers
+
+## 仓库结构
+
+```text
 .
-├── backend/    Spring Boot 后端(API + 数据层 + 安全)
-└── frontend/   Vue 3 前端(首页 / 登录 / 注册 / 设置 / 管理后台)
+├── backend/    Spring Boot 后端（认证 / 管理 / 数据层 / 安全）
+└── frontend/   Vue 3 前端（首页 / 登录 / 注册 / 设置 / 管理后台）
 ```
 
-## 环境要求
+## 适用场景
+
+- 自己部署一个可登录、可管理、可扩展的导航首页
+- 给家庭成员或小团队提供独立导航面板
+- 需要管理员控制开户，不希望任何人都能公开注册
+- 想在导航页上聚合常用搜索、收藏、待办、便签等轻量个人信息
+
+## 快速开始
+
+### 环境要求
 
 - JDK 21
-- Node.js ≥ 20.19(Vite 8 要求)
-- PostgreSQL 16、Redis 7(线上或本地实例)
-- 跑后端集成测试需本机 Docker(Testcontainers 会自动起临时 PG + Redis,测完即销毁,不碰线上库)
+- Node.js 20.19 及以上
+- PostgreSQL 16
+- Redis 7
+- Docker（仅后端集成测试需要）
 
-## 后端
+### 1. 启动后端
 
-### 配置(全部经环境变量注入,无硬编码连接信息)
+先准备 PostgreSQL 和 Redis，再设置至少以下环境变量：
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `REDIS_HOST`
+- `REDIS_PORT`
+- `APP_ADMIN_USERNAME`
+- `APP_ADMIN_PASSWORD`
+
+启动命令：
+
+```bash
+cd backend
+JAVA_HOME=<你的 JDK21 路径> ./mvnw spring-boot:run
+```
+
+后端默认监听 `http://localhost:8080`。
+
+### 2. 启动前端
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+前端默认监听 `http://localhost:5173`，开发环境下 `/api` 会自动代理到 `http://localhost:8080`。
+
+### 3. 首次登录
+
+如果数据库里还没有任何 `ADMIN` 用户，后端启动时会使用：
+
+- `APP_ADMIN_USERNAME`
+- `APP_ADMIN_PASSWORD`
+
+自动创建初始管理员。之后可使用该账号登录后台并继续开户或签发邀请码。
+
+## 配置说明
+
+后端配置全部通过环境变量注入，不在代码中硬编码连接信息。
+
+### 常用后端环境变量
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `DB_URL` | `jdbc:postgresql://localhost:5432/personal_nav` | PostgreSQL JDBC URL |
 | `DB_USERNAME` | `postgres` | 数据库用户名 |
-| `DB_PASSWORD` | (空) | 数据库密码 |
+| `DB_PASSWORD` | 空 | 数据库密码 |
 | `REDIS_HOST` | `localhost` | Redis 主机 |
 | `REDIS_PORT` | `6379` | Redis 端口 |
-| `REDIS_PASSWORD` | (空) | Redis 密码 |
-| `SERVER_PORT` | `8080` | 后端监听端口 |
-| `SESSION_TTL_SECONDS` | `604800` | 会话有效期(秒,默认 7 天) |
-| `SESSION_COOKIE_NAME` | `NAV_SESSION` | 会话 Cookie 名 |
-| `COOKIE_SECURE` | `false` | 会话 Cookie 是否带 `Secure`,**生产 HTTPS 下必须设为 `true`** |
-| `COOKIE_SAME_SITE` | `Lax` | 会话 Cookie 的 `SameSite` 属性 |
-| `STORAGE_BASE_DIR` | `./data/media` | 媒体文件本地存储目录 |
+| `REDIS_PASSWORD` | 空 | Redis 密码 |
+| `SERVER_PORT` | `8080` | 后端端口 |
+| `SESSION_TTL_SECONDS` | `604800` | 会话有效期，默认 7 天 |
+| `SESSION_COOKIE_NAME` | `NAV_SESSION` | 会话 Cookie 名称 |
+| `COOKIE_SECURE` | `false` | HTTPS 生产环境必须设为 `true` |
+| `COOKIE_SAME_SITE` | `Lax` | 会话 Cookie 的 SameSite 属性 |
+| `STORAGE_BASE_DIR` | `./data/media` | 本地图标/媒体存储目录 |
 | `MEDIA_UPLOAD_MAX_SIZE` | `2MB` | 单个上传文件大小上限 |
 | `MEDIA_UPLOAD_MAX_REQUEST_SIZE` | `3MB` | 上传请求总大小上限 |
-| `MEDIA_FETCH_MAX_BYTES` | `2097152` | 远程图标下载字节上限(2MB) |
-| `MEDIA_CONNECT_TIMEOUT_MS` | `3000` | 抓取建立连接超时(毫秒) |
-| `MEDIA_READ_TIMEOUT_MS` | `5000` | 抓取读取响应超时(毫秒) |
-| `MEDIA_MAX_REDIRECTS` | `3` | 抓取最大重定向次数(每跳都重做 SSRF 校验) |
-| `MEDIA_ALLOW_LOOPBACK` | `false` | 是否放行环回地址,**仅测试用,生产必须保持 `false`** |
-| `APP_ADMIN_USERNAME` | (空) | 初始管理员用户名:仅当库中无任何 ADMIN 时,启动用这组凭据创建 |
-| `APP_ADMIN_PASSWORD` | (空) | 初始管理员密码 |
+| `MEDIA_FETCH_MAX_BYTES` | `2097152` | 远程抓取最大字节数 |
+| `MEDIA_CONNECT_TIMEOUT_MS` | `3000` | 远程抓取连接超时 |
+| `MEDIA_READ_TIMEOUT_MS` | `5000` | 远程抓取读取超时 |
+| `MEDIA_MAX_REDIRECTS` | `3` | 远程抓取最大重定向次数 |
+| `MEDIA_ALLOW_LOOPBACK` | `false` | 仅测试可开启，生产必须保持 `false` |
+| `APP_ADMIN_USERNAME` | 空 | 初始管理员用户名 |
+| `APP_ADMIN_PASSWORD` | 空 | 初始管理员密码 |
 
-### 本地运行
+## 本地开发
 
-1. 准备 PostgreSQL 16 与 Redis 7 实例(表结构由 Flyway 在启动时自动建好,无需手动建表)。
-2. 配置上表中至少 `DB_*`、`REDIS_*`,以及首次启动用的 `APP_ADMIN_USERNAME` / `APP_ADMIN_PASSWORD`。
-3. 启动(JDK 21):
-
-   ```bash
-   cd backend
-   JAVA_HOME=<你的 JDK21 路径> ./mvnw spring-boot:run
-   ```
-
-   > macOS Homebrew 装的 JDK 21 通常在 `/usr/local/opt/openjdk@21`。请勿依赖 `/usr/libexec/java_home -v 21` 探测——系统默认是 Java 8 时它可能静默回退,导致编译报错。
-
-### 测试(需 Docker)
+### 后端测试
 
 ```bash
 cd backend
 JAVA_HOME=<你的 JDK21 路径> ./mvnw test
 ```
 
-Testcontainers 会自动起临时 PostgreSQL + Redis 跑全部集成测试,结束自动销毁。
+集成测试会通过 Testcontainers 拉起临时 PostgreSQL 与 Redis，测试结束后自动销毁。
 
-### 打包
+### 前端构建
+
+```bash
+cd frontend
+npm run build
+```
+
+该命令会先执行 `vue-tsc` 类型检查，再执行 Vite 构建。
+
+### 后端打包
 
 ```bash
 cd backend
-JAVA_HOME=<你的 JDK21 路径> ./mvnw -DskipTests package   # 产物在 target/*.jar
+JAVA_HOME=<你的 JDK21 路径> ./mvnw -DskipTests package
 ```
 
-## 前端
+产物位于 `backend/target/*.jar`。
 
-### 本地开发
+## 安全设计
 
-```bash
-cd frontend
-npm install
-npm run dev     # 监听 5173,/api 自动代理到 http://localhost:8080
-```
+- 服务端会话：登录态存 Redis，浏览器 Cookie 仅保存 session id。
+- 防会话固定：登录成功后会重新签发 session id。
+- CSRF 防护：使用 Cookie + Header 的双提交令牌方案。
+- 密码存储：使用 BCrypt 哈希，不保存明文密码。
+- 管理员干预：管理员禁用用户或重置密码后，可立即让该用户全部会话失效。
+- SSRF 防护：图标抓取仅允许公网 `http/https`，拒绝环回、私网、链路本地、多播地址，并限制超时、大小和重定向次数。
+- 多租户隔离：用户数据按 `user_id` 隔离，访问他人资源返回 404，不暴露存在性。
+- 限流：对登录、注册、开户等接口按 IP 或 IP+用户名维度限流。
 
-### 构建
+## 生产部署建议
 
-```bash
-cd frontend
-npm run build   # vue-tsc 类型检查 + vite 构建,产物在 dist/
-```
+- 使用 Nginx、Caddy 或其他可信反向代理终止 HTTPS。
+- 在 HTTPS 环境下将 `COOKIE_SECURE=true`。
+- `STORAGE_BASE_DIR` 指向持久化卷，避免容器重启后图标丢失。
+- 如果 Redis 禁用了 `CONFIG SET`，请手动开启 `notify-keyspace-events Egx`，以确保部分会话失效联动能力正常工作。
+- 不要直接将应用裸露在公网入口后面，建议始终放在可信代理之后。
 
-生产部署:把 `dist/` 交由 Nginx 等静态服务器托管,并由其反向代理 `/api` 到后端、终止 HTTPS。前端不需要任何环境变量(接口走相对路径 `/api`)。
+## 开发约束
 
-## 生产部署与安全(必读)
+- 数据库迁移由 Flyway 管理，只新增 `V{n}__*.sql`，不修改历史迁移。
+- 前端接口统一走相对路径 `/api`，方便反向代理部署。
+- 预置搜索引擎会在用户创建时写入数据库，用户之后可自行调整。
 
-- **HTTPS**:由反向代理(Nginx 等)终止 TLS,并转发 `X-Forwarded-Proto` 等头。后端已配置 `server.forward-headers-strategy=framework`,会在可信边界统一解析真实协议与客户端 IP——**请务必把应用部署在可信代理之后**,不要直接对外暴露。
-- **`COOKIE_SECURE=true`**:HTTPS 环境下必设,否则会话 Cookie 不带 `Secure`,有被明文链路窃取的风险。
-- **`MEDIA_ALLOW_LOOPBACK=false`**:保持默认。该开关仅供本地测试抓取本机桩站点,生产放行会打开 SSRF 缺口。
-- **强随机口令**:`APP_ADMIN_PASSWORD` 及数据库 / Redis 口令都用强随机值,且只经环境变量注入。
-- **Redis keyspace notifications**:「管理员禁用用户 / 重置密码后即时踢下线」依赖带索引的 Spring Session 仓库(`spring.session.redis.repository-type=indexed`)。Spring Boot 启动时会尝试 `CONFIG SET notify-keyspace-events` 自动开启过期事件通知。若线上 Redis 禁用了 `CONFIG` 命令(部分云托管如此),请在 Redis 侧手动开启 `notify-keyspace-events Egx`;主动注销(删除会话)功能本身不依赖该通知,仍可正常工作。
-- **媒体存储**:`STORAGE_BASE_DIR` 指向持久化卷,避免容器重启丢失已上传图标。
+## 开源前建议检查
 
-## 安全特性概览
+如果你准备把这个仓库公开到 GitHub，建议至少再确认以下几项：
 
-- **会话**:登录态存服务端(Redis),Cookie 仅持不可猜的 sessionId;登录成功换发 sessionId 防会话固定;管理员禁用用户或重置密码后,立即失效该用户的全部会话。
-- **CSRF**:基于 Cookie 会话的双提交令牌(`XSRF-TOKEN` Cookie + `X-XSRF-TOKEN` 请求头)。
-- **密码**:BCrypt 哈希存储,不存明文;禁用账户(`DISABLED`)拒绝登录。
-- **SSRF**:图标抓取仅放行公网 http/https,拒绝环回 / 私网 / 链路本地 / 多播地址,按解析出的全部 IP 判定,重定向逐跳重新校验,并有连接 / 读取超时与下载大小上限。
-- **多租户隔离**:所有用户数据按 `user_id` 过滤,访问他人资源一律返回 404(不暴露存在性)。
-- **限流**:登录、注册、开户接口按 IP 及 IP+用户名维度做 Redis 固定窗口限流,超阈值返回 429。
-- **邀请码**:并发同码注册用「仅当未被使用时原子消费」杜绝重复消费(防 TOCTOU)。
+- 是否补充 `LICENSE`
+- 是否需要 `CONTRIBUTING.md`
+- 是否需要 `SECURITY.md`
+- 是否确认仓库内不存在真实密钥、内网地址、生产账号或调试残留
+- 是否补充项目截图、演示 GIF 或部署示意图
 
-## 开发说明
+## License
 
-- 数据库迁移由 Flyway 管理(`backend/src/main/resources/db/migration`),**只增不改**:新增 `V{n}__*.sql`,不回写历史迁移。
-- 预置引擎(Google / 百度 / Bing / DuckDuckGo)在用户创建时按用户落库,之后可自由增删改、排序、设默认。
+当前仓库尚未声明开源许可证。公开发布前，建议补充一个明确的 `LICENSE` 文件。

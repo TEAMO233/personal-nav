@@ -1,5 +1,22 @@
-# Vue 3 + TypeScript + Vite
+# Frontend
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+`frontend/` 是这个项目的 Vue 3 + TypeScript + Vite 前端。
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+更完整的项目说明、启动方式、部署要求和开源信息请查看仓库根目录的 [README.md](../README.md)。
+
+## 常用命令
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
+```
+
+## 模块说明
+
+- `src/views/`：页面视图（首页、登录、注册、设置、后台）
+- `src/components/`：可复用组件与首页面板
+- `src/stores/`：Pinia 状态管理
+- `src/api/`：接口请求与类型定义
+- `public/`：静态资源
