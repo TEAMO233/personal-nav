@@ -71,7 +71,7 @@ onMounted(loadAll)
     <div class="home__shell">
       <HomeTopbar />
 
-      <main class="home__main">
+      <main class="home__main" :class="{ 'home__main--guest': !auth.isLoggedIn }">
         <HomeHero class="home__hero" />
 
         <div v-if="auth.isLoggedIn && loading" class="home__state">加载中…</div>
@@ -125,6 +125,18 @@ onMounted(loadAll)
   min-width: 0;
   margin: 0 auto;
   padding: 38px 52px 52px;
+}
+
+.home__main--guest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 0;
+}
+
+.home__main--guest .home__hero {
+  width: 100%;
+  margin-bottom: 0;
 }
 
 .home__hero {
@@ -194,6 +206,12 @@ onMounted(loadAll)
     overflow: hidden;
   }
 
+  .home__main--guest {
+    display: flex;
+    min-height: calc(100svh - 58px);
+    padding-block: 0;
+  }
+
   .home__hero {
     margin-bottom: 22px;
   }
@@ -202,6 +220,10 @@ onMounted(loadAll)
 @media (max-width: 430px) {
   .home__main {
     padding: 22px 12px 28px;
+  }
+
+  .home__main--guest {
+    padding-block: 0;
   }
 }
 </style>

@@ -57,7 +57,16 @@ const auth = useAuthStore()
 }
 
 .hero__search--solo {
+  max-width: min(680px, 100%);
   margin-top: 0;
+}
+
+.hero__search--solo :deep(.search-bar) {
+  height: 58px;
+  max-width: 100%;
+  background: color-mix(in srgb, var(--home-search-bg) 76%, transparent);
+  border-color: color-mix(in srgb, var(--home-search-border) 82%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 18px 46px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 420px) {
@@ -70,6 +79,10 @@ const auth = useAuthStore()
     max-width: 100%;
     font-size: 16px;
     line-height: 1.55;
+  }
+
+  .hero__search--solo :deep(.search-bar) {
+    height: 52px;
   }
 }
 
