@@ -81,13 +81,17 @@ const auth = useAuthStore()
   display: grid;
   flex: 1;
   grid-template-rows: auto auto minmax(0, 1fr);
+  position: relative;
   box-sizing: border-box;
   min-width: 0;
   padding: 34px 52px 52px;
+  overflow: visible;
 }
 
 .desktop-home__hero {
   display: flex;
+  position: relative;
+  z-index: 20;
   flex-direction: column;
   gap: 18px;
   align-items: center;
@@ -132,10 +136,14 @@ const auth = useAuthStore()
 }
 
 .desktop-home__features {
+  position: relative;
+  z-index: 1;
   margin-bottom: 20px;
 }
 
 .desktop-home :deep(.dashboard-grid) {
+  position: relative;
+  z-index: 0;
   min-height: 0;
 }
 

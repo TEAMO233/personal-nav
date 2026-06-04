@@ -274,6 +274,7 @@ onUnmounted(() => {
 <style scoped>
 .search-bar {
   position: relative;
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -301,6 +302,8 @@ onUnmounted(() => {
 
 .engine-select {
   display: flex;
+  position: relative;
+  z-index: 2;
   align-items: center;
 }
 
@@ -397,14 +400,14 @@ onUnmounted(() => {
 .dropdown-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 999;
 }
 
 .engine-menu {
   position: absolute;
   top: calc(100% + var(--space-2));
   left: 0;
-  z-index: 100;
+  z-index: 1000;
   min-width: 220px;
   margin: 0;
   padding: var(--space-1);
@@ -452,7 +455,7 @@ onUnmounted(() => {
   top: calc(100% + var(--space-2));
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 1000;
   max-height: 360px;
   margin: 0;
   padding: var(--space-1);

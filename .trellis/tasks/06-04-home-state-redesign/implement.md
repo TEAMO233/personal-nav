@@ -22,6 +22,8 @@
 - Follow-up design source for login entry: `ui-ux-pro-max` Minimal Single Column + focus/contrast guidance; login is a single auxiliary text action, not a second primary CTA.
 - Follow-up correction: logged-in desktop also treats search as the primary home CTA, so its hero uses a centered vertical search-first composition instead of a right-column search block.
 - Follow-up mobile redesign source: `ui-ux-pro-max` Minimal Single Column and no-navigation-clutter guidance; logged-in mobile now removes topbar shortcuts and dashboard widgets, keeping search plus real enabled home bookmarks only.
+- Follow-up mobile account correction: top-right user/account entry is retained as page chrome with a 44px touch target, while search and home bookmarks remain the only content modules.
+- Follow-up overlay fix: search engine/history dropdowns are lifted above later home cards by correcting search and hero stacking contexts; `ui-ux-pro-max` flagged overflow clipping and stacking context as the relevant UX risks.
 - Project adaptations: no external font imports, no icon libraries, no fake data, scoped CSS, and semantic tokens in `style.css`.
 - Guest desktop/mobile were visually checked at 1440px and 390px widths. Login-state components were verified by build/type-check and structural review; no fake store data was added for visual fill.
 

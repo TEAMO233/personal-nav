@@ -88,6 +88,7 @@ Logged-in mobile:
 - Follow-up mobile scope: only search and home bookmarks remain.
 - Use `ui-ux-pro-max` Minimal Single Column guidance: one-column, high contrast, generous spacing, no navigation clutter.
 - Reuse real enabled home bookmark data through `HomeBookmarkPanel.vue`; do not render dashboard-only widgets or fabricate mobile content.
+- Keep the user/account entry as lightweight top-right chrome, not as a content module; use a 44px touch target and visible focus state per `ui-ux-pro-max` mobile touch guidance.
 
 ## Compatibility
 
