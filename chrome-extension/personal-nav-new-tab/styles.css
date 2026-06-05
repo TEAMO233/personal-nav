@@ -34,6 +34,10 @@ body {
   background: var(--bg);
 }
 
+body.redirecting {
+  background: transparent;
+}
+
 .shell {
   display: grid;
   min-height: 100vh;

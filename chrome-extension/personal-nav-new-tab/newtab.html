@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>打开个人导航</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="newtab.js"></script>
   </head>
-  <body>
-    <main class="shell" aria-live="polite">
+  <body class="redirecting">
+    <main id="fallback" class="shell" aria-live="polite" hidden>
       <section class="panel">
-        <p class="eyebrow">New Tab</p>
-        <h1>正在打开个人导航</h1>
-        <p class="hint">如果没有自动跳转,请检查扩展选项中的首页地址。</p>
+        <h1>无法打开个人导航</h1>
+        <p id="fallbackMessage" class="hint">请检查扩展选项中的首页地址。</p>
         <button id="optionsButton" type="button">打开扩展选项</button>
       </section>
     </main>
-    <script src="newtab.js"></script>
   </body>
 </html>
