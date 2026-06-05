@@ -2,15 +2,10 @@
 /**
  * 外观设置区:配置亮暗模式与主页配色主题。
  */
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { PALETTE_OPTIONS, useThemeStore, type ThemeMode, type ThemePalette } from '@/stores/theme'
 import AppIcon from '@/components/AppIcon.vue'
 
 const theme = useThemeStore()
-const router = useRouter()
-const homeUrl = computed(() => new URL(router.resolve({ name: 'home' }).href, window.location.origin).toString())
-const extensionDirectory = 'chrome-extension/personal-nav-new-tab'
 
 const modeOptions: Array<{ value: ThemeMode; label: string; icon: 'sun' | 'moon' }> = [
   { value: 'light', label: '亮色', icon: 'sun' },
@@ -35,56 +30,6 @@ function chooseMode(mode: ThemeMode): void {
 function choosePalette(palette: ThemePalette): void {
   // 1. 写入全局主题 store
   theme.setPalette(palette)
-}
-
-/**
- * 复制导航首页地址。
- */
-async function copyHomeUrl(): Promise<boolean> {
-  // 1. 优先使用现代剪贴板 API
-  try {
-    await navigator.clipboard.writeText(homeUrl.value)
-    ElMessage.success('首页地址已复制')
-    return true
-  } catch {
-    // 2. 剪贴板不可用时提示手动复制
-    ElMessage.error('复制失败,请手动选择地址复制')
-    return false
-  }
-}
-
-/**
- * 复制地址并打开 Chrome 启动页设置。
- */
-async function openChromeStartupSettings(): Promise<void> {
-  // 1. 先复制地址,再尝试打开 Chrome 设置页
-  await copyHomeUrl()
-  window.open('chrome://settings/onStartup', '_blank', 'noopener')
-}
-
-/**
- * 复制扩展目录。
- */
-async function copyExtensionDirectory(): Promise<boolean> {
-  // 1. 复制仓库内的扩展目录,方便在 Chrome 开发者模式中选择
-  try {
-    await navigator.clipboard.writeText(extensionDirectory)
-    ElMessage.success('扩展目录已复制')
-    return true
-  } catch {
-    // 2. 剪贴板不可用时提示手动复制
-    ElMessage.error('复制失败,请手动选择目录复制')
-    return false
-  }
-}
-
-/**
- * 打开 Chrome 扩展管理页。
- */
-async function openChromeExtensions(): Promise<void> {
-  // 1. 先复制扩展目录,再打开扩展管理页
-  await copyExtensionDirectory()
-  window.open('chrome://extensions/', '_blank', 'noopener')
 }
 </script>
 
@@ -151,49 +96,6 @@ async function openChromeExtensions(): Promise<void> {
             <AppIcon v-if="theme.palette === item.value" name="check" :size="16" />
           </span>
         </button>
-      </div>
-    </div>
-
-    <!-- Chrome 浏览器入口 -->
-    <div class="setting-group">
-      <div class="setting-group__head">
-        <h3>浏览器入口</h3>
-      </div>
-      <div class="startup-card">
-        <div class="startup-card__body">
-          <span class="startup-card__eyebrow">Chrome</span>
-          <strong>把个人导航放到 Chrome 常用入口</strong>
-          <p>启动时打开可用 Chrome 原生设置;新建标签页需要加载本仓库里的本地扩展。</p>
-          <code class="startup-card__url">{{ homeUrl }}</code>
-          <div class="startup-card__options" aria-label="Chrome 设置方式">
-            <div class="startup-option">
-              <span class="startup-option__label">启动时打开</span>
-              <span class="startup-option__text">复制地址后,在 Chrome “启动时”里选择打开特定网页。</span>
-            </div>
-            <div class="startup-option">
-              <span class="startup-option__label">新建标签页</span>
-              <span class="startup-option__text">打开扩展管理页,启用开发者模式并加载 <code>{{ extensionDirectory }}</code>。</span>
-            </div>
-          </div>
-        </div>
-        <div class="startup-card__actions">
-          <button type="button" class="startup-card__primary" @click="openChromeStartupSettings">
-            <AppIcon name="external-link" :size="16" />
-            <span>启动页设置</span>
-          </button>
-          <button type="button" class="startup-card__secondary" @click="openChromeExtensions">
-            <AppIcon name="external-link" :size="16" />
-            <span>扩展管理</span>
-          </button>
-          <button type="button" class="startup-card__secondary" @click="copyExtensionDirectory">
-            <AppIcon name="copy" :size="16" />
-            <span>复制目录</span>
-          </button>
-          <button type="button" class="startup-card__secondary" @click="copyHomeUrl">
-            <AppIcon name="copy" :size="16" />
-            <span>复制地址</span>
-          </button>
-        </div>
       </div>
     </div>
   </section>
@@ -353,144 +255,9 @@ async function openChromeExtensions(): Promise<void> {
   color: var(--system-blue);
 }
 
-.startup-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--space-4);
-  align-items: center;
-  padding: var(--space-4);
-  background: var(--bg-tertiary);
-  border: 1px solid var(--separator);
-  border-radius: var(--radius-lg);
-}
-
-.startup-card__body {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  gap: var(--space-2);
-}
-
-.startup-card__eyebrow {
-  font-size: var(--text-caption1);
-  font-weight: 700;
-  color: var(--system-blue);
-}
-
-.startup-card__body strong {
-  font-size: var(--text-subhead);
-  color: var(--label-primary);
-}
-
-.startup-card__body p {
-  margin: 0;
-  font-size: var(--text-footnote);
-  line-height: 1.45;
-  color: var(--label-secondary);
-}
-
-.startup-card__url {
-  overflow: hidden;
-  max-width: 100%;
-  padding: 7px 10px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--text-caption1);
-  color: var(--label-secondary);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  background: var(--bg-elevated);
-  border: 1px solid var(--separator);
-  border-radius: var(--radius-md);
-}
-
-.startup-option__text code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--text-caption1);
-  color: var(--label-primary);
-}
-
-.startup-card__options {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-2);
-}
-
-.startup-option {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-  padding: var(--space-3);
-  background: var(--bg-elevated);
-  border: 1px solid var(--separator);
-  border-radius: var(--radius-md);
-}
-
-.startup-option__label {
-  font-size: var(--text-footnote);
-  font-weight: 700;
-  color: var(--label-primary);
-}
-
-.startup-option__text {
-  font-size: var(--text-caption1);
-  line-height: 1.45;
-  color: var(--label-secondary);
-}
-
-.startup-card__actions {
-  display: flex;
-  gap: var(--space-2);
-  align-items: center;
-}
-
-.startup-card__actions button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-1);
-  min-height: 36px;
-  padding: 0 var(--space-3);
-  font-family: inherit;
-  font-size: var(--text-footnote);
-  font-weight: 650;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: opacity var(--duration-fast) var(--ease-default),
-    transform var(--duration-instant) var(--ease-default);
-}
-
-.startup-card__actions button:active {
-  transform: scale(0.98);
-}
-
-.startup-card__primary {
-  color: #ffffff;
-  background: var(--system-blue);
-  border: 1px solid var(--system-blue);
-}
-
-.startup-card__secondary {
-  color: var(--system-blue);
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--system-blue) 45%, var(--separator));
-}
-
 @media (max-width: 640px) {
   .palette-list {
     grid-template-columns: 1fr;
-  }
-
-  .startup-card {
-    grid-template-columns: 1fr;
-  }
-
-  .startup-card__options {
-    grid-template-columns: 1fr;
-  }
-
-  .startup-card__actions {
-    flex-wrap: wrap;
   }
 }
 </style>
