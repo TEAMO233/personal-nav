@@ -194,7 +194,8 @@ onUnmounted(() => {
         :aria-label="selected ? `当前引擎 ${selected.name},点击切换` : '无可用引擎'"
         @click="toggleEngineDropdown"
       >
-        <AppIcon name="search" :size="26" />
+        <EngineIcon v-if="selected" :engine="selected" :size="28" />
+        <AppIcon v-else name="search" :size="26" />
       </button>
 
       <!-- 引擎下拉:遮罩点击关闭 -->
@@ -310,6 +311,7 @@ onUnmounted(() => {
 .engine-trigger {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-1);
   height: 44px;
   width: 44px;
