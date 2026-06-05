@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>个人导航新标签页设置</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <form id="optionsForm" class="panel">
+        <p class="eyebrow">Chrome Extension</p>
+        <h1>个人导航新标签页</h1>
+        <label class="field" for="homeUrl">
+          <span>首页地址</span>
+          <input id="homeUrl" name="homeUrl" type="url" required placeholder="http://127.0.0.1:5173/" />
+        </label>
+        <p id="status" class="hint" role="status">新建标签页会自动跳转到这里填写的地址。</p>
+        <div class="actions">
+          <button type="submit">保存</button>
+          <button id="resetButton" class="secondary" type="button">恢复默认</button>
+        </div>
+      </form>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

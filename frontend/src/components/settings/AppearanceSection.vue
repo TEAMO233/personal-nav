@@ -9,7 +9,8 @@ import AppIcon from '@/components/AppIcon.vue'
 
 const theme = useThemeStore()
 const router = useRouter()
-const startupUrl = computed(() => new URL(router.resolve({ name: 'home' }).href, window.location.origin).toString())
+const homeUrl = computed(() => new URL(router.resolve({ name: 'home' }).href, window.location.origin).toString())
+const extensionDirectory = 'chrome-extension/personal-nav-new-tab'
 
 const modeOptions: Array<{ value: ThemeMode; label: string; icon: 'sun' | 'moon' }> = [
   { value: 'light', label: '亮色', icon: 'sun' },
@@ -39,10 +40,10 @@ function choosePalette(palette: ThemePalette): void {
 /**
  * 复制导航首页地址。
  */
-async function copyStartupUrl(): Promise<boolean> {
+async function copyHomeUrl(): Promise<boolean> {
   // 1. 优先使用现代剪贴板 API
   try {
-    await navigator.clipboard.writeText(startupUrl.value)
+    await navigator.clipboard.writeText(homeUrl.value)
     ElMessage.success('首页地址已复制')
     return true
   } catch {
@@ -57,8 +58,33 @@ async function copyStartupUrl(): Promise<boolean> {
  */
 async function openChromeStartupSettings(): Promise<void> {
   // 1. 先复制地址,再尝试打开 Chrome 设置页
-  await copyStartupUrl()
+  await copyHomeUrl()
   window.open('chrome://settings/onStartup', '_blank', 'noopener')
+}
+
+/**
+ * 复制扩展目录。
+ */
+async function copyExtensionDirectory(): Promise<boolean> {
+  // 1. 复制仓库内的扩展目录,方便在 Chrome 开发者模式中选择
+  try {
+    await navigator.clipboard.writeText(extensionDirectory)
+    ElMessage.success('扩展目录已复制')
+    return true
+  } catch {
+    // 2. 剪贴板不可用时提示手动复制
+    ElMessage.error('复制失败,请手动选择目录复制')
+    return false
+  }
+}
+
+/**
+ * 打开 Chrome 扩展管理页。
+ */
+async function openChromeExtensions(): Promise<void> {
+  // 1. 先复制扩展目录,再打开扩展管理页
+  await copyExtensionDirectory()
+  window.open('chrome://extensions/', '_blank', 'noopener')
 }
 </script>
 
@@ -128,24 +154,42 @@ async function openChromeStartupSettings(): Promise<void> {
       </div>
     </div>
 
-    <!-- Chrome 启动页 -->
+    <!-- Chrome 浏览器入口 -->
     <div class="setting-group">
       <div class="setting-group__head">
-        <h3>浏览器启动页</h3>
+        <h3>浏览器入口</h3>
       </div>
       <div class="startup-card">
         <div class="startup-card__body">
           <span class="startup-card__eyebrow">Chrome</span>
-          <strong>将个人导航设为启动时打开的页面</strong>
-          <p>Chrome 需要在浏览器设置中确认。点击后会复制首页地址,再打开“启动时”设置页。</p>
-          <code>{{ startupUrl }}</code>
+          <strong>把个人导航放到 Chrome 常用入口</strong>
+          <p>启动时打开可用 Chrome 原生设置;新建标签页需要加载本仓库里的本地扩展。</p>
+          <code class="startup-card__url">{{ homeUrl }}</code>
+          <div class="startup-card__options" aria-label="Chrome 设置方式">
+            <div class="startup-option">
+              <span class="startup-option__label">启动时打开</span>
+              <span class="startup-option__text">复制地址后,在 Chrome “启动时”里选择打开特定网页。</span>
+            </div>
+            <div class="startup-option">
+              <span class="startup-option__label">新建标签页</span>
+              <span class="startup-option__text">打开扩展管理页,启用开发者模式并加载 <code>{{ extensionDirectory }}</code>。</span>
+            </div>
+          </div>
         </div>
         <div class="startup-card__actions">
           <button type="button" class="startup-card__primary" @click="openChromeStartupSettings">
             <AppIcon name="external-link" :size="16" />
-            <span>打开设置</span>
+            <span>启动页设置</span>
           </button>
-          <button type="button" class="startup-card__secondary" @click="copyStartupUrl">
+          <button type="button" class="startup-card__secondary" @click="openChromeExtensions">
+            <AppIcon name="external-link" :size="16" />
+            <span>扩展管理</span>
+          </button>
+          <button type="button" class="startup-card__secondary" @click="copyExtensionDirectory">
+            <AppIcon name="copy" :size="16" />
+            <span>复制目录</span>
+          </button>
+          <button type="button" class="startup-card__secondary" @click="copyHomeUrl">
             <AppIcon name="copy" :size="16" />
             <span>复制地址</span>
           </button>
@@ -345,7 +389,7 @@ async function openChromeStartupSettings(): Promise<void> {
   color: var(--label-secondary);
 }
 
-.startup-card__body code {
+.startup-card__url {
   overflow: hidden;
   max-width: 100%;
   padding: 7px 10px;
@@ -357,6 +401,41 @@ async function openChromeStartupSettings(): Promise<void> {
   background: var(--bg-elevated);
   border: 1px solid var(--separator);
   border-radius: var(--radius-md);
+}
+
+.startup-option__text code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--text-caption1);
+  color: var(--label-primary);
+}
+
+.startup-card__options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.startup-option {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: var(--space-3);
+  background: var(--bg-elevated);
+  border: 1px solid var(--separator);
+  border-radius: var(--radius-md);
+}
+
+.startup-option__label {
+  font-size: var(--text-footnote);
+  font-weight: 700;
+  color: var(--label-primary);
+}
+
+.startup-option__text {
+  font-size: var(--text-caption1);
+  line-height: 1.45;
+  color: var(--label-secondary);
 }
 
 .startup-card__actions {
@@ -403,6 +482,10 @@ async function openChromeStartupSettings(): Promise<void> {
   }
 
   .startup-card {
+    grid-template-columns: 1fr;
+  }
+
+  .startup-card__options {
     grid-template-columns: 1fr;
   }
 

@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "个人导航新标签页",
+  "description": "将 Chrome 新建标签页跳转到个人导航首页。",
+  "version": "1.0.0",
+  "permissions": ["storage"],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "options_page": "options.html"
+}

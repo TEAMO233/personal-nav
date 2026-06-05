@@ -5,7 +5,7 @@
 import { computed } from 'vue'
 import type { Engine } from '@/api/types'
 import { mediaUrl } from '@/api/media'
-import googleIcon from '@/assets/engine-icons/google.svg'
+import googleIcon from '@/assets/engine-icons/google.ico'
 import baiduIcon from '@/assets/engine-icons/baidu.svg'
 import bingIcon from '@/assets/engine-icons/bing.svg'
 import duckduckgoIcon from '@/assets/engine-icons/duckduckgo.svg'
