@@ -152,7 +152,7 @@ function onOpenAdmin(): void {
 <style scoped>
 .topbar {
   position: relative;
-  z-index: 8;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
