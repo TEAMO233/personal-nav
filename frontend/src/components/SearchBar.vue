@@ -32,6 +32,7 @@ const selectedId = ref<string | null>(null)
 const dropdownOpen = ref(false)
 const historyOpen = ref(false)
 const inputEl = ref<HTMLInputElement | null>(null)
+const searchFieldName = `pn-query-${Math.random().toString(36).slice(2)}`
 
 // 可用引擎:登录后使用个人引擎,匿名态提供公开默认引擎
 const availableEngines = computed<Engine[]>(() =>
@@ -184,7 +185,15 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <form class="search-bar" @submit.prevent="doSearch">
+  <form class="search-bar" autocomplete="off" @submit.prevent="doSearch">
+    <input
+      class="search-autocomplete-decoy"
+      type="text"
+      name="personal-nav-autocomplete-decoy"
+      autocomplete="off"
+      tabindex="-1"
+      aria-hidden="true"
+    />
     <!-- 引擎选择器 -->
     <div class="engine-select">
       <button
@@ -226,10 +235,16 @@ onUnmounted(() => {
       v-model="keyword"
       class="search-input"
       type="text"
-      name="personal-nav-search"
-      autocomplete="new-password"
+      :name="searchFieldName"
+      autocomplete="off"
+      aria-autocomplete="none"
       autocapitalize="off"
+      autocorrect="off"
+      enterkeyhint="search"
+      inputmode="search"
       spellcheck="false"
+      data-lpignore="true"
+      data-1p-ignore="true"
       placeholder="搜索常用网站、工具或内容"
       @focus="onInputFocus"
       @blur="onInputBlur"
@@ -275,6 +290,7 @@ onUnmounted(() => {
 <style scoped>
 .search-bar {
   position: relative;
+  isolation: isolate;
   z-index: 30;
   display: flex;
   align-items: center;
@@ -293,6 +309,15 @@ onUnmounted(() => {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), var(--home-search-shadow);
   transition: box-shadow var(--duration-fast) var(--ease-default),
     border-color var(--duration-fast) var(--ease-default);
+}
+
+.search-autocomplete-decoy {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-100vh);
 }
 
 .search-bar:focus-within {
@@ -414,12 +439,12 @@ onUnmounted(() => {
   margin: 0;
   padding: var(--space-1);
   list-style: none;
-  background: var(--home-menu-bg);
+  background: color-mix(in srgb, var(--home-menu-bg) 92%, var(--bg-elevated));
   border: 1px solid var(--home-panel-border);
   border-radius: 18px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 55px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(22px) saturate(170%);
-  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 22px 55px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
 }
 
 .engine-option {
@@ -463,12 +488,12 @@ onUnmounted(() => {
   padding: var(--space-1);
   overflow-y: auto;
   list-style: none;
-  background: var(--home-menu-bg);
+  background: color-mix(in srgb, var(--home-menu-bg) 92%, var(--bg-elevated));
   border: 1px solid var(--home-panel-border);
   border-radius: 18px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 22px 55px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(22px) saturate(170%);
-  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 22px 55px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
 }
 
 .history-item {

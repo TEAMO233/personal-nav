@@ -40,3 +40,8 @@
 **Symptom**: A shortcut (e.g. ⌘K to focus search) keeps firing after leaving the page.
 **Cause**: `window.addEventListener('keydown', ...)` in `onMounted` without cleanup.
 **Fix**: Always `removeEventListener` in `onUnmounted`.
+
+### Browser autocomplete covering custom menus
+**Symptom**: Chrome's native autocomplete popup appears over an app-owned search/history menu.
+**Cause**: A stable search-like `name`/`id` can trigger browser field history even when `autocomplete="new-password"` is present.
+**Fix**: Put `autocomplete="off"` on the form and input, avoid stable search-like field names, and add autocomplete-ignore attributes when the field owns a custom suggestion menu.
