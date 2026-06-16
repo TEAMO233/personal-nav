@@ -15,7 +15,7 @@ const props = withDefaults(
     limit?: number
   }>(),
   {
-    limit: 6,
+    limit: 0,
   },
 )
 
