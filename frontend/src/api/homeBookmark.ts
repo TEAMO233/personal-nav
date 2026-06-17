@@ -11,8 +11,13 @@ import type { HomeBookmark, HomeBookmarkInput } from './types'
  * @returns 首页书签列表
  */
 export function listHomeBookmarks(enabledOnly = true): Promise<HomeBookmark[]> {
-  // 1. 首页默认只拉启用项
-  return http.get<HomeBookmark[]>('/home-bookmarks', { params: { enabledOnly } }).then((r) => r.data)
+  // 1. 首页书签会在设置页频繁变更,列表请求显式绕过浏览器/代理缓存
+  return http
+    .get<HomeBookmark[]>('/home-bookmarks', {
+      params: { enabledOnly, _: Date.now() },
+      headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+    })
+    .then((r) => r.data)
 }
 
 /**

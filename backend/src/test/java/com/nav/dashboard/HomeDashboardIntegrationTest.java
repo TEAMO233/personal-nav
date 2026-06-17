@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -169,7 +170,10 @@ class HomeDashboardIntegrationTest {
         String firstId = objectMapper.readTree(first.getBody()).path("id").asText();
         String secondId = objectMapper.readTree(second.getBody()).path("id").asText();
         // 2. 默认列表只返回启用项,设置页列表返回全部
-        assertThat(list(userA, "/api/home-bookmarks").size()).isEqualTo(1);
+        ResponseEntity<String> enabledOnly = userA.exchange(HttpMethod.GET, "/api/home-bookmarks", null);
+        assertThat(enabledOnly.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(enabledOnly.getHeaders().getCacheControl()).isEqualTo(CacheControl.noStore().getHeaderValue());
+        assertThat(objectMapper.readTree(enabledOnly.getBody()).size()).isEqualTo(1);
         JsonNode all = list(userA, "/api/home-bookmarks?enabledOnly=false");
         assertThat(all.size()).isEqualTo(2);
         // 3. 重排全部书签

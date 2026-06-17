@@ -6,7 +6,9 @@ import com.nav.bookmark.dto.ReorderHomeBookmarksRequest;
 import com.nav.bookmark.dto.UpdateHomeBookmarkRequest;
 import com.nav.security.SecurityUtils;
 import jakarta.validation.Valid;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,9 +43,14 @@ public class HomeBookmarkController {
      * @return 书签列表
      */
     @GetMapping
-    public List<HomeBookmarkResponse> list(@RequestParam(defaultValue = "true") boolean enabledOnly) {
+    public ResponseEntity<List<HomeBookmarkResponse>> list(
+            @RequestParam(defaultValue = "true") boolean enabledOnly) {
         // 1. 首页默认只取启用项,设置页可传 false 取全部
-        return bookmarkService.list(SecurityUtils.currentUserId(), enabledOnly);
+        List<HomeBookmarkResponse> bookmarks = bookmarkService.list(SecurityUtils.currentUserId(), enabledOnly);
+        // 2. 书签列表是动态用户配置,避免首次打开拿到浏览器/代理旧响应
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noStore())
+                .body(bookmarks);
     }
 
     /**
