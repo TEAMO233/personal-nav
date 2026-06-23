@@ -143,8 +143,8 @@ function goSettings(): void {
   width: 30px;
   height: 30px;
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: 10px;
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-default),
@@ -152,8 +152,8 @@ function goSettings(): void {
 }
 
 .panel__action:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 .bookmark__list {
@@ -169,12 +169,12 @@ function goSettings(): void {
   align-items: center;
   min-height: 42px;
   color: inherit;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--home-subtle-divider);
   border-radius: 8px;
 }
 
 .bookmark__item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--home-surface-hover);
 }
 
 .bookmark__icon {
@@ -241,11 +241,12 @@ function goSettings(): void {
   padding: 0 14px;
   font-size: 13px;
   font-weight: 650;
-  color: #ffffff;
-  background: color-mix(in srgb, var(--system-blue) 80%, transparent);
+  color: var(--home-primary-on-accent);
+  background: var(--accent-grad);
   border: none;
   border-radius: 999px;
   cursor: pointer;
+  box-shadow: 0 8px 18px var(--accent-shadow);
 }
 
 @media (max-width: 480px) {

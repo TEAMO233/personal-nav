@@ -26,7 +26,7 @@ import NotePanel from './NotePanel.vue'
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 18px;
-  align-items: stretch;
+  align-items: start;
   width: 100%;
   min-width: 0;
   min-height: 0;
@@ -42,7 +42,7 @@ import NotePanel from './NotePanel.vue'
 
 .dashboard-grid :deep(.panel) {
   min-width: 0;
-  height: 100%;
+  height: auto;
 }
 
 .dashboard-grid__right :deep(.todo) {

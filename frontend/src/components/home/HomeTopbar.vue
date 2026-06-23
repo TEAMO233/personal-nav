@@ -184,7 +184,7 @@ function onOpenAdmin(): void {
   white-space: nowrap;
   font-size: 20px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.94);
+  color: var(--home-text-primary);
 }
 
 .brand-mark {
@@ -222,8 +222,8 @@ function onOpenAdmin(): void {
 }
 
 .top-icon-btn:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 :deep(.theme-toggle) {
@@ -231,8 +231,8 @@ function onOpenAdmin(): void {
 }
 
 :deep(.theme-toggle:hover) {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 .user-menu {
@@ -245,9 +245,9 @@ function onOpenAdmin(): void {
   gap: 10px;
   height: 44px;
   padding: 0 14px 0 6px;
-  color: rgba(255, 255, 255, 0.94);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--home-text-primary);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-default),
@@ -255,7 +255,7 @@ function onOpenAdmin(): void {
 }
 
 .user-trigger:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--home-surface-hover);
   border-color: var(--home-search-border);
 }
 
@@ -333,7 +333,7 @@ function onOpenAdmin(): void {
 }
 
 .user-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-hover);
 }
 
 @media (max-width: 768px) {

@@ -62,7 +62,7 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
   grid-template-columns: 28px minmax(0, 1fr) auto;
   align-items: center;
   min-height: 36px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--home-subtle-divider);
 }
 
 .category__icon {
@@ -84,7 +84,8 @@ const icons: IconName[] = ['code', 'chart', 'server', 'star', 'globe', 'document
   font-size: 13px;
   color: var(--home-text-secondary);
   text-align: center;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: var(--radius-full);
 }
 

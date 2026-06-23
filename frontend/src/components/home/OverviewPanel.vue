@@ -91,7 +91,7 @@ const ringStyle = computed(() => ({
   height: 92px;
   background: conic-gradient(
     var(--system-blue) 0 var(--ring-percent),
-    rgba(255, 255, 255, 0.1) var(--ring-percent) 100%
+    var(--home-surface-border-soft) var(--ring-percent) 100%
   );
   border-radius: var(--radius-full);
   box-shadow: 0 12px 35px rgba(47, 120, 255, 0.26);
@@ -105,8 +105,8 @@ const ringStyle = computed(() => ({
   height: 68px;
   font-size: 23px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(10, 25, 55, 0.9);
+  color: var(--home-text-primary);
+  background: var(--home-focus-ring-bg);
   border-radius: var(--radius-full);
 }
 
@@ -137,8 +137,8 @@ const ringStyle = computed(() => ({
   flex-direction: column;
   gap: 4px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.075);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-bg);
+  border: 1px solid var(--home-surface-border-soft);
   border-radius: 10px;
 }
 
@@ -158,15 +158,15 @@ const ringStyle = computed(() => ({
 
 .mini-stat--ok strong,
 .mini-stat--ok svg {
-  color: #34d399;
+  color: var(--home-success-text);
 }
 
 .overview__quote {
   margin: 14px 0 0;
   padding: 14px 20px;
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-bg);
+  border: 1px solid var(--home-surface-border-soft);
   border-radius: 10px;
 }
 

@@ -371,15 +371,15 @@ function isScheduled(item: TodoItem): boolean {
   width: 28px;
   height: 28px;
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: 9px;
   cursor: pointer;
 }
 
 .panel__actions button:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 .todo__list {
@@ -401,8 +401,8 @@ function isScheduled(item: TodoItem): boolean {
   align-items: center;
   min-height: 50px;
   padding: 8px 10px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035));
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-bg);
+  border: 1px solid var(--home-surface-border-soft);
   border-radius: 12px;
 }
 
@@ -412,8 +412,8 @@ function isScheduled(item: TodoItem): boolean {
 
 .todo__row--overdue {
   background:
-    linear-gradient(145deg, color-mix(in srgb, var(--system-red) 23%, transparent), rgba(255, 255, 255, 0.045)),
-    rgba(255, 255, 255, 0.06);
+    linear-gradient(145deg, color-mix(in srgb, var(--system-red) 23%, transparent), var(--home-surface-bg)),
+    var(--home-surface-bg);
   border-color: color-mix(in srgb, var(--system-red) 48%, transparent);
   box-shadow: 0 10px 26px color-mix(in srgb, var(--system-red) 22%, transparent);
 }
@@ -423,7 +423,7 @@ function isScheduled(item: TodoItem): boolean {
 }
 
 .todo__row--overdue .todo__title {
-  color: #ffffff;
+  color: var(--home-text-primary);
   font-weight: 600;
 }
 
@@ -453,7 +453,7 @@ function isScheduled(item: TodoItem): boolean {
   display: block;
   overflow: hidden;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--home-text-primary);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -474,8 +474,8 @@ function isScheduled(item: TodoItem): boolean {
 .todo__tag {
   padding: 2px 8px;
   font-size: 12px;
-  color: #77d89a;
-  background: rgba(52, 211, 153, 0.12);
+  color: var(--home-tag-text);
+  background: var(--home-tag-bg);
   border-radius: var(--radius-full);
 }
 
@@ -498,14 +498,14 @@ function isScheduled(item: TodoItem): boolean {
   padding: 2px 8px;
   font-size: 12px;
   color: var(--home-text-tertiary);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: var(--radius-full);
   white-space: nowrap;
 }
 
 .todo__time--scheduled {
-  color: #bfdbfe;
+  color: var(--system-blue);
   background: color-mix(in srgb, var(--system-blue) 20%, transparent);
   border-color: color-mix(in srgb, var(--system-blue) 28%, transparent);
 }
@@ -528,15 +528,15 @@ function isScheduled(item: TodoItem): boolean {
   width: 24px;
   height: 24px;
   color: var(--home-text-tertiary);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: 8px;
   cursor: pointer;
 }
 
 .todo__row-actions button:hover:not(:disabled) {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 .todo__row-actions button:disabled {
@@ -555,9 +555,13 @@ function isScheduled(item: TodoItem): boolean {
   cursor: pointer;
 }
 
-.todo__add:hover,
+.todo__add:hover {
+  color: var(--home-text-primary);
+}
+
 .todo__empty:hover {
-  color: #ffffff;
+  color: var(--home-primary-on-accent);
+  filter: brightness(1.03);
 }
 
 .todo__editor {
@@ -571,9 +575,9 @@ function isScheduled(item: TodoItem): boolean {
   height: 34px;
   padding: 0 12px;
   font-family: inherit;
-  color: var(--label-primary);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-bg-strong);
+  border: 1px solid var(--home-surface-border);
   border-radius: 12px;
 }
 
@@ -622,18 +626,20 @@ function isScheduled(item: TodoItem): boolean {
 
 .todo__editor-actions .todo__cancel {
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--home-control-bg);
 }
 
 .todo__empty {
   align-self: flex-start;
-  min-height: 34px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 16px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.92);
-  background: color-mix(in srgb, var(--system-blue) 24%, transparent);
-  border: 1px solid color-mix(in srgb, var(--system-blue) 28%, transparent);
+  font-weight: 700;
+  color: var(--home-primary-on-accent);
+  background: var(--accent-grad);
+  border: none;
   border-radius: var(--radius-full);
+  box-shadow: 0 8px 18px var(--accent-shadow);
   cursor: pointer;
 }
 

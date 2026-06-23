@@ -180,15 +180,15 @@ function displayDate(value: string): string {
   width: 28px;
   height: 28px;
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: 9px;
   cursor: pointer;
 }
 
 .panel__actions button:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 .note__list {
@@ -220,8 +220,8 @@ function displayDate(value: string): string {
   gap: 6px 10px;
   align-items: start;
   padding: 10px 12px;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--home-surface-bg);
+  border: 1px solid var(--home-surface-border-soft);
   border-radius: 12px;
 }
 
@@ -244,7 +244,7 @@ function displayDate(value: string): string {
   margin: 0;
   font-size: 14px;
   line-height: 1.45;
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--home-text-primary);
   overflow-wrap: anywhere;
   white-space: pre-line;
 }
@@ -264,15 +264,15 @@ function displayDate(value: string): string {
   width: 24px;
   height: 24px;
   color: var(--home-text-tertiary);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--home-control-bg);
+  border: 1px solid var(--home-control-border);
   border-radius: 8px;
   cursor: pointer;
 }
 
 .note__row-actions button:hover:not(:disabled) {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-hover);
 }
 
 .note__row-actions button:disabled {
@@ -282,13 +282,15 @@ function displayDate(value: string): string {
 
 .note__empty {
   align-self: flex-start;
-  min-height: 34px;
-  padding: 0 14px;
+  min-height: 38px;
+  padding: 0 16px;
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.92);
-  background: color-mix(in srgb, var(--system-blue) 24%, transparent);
-  border: 1px solid color-mix(in srgb, var(--system-blue) 28%, transparent);
+  font-weight: 700;
+  color: var(--home-primary-on-accent);
+  background: var(--accent-grad);
+  border: none;
   border-radius: var(--radius-full);
+  box-shadow: 0 8px 18px var(--accent-shadow);
   cursor: pointer;
 }
 
@@ -304,9 +306,9 @@ function displayDate(value: string): string {
   min-height: 72px;
   padding: 12px;
   font-family: inherit;
-  color: var(--label-primary);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--home-text-primary);
+  background: var(--home-surface-bg-strong);
+  border: 1px solid var(--home-surface-border);
   border-radius: 12px;
 }
 
@@ -328,6 +330,6 @@ function displayDate(value: string): string {
 
 .note__editor-actions .note__cancel {
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--home-control-bg);
 }
 </style>

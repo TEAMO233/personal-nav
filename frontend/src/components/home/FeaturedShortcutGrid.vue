@@ -63,7 +63,7 @@ function iconName(shortcut: Shortcut): IconName {
 .shortcut-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
-  gap: 22px;
+  gap: 18px;
   width: 100%;
 }
 
@@ -73,19 +73,19 @@ function iconName(shortcut: Shortcut): IconName {
   flex-direction: column;
   align-items: flex-start;
   min-width: 0;
-  height: 154px;
-  min-height: 154px;
+  height: 146px;
+  min-height: 146px;
   padding: 18px 24px 42px;
   overflow: hidden;
   color: var(--label-primary);
   text-align: left;
-  background: rgba(255, 255, 255, 0.075);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--home-surface-bg);
+  border: 1px solid var(--home-surface-border);
   border-radius: 16px;
   cursor: pointer;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 16px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), var(--home-surface-shadow);
   transition: transform var(--duration-fast) var(--ease-default),
     background-color var(--duration-fast) var(--ease-default),
     border-color var(--duration-fast) var(--ease-default),
@@ -93,9 +93,9 @@ function iconName(shortcut: Shortcut): IconName {
 }
 
 .feature-card:hover {
-  background: rgba(255, 255, 255, 0.11);
+  background: var(--home-surface-bg-strong);
   border-color: var(--home-search-border);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 22px 45px rgba(0, 0, 0, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), var(--home-surface-shadow);
   transform: translateY(-4px);
 }
 
@@ -115,7 +115,7 @@ function iconName(shortcut: Shortcut): IconName {
   overflow: hidden;
   font-size: 17px;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--home-text-primary);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

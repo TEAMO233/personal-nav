@@ -350,7 +350,7 @@ onUnmounted(() => {
 }
 
 .engine-trigger:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-hover);
 }
 
 .engine-trigger:disabled {
@@ -371,7 +371,7 @@ onUnmounted(() => {
   font-family: inherit;
   font-size: 17px;
   font-weight: 550;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--home-text-primary);
   background: transparent;
   border: none;
   outline: none;
@@ -389,7 +389,7 @@ onUnmounted(() => {
   font-weight: 600;
   letter-spacing: 0.5px;
   color: var(--home-text-secondary);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-control-bg);
   border-radius: var(--radius-full);
 }
 
@@ -464,7 +464,7 @@ onUnmounted(() => {
 }
 
 .engine-option:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-hover);
 }
 
 .engine-option--active {
@@ -519,7 +519,7 @@ onUnmounted(() => {
 }
 
 .history-pick:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-hover);
 }
 
 .history-icon {
@@ -578,7 +578,7 @@ onUnmounted(() => {
 
 .history-clear:hover {
   color: var(--system-red, #ff3b30);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--home-surface-hover);
 }
 
 /* 移动端:搜索框略矮 */

@@ -68,8 +68,7 @@ const auth = useAuthStore()
   position: relative;
   z-index: 1;
   width: 100%;
-  height: calc(100vh - 16px);
-  min-height: 880px;
+  min-height: calc(100vh - 16px);
   overflow: hidden;
   background: color-mix(in srgb, var(--home-shell-bg) 92%, #0f172a);
   border: 1px solid var(--home-shell-border);
@@ -95,7 +94,7 @@ const auth = useAuthStore()
   flex-direction: column;
   gap: 18px;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
   text-align: center;
 }
 
@@ -138,7 +137,7 @@ const auth = useAuthStore()
 .desktop-home__features {
   position: relative;
   z-index: 1;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .desktop-home :deep(.dashboard-grid) {
@@ -155,6 +154,18 @@ const auth = useAuthStore()
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), var(--home-panel-shadow);
   backdrop-filter: blur(18px) saturate(135%);
   -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+
+@media (min-width: 1280px) {
+  .desktop-home__main {
+    grid-template-rows: auto auto auto;
+  }
+}
+
+@media (max-width: 1280px) {
+  .desktop-home__main {
+    padding: 28px 32px 36px;
+  }
 }
 
 .desktop-home__state {
